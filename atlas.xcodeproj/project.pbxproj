@@ -1,0 +1,415 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F643B762115B5DCC00832707 /* check_atlas.c in Sources */ = {isa = PBXBuildFile; fileRef = F643B761115B5DCC00832707 /* check_atlas.c */; };
+		F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC0630554660B00DB518D /* libatlas.dylib */; };
+		F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B76B115B5E8C00832707 /* libcheck.dylib */; };
+		F643B920115B8A3A00832707 /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
+		F643B92B115B8A7500832707 /* atlas_base_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F643B929115B8A7500832707 /* atlas_base_impl.c */; };
+		F643B964115B8B7A00832707 /* atlas.h in Headers */ = {isa = PBXBuildFile; fileRef = F643B963115B8B7A00832707 /* atlas.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F643B768115B5E6C00832707 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC0620554660B00DB518D;
+			remoteInfo = atlas;
+		};
+		F643B7B3115B60FD00832707 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC0630554660B00DB518D;
+			remoteInfo = lazyObject;
+		};
+		F643B7B5115B60FD00832707 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F63FD96D1153C2A6004F38F5;
+			remoteInfo = check_lazy_object;
+		};
+		F643B914115B89EF00832707 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC045055464E500DB518D /* lazyObject */;
+			remoteInfo = lazyObject;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D2AAC0630554660B00DB518D /* libatlas.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libatlas.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F643B75D115B5D8C00832707 /* check_atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = check_atlas; sourceTree = BUILT_PRODUCTS_DIR; };
+		F643B761115B5DCC00832707 /* check_atlas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_atlas.c; path = test/check_atlas.c; sourceTree = "<group>"; };
+		F643B76B115B5E8C00832707 /* libcheck.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcheck.dylib; path = /opt/local/lib/libcheck.dylib; sourceTree = "<absolute>"; };
+		F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyObject.xcodeproj; path = lazyObject/lazyObject.xcodeproj; sourceTree = "<group>"; };
+		F643B928115B8A7500832707 /* atlas_base_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_base_impl.h; path = atlas/atlas_base_impl.h; sourceTree = "<group>"; };
+		F643B929115B8A7500832707 /* atlas_base_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_base_impl.c; path = atlas/atlas_base_impl.c; sourceTree = "<group>"; };
+		F643B963115B8B7A00832707 /* atlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas.h; path = include/atlas.h; sourceTree = "<group>"; };
+		F643B96F115B8C1100832707 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		F643B97E115B8C9200832707 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
+		F643B97F115B8CA000832707 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D289988505E68E00004EDB86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F643B920115B8A3A00832707 /* liblazyObject.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F643B75B115B5D8C00832707 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */,
+				F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* atlas */ = {
+			isa = PBXGroup;
+			children = (
+				F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */,
+				F643B74E115B5D0800832707 /* API */,
+				F643B74F115B5D0D00832707 /* Lib Atlas */,
+				F643B74B115B5D0100832707 /* Tests */,
+				F643B750115B5D1E00832707 /* Resources */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+				F643B76B115B5E8C00832707 /* libcheck.dylib */,
+			);
+			name = atlas;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC0630554660B00DB518D /* libatlas.dylib */,
+				F643B75D115B5D8C00832707 /* check_atlas */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F643B74B115B5D0100832707 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F643B761115B5DCC00832707 /* check_atlas.c */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		F643B74E115B5D0800832707 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				F643B963115B8B7A00832707 /* atlas.h */,
+			);
+			name = API;
+			sourceTree = "<group>";
+		};
+		F643B74F115B5D0D00832707 /* Lib Atlas */ = {
+			isa = PBXGroup;
+			children = (
+				F643B928115B8A7500832707 /* atlas_base_impl.h */,
+				F643B929115B8A7500832707 /* atlas_base_impl.c */,
+			);
+			name = "Lib Atlas";
+			sourceTree = "<group>";
+		};
+		F643B750115B5D1E00832707 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F643B97F115B8CA000832707 /* COPYING */,
+				F643B96F115B8C1100832707 /* README.markdown */,
+				F643B97E115B8C9200832707 /* AUTHORS */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F643B7AB115B60FD00832707 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F643B7B4115B60FD00832707 /* liblazyObject.a */,
+				F643B7B6115B60FD00832707 /* check_lazy_object */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC0600554660B00DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F643B964115B8B7A00832707 /* atlas.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC0620554660B00DB518D /* atlas */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB914A08733D8E0010E9CD /* Build configuration list for PBXNativeTarget "atlas" */;
+			buildPhases = (
+				D2AAC0600554660B00DB518D /* Headers */,
+				D2AAC0610554660B00DB518D /* Sources */,
+				D289988505E68E00004EDB86 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F643B915115B89EF00832707 /* PBXTargetDependency */,
+			);
+			name = atlas;
+			productName = atlas;
+			productReference = D2AAC0630554660B00DB518D /* libatlas.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		F643B75C115B5D8C00832707 /* check_atlas */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F643B763115B5DCC00832707 /* Build configuration list for PBXNativeTarget "check_atlas" */;
+			buildPhases = (
+				F643B75A115B5D8C00832707 /* Sources */,
+				F643B75B115B5D8C00832707 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F643B769115B5E6C00832707 /* PBXTargetDependency */,
+			);
+			name = check_atlas;
+			productName = check_atlas;
+			productReference = F643B75D115B5D8C00832707 /* check_atlas */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Fraunhofer Institut für Software- und Systemtechnik ISST";
+			};
+			buildConfigurationList = 1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "atlas" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* atlas */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F643B7AB115B60FD00832707 /* Products */;
+					ProjectRef = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				D2AAC0620554660B00DB518D /* atlas */,
+				F643B75C115B5D8C00832707 /* check_atlas */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F643B7B4115B60FD00832707 /* liblazyObject.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblazyObject.a;
+			remoteRef = F643B7B3115B60FD00832707 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F643B7B6115B60FD00832707 /* check_lazy_object */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = check_lazy_object;
+			remoteRef = F643B7B5115B60FD00832707 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC0610554660B00DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F643B92B115B8A7500832707 /* atlas_base_impl.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F643B75A115B5D8C00832707 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F643B762115B5DCC00832707 /* check_atlas.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F643B769115B5E6C00832707 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC0620554660B00DB518D /* atlas */;
+			targetProxy = F643B768115B5E6C00832707 /* PBXContainerItemProxy */;
+		};
+		F643B915115B89EF00832707 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lazyObject;
+			targetProxy = F643B914115B89EF00832707 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB914B08733D8E0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = atlas;
+			};
+			name = Debug;
+		};
+		1DEB914C08733D8E0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = atlas;
+			};
+			name = Release;
+		};
+		1DEB914F08733D8E0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SOURCE_ROOT}/lazyObject/include",
+					/opt/local/include/,
+					"${SOURCE_ROOT}/include",
+				);
+				LIBRARY_SEARCH_PATHS = "${SOURCE_ROOT}/lazyObject//**";
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB915008733D8E0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SOURCE_ROOT}/lazyObject/include",
+					/opt/local/include/,
+					"${SOURCE_ROOT}/include",
+				);
+				LIBRARY_SEARCH_PATHS = "${SOURCE_ROOT}/lazyObject//**";
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		F643B75F115B5D8D00832707 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = check_atlas;
+			};
+			name = Debug;
+		};
+		F643B760115B5D8D00832707 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = check_atlas;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB914A08733D8E0010E9CD /* Build configuration list for PBXNativeTarget "atlas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB914B08733D8E0010E9CD /* Debug */,
+				1DEB914C08733D8E0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "atlas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB914F08733D8E0010E9CD /* Debug */,
+				1DEB915008733D8E0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F643B763115B5DCC00832707 /* Build configuration list for PBXNativeTarget "check_atlas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F643B75F115B5D8D00832707 /* Debug */,
+				F643B760115B5D8D00832707 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

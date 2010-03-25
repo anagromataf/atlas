@@ -1,0 +1,3 @@
+[submodule "lazyObject"]
+	path = lazyObject
+	url = git://github.com/situmet/lazyObject.git
