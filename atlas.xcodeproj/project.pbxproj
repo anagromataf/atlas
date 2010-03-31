@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F018F10C116228BD001BB51E /* atlas_shape_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F018F10A116228BD001BB51E /* atlas_shape_impl.c */; };
+		F018F15011624091001BB51E /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
 		F643B762115B5DCC00832707 /* check_atlas.c in Sources */ = {isa = PBXBuildFile; fileRef = F643B761115B5DCC00832707 /* check_atlas.c */; };
 		F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC0630554660B00DB518D /* libatlas.dylib */; };
 		F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B76B115B5E8C00832707 /* libcheck.dylib */; };
@@ -41,13 +43,16 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC045055464E500DB518D /* lazyObject */;
+			remoteGlobalIDString = D2AAC045055464E500DB518D;
 			remoteInfo = lazyObject;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D2AAC0630554660B00DB518D /* libatlas.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libatlas.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F018F10A116228BD001BB51E /* atlas_shape_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_shape_impl.c; path = atlas/atlas_shape_impl.c; sourceTree = "<group>"; };
+		F018F10B116228BD001BB51E /* atlas_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_shape_impl.h; path = atlas/atlas_shape_impl.h; sourceTree = "<group>"; };
+		F018F119116237F5001BB51E /* test_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl.h; path = test/test_shape_impl.h; sourceTree = "<group>"; };
 		F643B75D115B5D8C00832707 /* check_atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = check_atlas; sourceTree = BUILT_PRODUCTS_DIR; };
 		F643B761115B5DCC00832707 /* check_atlas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_atlas.c; path = test/check_atlas.c; sourceTree = "<group>"; };
 		F643B76B115B5E8C00832707 /* libcheck.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcheck.dylib; path = /opt/local/lib/libcheck.dylib; sourceTree = "<absolute>"; };
@@ -74,6 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */,
+				F018F15011624091001BB51E /* liblazyObject.a in Frameworks */,
 				F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,9 +110,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F018F11811623737001BB51E /* shape */ = {
+			isa = PBXGroup;
+			children = (
+				F018F10B116228BD001BB51E /* atlas_shape_impl.h */,
+				F018F10A116228BD001BB51E /* atlas_shape_impl.c */,
+			);
+			name = shape;
+			sourceTree = "<group>";
+		};
 		F643B74B115B5D0100832707 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F018F119116237F5001BB51E /* test_shape_impl.h */,
 				F643B761115B5DCC00832707 /* check_atlas.c */,
 			);
 			name = Tests;
@@ -123,6 +139,7 @@
 		F643B74F115B5D0D00832707 /* Lib Atlas */ = {
 			isa = PBXGroup;
 			children = (
+				F018F11811623737001BB51E /* shape */,
 				F643B928115B8A7500832707 /* atlas_base_impl.h */,
 				F643B929115B8A7500832707 /* atlas_base_impl.c */,
 			);
@@ -255,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B762115B5DCC00832707 /* check_atlas.c in Sources */,
+				F018F10C116228BD001BB51E /* atlas_shape_impl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,7 +22,11 @@
  */
 
 #include <check.h>
+
+#include <lazy.h>
 #include <stdlib.h>
+
+#include "test_shape_impl.h"
 
 #pragma mark -
 #pragma mark Atlas Suites
@@ -34,6 +38,9 @@ Suite * atlas_suite(void) {
     TCase *tc_core = tcase_create("Core");
     
     //tcase_add_test(tc_core, ...);
+	
+	tcase_add_test(tc_core, test_shape_impl);
+
     
     suite_add_tcase(s, tc_core);
     
@@ -57,6 +64,7 @@ int main(int argc, char ** argv) {
     int number_failed;
     
     SRunner *sr = srunner_create(main_suite());
+	srunner_set_fork_status(sr, CK_NOFORK);
     
     // add the suites to the main suite
     srunner_add_suite(sr, atlas_suite());
