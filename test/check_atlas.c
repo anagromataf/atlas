@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include "test_shape_impl.h"
+#include "test_shape_impl_equal.h"
 
 #pragma mark -
 #pragma mark Atlas Suites
@@ -40,6 +41,7 @@ Suite * atlas_suite(void) {
     //tcase_add_test(tc_core, ...);
 	
 	tcase_add_test(tc_core, test_shape_impl);
+	tcase_add_test(tc_core, test_shape_impl_equal);
 
     
     suite_add_tcase(s, tc_core);
