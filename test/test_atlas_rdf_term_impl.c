@@ -37,8 +37,10 @@ START_TEST (test_create_rdf_term_iri) {
     // create iri
     term = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == IRI);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == IRI);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     
@@ -52,8 +54,10 @@ START_TEST (test_create_rdf_term_blank_node) {
     // create blank node
     term = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == BLANK_NODE);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == BLANK_NODE);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     
@@ -67,14 +71,18 @@ START_TEST (test_create_rdf_term_string) {
     // create string literal
     term = atlas_rdf_term_create_string("Hallo Atlas!", 0, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == STRING_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == STRING_LITERAL);
+        lz_release(term);
+    }
     
     // create string literal
     term = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == STRING_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == STRING_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     
@@ -88,13 +96,17 @@ START_TEST (test_create_rdf_term_typed_literal) {
     
     // create the type for the term
     type = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
-    
-    // create typed literal
-    term = atlas_rdf_term_create_typed("foo", type, ^(int err, const char * msg){});
-    fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == TYPED_LITERAL);
-    lz_release(term);
-    lz_release(type);
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("foo", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            fail_unless(atlas_rdf_term_type(term) == TYPED_LITERAL);
+            lz_release(term);
+        }
+        lz_release(type);
+    }
     
     lz_wait_for_completion();
     
@@ -108,8 +120,10 @@ START_TEST (test_create_rdf_term_boolean) {
     // create boolean literal
     term = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == BOOLEAN_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == BOOLEAN_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     
@@ -123,8 +137,10 @@ START_TEST (test_create_rdf_term_datetime) {
     // create datetime literal
     term = atlas_rdf_term_create_datetime(0, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == DATETIME_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == DATETIME_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     
@@ -141,8 +157,10 @@ START_TEST (test_create_rdf_term_integer) {
     // create integer literal
     term = atlas_rdf_term_create_integer(i, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == INTEGER_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == INTEGER_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     mpz_clear(i);
@@ -156,8 +174,10 @@ START_TEST (test_create_rdf_term_double) {
     // create double literal
     term = atlas_rdf_term_create_double(4.7, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
 } END_TEST
@@ -173,8 +193,10 @@ START_TEST (test_create_rdf_term_decimal) {
     // create decimal literal
     term = atlas_rdf_term_create_decimal(f, ^(int err, const char * msg){});
     fail_if(term == 0);
-    fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
-    lz_release(term);
+    if (term) {
+        fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
+        lz_release(term);
+    }
     
     lz_wait_for_completion();
     mpf_clear(f);

@@ -26,6 +26,4 @@
 
 #include <atlas/rdf/term.h>
 
-
-
 #endif // _ATLAS_RDF_TERM_IMPL_H_
