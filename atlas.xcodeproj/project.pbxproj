@@ -13,6 +13,14 @@
 		F643B920115B8A3A00832707 /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
 		F643B92B115B8A7500832707 /* atlas_base_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F643B929115B8A7500832707 /* atlas_base_impl.c */; };
 		F643B964115B8B7A00832707 /* atlas.h in Headers */ = {isa = PBXBuildFile; fileRef = F643B963115B8B7A00832707 /* atlas.h */; };
+		F6FE52031174750B0023A1E1 /* term.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FE52021174750B0023A1E1 /* term.h */; };
+		F6FE521A117487A00023A1E1 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FE5219117487A00023A1E1 /* base.h */; };
+		F6FE522D117499DC0023A1E1 /* atlas_rdf_term_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FE522B117499DC0023A1E1 /* atlas_rdf_term_impl.h */; };
+		F6FE522E117499DC0023A1E1 /* atlas_rdf_term_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F6FE522C117499DC0023A1E1 /* atlas_rdf_term_impl.c */; };
+		F6FE52471174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F6FE52461174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c */; };
+		F6FE52A51174A3C90023A1E1 /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
+		F6FE52F31174AE6B0023A1E1 /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FE52F21174AE6B0023A1E1 /* libgmp.dylib */; };
+		F6FE52F61174AF350023A1E1 /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FE52F21174AE6B0023A1E1 /* libgmp.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +49,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F643B7AA115B60FD00832707 /* lazyObject.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC045055464E500DB518D /* lazyObject */;
+			remoteGlobalIDString = D2AAC045055464E500DB518D;
 			remoteInfo = lazyObject;
 		};
 /* End PBXContainerItemProxy section */
@@ -58,6 +66,13 @@
 		F643B96F115B8C1100832707 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		F643B97E115B8C9200832707 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		F643B97F115B8CA000832707 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		F6FE52021174750B0023A1E1 /* term.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = term.h; path = include/atlas/rdf/term.h; sourceTree = "<group>"; };
+		F6FE5219117487A00023A1E1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base.h; path = include/atlas/base.h; sourceTree = "<group>"; };
+		F6FE522B117499DC0023A1E1 /* atlas_rdf_term_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atlas_rdf_term_impl.h; sourceTree = "<group>"; };
+		F6FE522C117499DC0023A1E1 /* atlas_rdf_term_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atlas_rdf_term_impl.c; sourceTree = "<group>"; };
+		F6FE52451174A0DF0023A1E1 /* test_atlas_rdf_term_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_atlas_rdf_term_impl.h; path = test/test_atlas_rdf_term_impl.h; sourceTree = "<group>"; };
+		F6FE52461174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_atlas_rdf_term_impl.c; path = test/test_atlas_rdf_term_impl.c; sourceTree = "<group>"; };
+		F6FE52F21174AE6B0023A1E1 /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = /opt/local/lib/libgmp.dylib; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +81,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B920115B8A3A00832707 /* liblazyObject.a in Frameworks */,
+				F6FE52F31174AE6B0023A1E1 /* libgmp.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,6 +89,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6FE52F61174AF350023A1E1 /* libgmp.dylib in Frameworks */,
+				F6FE52A51174A3C90023A1E1 /* liblazyObject.a in Frameworks */,
 				F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */,
 				F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */,
 			);
@@ -91,6 +109,7 @@
 				F643B750115B5D1E00832707 /* Resources */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 				F643B76B115B5E8C00832707 /* libcheck.dylib */,
+				F6FE52F21174AE6B0023A1E1 /* libgmp.dylib */,
 			);
 			name = atlas;
 			sourceTree = "<group>";
@@ -108,6 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				F643B761115B5DCC00832707 /* check_atlas.c */,
+				F6FE52451174A0DF0023A1E1 /* test_atlas_rdf_term_impl.h */,
+				F6FE52461174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -116,6 +137,8 @@
 			isa = PBXGroup;
 			children = (
 				F643B963115B8B7A00832707 /* atlas.h */,
+				F6FE5219117487A00023A1E1 /* base.h */,
+				F6FE5204117475100023A1E1 /* Types */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -125,6 +148,8 @@
 			children = (
 				F643B928115B8A7500832707 /* atlas_base_impl.h */,
 				F643B929115B8A7500832707 /* atlas_base_impl.c */,
+				F6FE522B117499DC0023A1E1 /* atlas_rdf_term_impl.h */,
+				F6FE522C117499DC0023A1E1 /* atlas_rdf_term_impl.c */,
 			);
 			name = "Lib Atlas";
 			sourceTree = "<group>";
@@ -148,6 +173,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F6FE5204117475100023A1E1 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				F6FE5205117475160023A1E1 /* RDF */,
+			);
+			name = Types;
+			sourceTree = "<group>";
+		};
+		F6FE5205117475160023A1E1 /* RDF */ = {
+			isa = PBXGroup;
+			children = (
+				F6FE52021174750B0023A1E1 /* term.h */,
+			);
+			name = RDF;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -156,6 +197,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B964115B8B7A00832707 /* atlas.h in Headers */,
+				F6FE52031174750B0023A1E1 /* term.h in Headers */,
+				F6FE521A117487A00023A1E1 /* base.h in Headers */,
+				F6FE522D117499DC0023A1E1 /* atlas_rdf_term_impl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B92B115B8A7500832707 /* atlas_base_impl.c in Sources */,
+				F6FE522E117499DC0023A1E1 /* atlas_rdf_term_impl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B762115B5DCC00832707 /* check_atlas.c in Sources */,
+				F6FE52471174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +331,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = atlas;
 			};
 			name = Debug;
@@ -297,6 +347,10 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = atlas;
 			};
 			name = Release;

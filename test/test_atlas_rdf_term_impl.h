@@ -1,8 +1,8 @@
 /*
- *  atlas_base_impl.h
+ *  test_atlas_rdf_term_impl.h
  *  atlas
  *
- *  Created by Tobias Kräntzer on 25.03.10.
+ *  Created by Tobias Kräntzer on 13.04.10.
  *  Copyright 2010 Fraunhofer Institut für Software- und Systemtechnik ISST.
  *
  *  This file is part of atlas.
@@ -21,8 +21,11 @@
  *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ATLAS_BASE_IMPL_H_
-#define _ATLAS_BASE_IMPL_H_
+#ifndef _TEST_ATLAS_RDF_TERM_IMPL_H_
+#define _TEST_ATLAS_RDF_TERM_IMPL_H_
 
+#include <check.h>
 
-#endif // _ATLAS_BASE_IMPL_H_
+Suite * rdf_term_suite(void);
+
+#endif // _TEST_ATLAS_RDF_TERM_IMPL_H_

@@ -24,21 +24,7 @@
 #include <check.h>
 #include <stdlib.h>
 
-#pragma mark -
-#pragma mark Atlas Suites
-
-Suite * atlas_suite(void) {
-    
-    Suite *s = suite_create("Atlas");
-    
-    TCase *tc_core = tcase_create("Core");
-    
-    //tcase_add_test(tc_core, ...);
-    
-    suite_add_tcase(s, tc_core);
-    
-    return s;
-}
+#include "test_atlas_rdf_term_impl.h"
 
 #pragma mark -
 #pragma mark Main Suite
@@ -57,9 +43,10 @@ int main(int argc, char ** argv) {
     int number_failed;
     
     SRunner *sr = srunner_create(main_suite());
+    srunner_set_fork_status(sr, CK_NOFORK);
     
     // add the suites to the main suite
-    srunner_add_suite(sr, atlas_suite());
+    srunner_add_suite(sr, rdf_term_suite());
     
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed (sr);

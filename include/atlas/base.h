@@ -1,8 +1,8 @@
 /*
- *  atlas_base_impl.h
+ *  base.h
  *  atlas
  *
- *  Created by Tobias Kräntzer on 25.03.10.
+ *  Created by Tobias Kräntzer on 13.04.10.
  *  Copyright 2010 Fraunhofer Institut für Software- und Systemtechnik ISST.
  *
  *  This file is part of atlas.
@@ -21,8 +21,9 @@
  *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ATLAS_BASE_IMPL_H_
-#define _ATLAS_BASE_IMPL_H_
+#ifndef _ATLAS_BASE_H_
+#define _ATLAS_BASE_H_
 
+typedef void(^atlas_error_handler)(int err, const char *msg);
 
-#endif // _ATLAS_BASE_IMPL_H_
+#endif // _ATLAS_BASE_H_
