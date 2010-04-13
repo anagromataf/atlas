@@ -62,6 +62,10 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 						  struct atlas_shape_coordinate_s * coordinates,
 						  void (^error_handler)(int errno, const char *msg));
 
+
+lz_obj atlas_shape_create_union(lz_obj obj1, lz_obj obj2);
+
+
 #endif // _ATLAS_SHAPE_IMPL_H_
 
 

@@ -53,6 +53,9 @@
 		F018F10A116228BD001BB51E /* atlas_shape_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_shape_impl.c; path = atlas/atlas_shape_impl.c; sourceTree = "<group>"; };
 		F018F10B116228BD001BB51E /* atlas_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_shape_impl.h; path = atlas/atlas_shape_impl.h; sourceTree = "<group>"; };
 		F018F119116237F5001BB51E /* test_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl.h; path = test/test_shape_impl.h; sourceTree = "<group>"; };
+		F03A3AA2116C73BE00B4F2C3 /* test_shape_impl_line_intersect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_line_intersect.h; sourceTree = "<group>"; };
+		F07C5DEA117459FA00CC8B53 /* test_shape_impl_union.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_union.h; sourceTree = "<group>"; };
+		F0801768116B4C9000985EEE /* test_shape_impl_equal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_equal.h; sourceTree = "<group>"; };
 		F643B75D115B5D8C00832707 /* check_atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = check_atlas; sourceTree = BUILT_PRODUCTS_DIR; };
 		F643B761115B5DCC00832707 /* check_atlas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_atlas.c; path = test/check_atlas.c; sourceTree = "<group>"; };
 		F643B76B115B5E8C00832707 /* libcheck.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcheck.dylib; path = /opt/local/lib/libcheck.dylib; sourceTree = "<absolute>"; };
@@ -124,6 +127,9 @@
 			children = (
 				F018F119116237F5001BB51E /* test_shape_impl.h */,
 				F643B761115B5DCC00832707 /* check_atlas.c */,
+				F0801768116B4C9000985EEE /* test_shape_impl_equal.h */,
+				F03A3AA2116C73BE00B4F2C3 /* test_shape_impl_line_intersect.h */,
+				F07C5DEA117459FA00CC8B53 /* test_shape_impl_union.h */,
 			);
 			name = Tests;
 			sourceTree = "<group>";

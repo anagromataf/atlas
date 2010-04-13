@@ -49,7 +49,16 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 						  void (^error_handler)(int errno, const char *msg)) {
 	
 	
-	// TODO Daten validieren, z.b. Koordinaten sinnvoll, selfintersecting
+	// TODO Daten validieren
+	/*
+	 * Koordinaten sinnvoll?
+	 * 
+	 * Polygon: is_simple() => A polygon is simple if edges don't intersect, except consecutive edges, which intersect in their common vertex. == selfintersecting
+	 *
+	 * Lines: Überschneidungen erlaubt?
+	 */
+	
+	// END TODO Daten validieren
 	
 	
 	
@@ -58,7 +67,7 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 	 * Calculate total necessary length of data to allocate.
 	 * The length is two uint_16 for the number of parts and the number of coordinates. Next the number of parts times the size of the atlas_shape_part_info_s struct. Finally the number of coordinates times the size of the struct for a coordinate tuple.
 	 */
-
+	
 	int length_of_data = sizeof(uint16_t) * 2
 	+ number_of_parts * sizeof(struct atlas_shape_part_info_s)
 	+ number_of_coordinates * sizeof(struct atlas_shape_coordinate_s);
@@ -74,40 +83,17 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 		shape_data->number_of_parts = number_of_parts;
 		// assign number of coordinates
 		shape_data->number_of_coordinates = number_of_coordinates;
-
+		
 		if (number_of_parts > 0) {
 			// if the number of parts would be 0, then there exists no data to copy. Otherwise copy pan part start indices.
 			
-//			memcpy(static_data->data,
-//				   pan_part_start,
-//				   number_of_parts * sizeof(uint16_t));
-//			
-//			// Also only copy the types, if there is one part or more
-//			memcpy(static_data->data + number_of_parts * sizeof(uint16_t),
-//				   pan_part_type,
-//				   number_of_parts * sizeof(enum atlas_shape_type_e));
-			
-			
-			// =====> =====> TODO !!! geht sicher kürzer !!! WIE ?
-			
+			struct atlas_shape_part_info_s * part_infos = (struct atlas_shape_part_info_s *) shape_data->data;
 			// for the number of parts
 			for (int i = 0; i < number_of_parts; i++){
-				// allocate memory to hold a struct for the information of a part
-				struct atlas_shape_part_info_s * part_info = malloc(sizeof(struct atlas_shape_part_info_s));
-				
 				// copy part information from parameter
-				part_info->pan_part_start = pan_part_start[i];
-				part_info->pan_part_type = pan_part_type[i];
-				
-				// copy information to dynamic data part of shape 
-				memcpy(shape_data->data + i * sizeof(struct atlas_shape_part_info_s), 
-					   part_info, 
-					   sizeof(struct atlas_shape_part_info_s));
-				
-				// release memory, since it was only temporarily needed
-				free(part_info);
+				part_infos[i].pan_part_start = pan_part_start[i];
+				part_infos[i].pan_part_type = pan_part_type[i];
 			}
-			
 		}
 		
 		if (number_of_coordinates > 0) {
@@ -143,7 +129,7 @@ int atlas_shape_get_number_of_parts(lz_obj obj){
 	//		result = &((uint16_t *)data);
 	//	});
 	//	return result;
-
+	
 	
 	__block uint16_t number_of_parts = 0;
 	
@@ -188,17 +174,14 @@ enum atlas_shape_type_e atlas_shape_get_type_of_part(lz_obj obj, int part){
 		
 		// Check if part number (as in index) is smaller than the number of parts specified in the object
 		assert(part < shape->number_of_parts);
-
 		
-		// struct xyz * x = (struct xyz *)(shape->data);
-		// t = x[part].type
 		struct atlas_shape_part_info_s * part_info = (struct atlas_shape_part_info_s *)(shape->data);
 		type_of_shape = part_info[part].pan_part_type;
 		
 		printf("TEST: Shape type is %i\n", type_of_shape);
 		
-
-
+		
+		
 	});
 	return type_of_shape;
 }
@@ -235,8 +218,105 @@ lz_obj atlas_shape_create_intersection(){
 /*
  * Create the union of two shapes.
  */
-lz_obj atlas_shape_create_union(){
-	return 0;
+lz_obj atlas_shape_create_union(lz_obj obj1, lz_obj obj2){
+	__block struct atlas_shape_data_s * shape1;
+	__block struct atlas_shape_data_s * shape2;
+	
+	// read first shape
+	lz_obj_sync(obj2, ^(void * data, uint32_t size){
+		shape1 = data;		
+	});
+	
+	// read second shape
+	lz_obj_sync(obj2, ^(void * data, uint32_t size){
+		shape2 = data;
+	});
+	
+	uint16_t number_of_parts_union = shape1->number_of_parts + shape2->number_of_parts;
+	uint16_t number_of_coordinates_union = shape1->number_of_coordinates + shape2->number_of_coordinates;
+	
+	int length_of_data_union = sizeof(uint16_t) * 2
+	+ number_of_parts_union * sizeof(struct atlas_shape_part_info_s)
+	+ number_of_coordinates_union * sizeof(struct atlas_shape_coordinate_s);
+	
+	
+	// Declare pointer to begin of memory location
+	struct atlas_shape_data_s * shape_data_union = malloc(length_of_data_union);
+	
+	if (shape_data_union){
+		
+		
+		shape_data_union->number_of_parts = number_of_parts_union;
+		shape_data_union->number_of_coordinates = number_of_coordinates_union;
+		
+		
+		/*
+		 * take structs holding part information from second shape, increment pan_part_starts by number of coordinates from first shape, and attach them to the first
+		 */
+		
+		// copies shape information from shape1 to new shape
+		memcpy(shape_data_union->data,
+			   shape1->data,
+			   sizeof(struct atlas_shape_part_info_s) * shape1->number_of_parts);
+		
+		
+		// copies shape information from shape2 to new shape, destination is the pointer sum of the part info from shape1 within data, the source is the data part of shape2 and the length to copy is the info size
+		memcpy(shape_data_union->data + shape1->number_of_parts * sizeof(struct atlas_shape_part_info_s),
+			   shape2->data,
+			   sizeof(struct atlas_shape_part_info_s) * shape2->number_of_parts);
+		
+		// create part info pointer to data of new shape
+		struct atlas_shape_part_info_s * part_infos = (struct atlas_shape_part_info_s *) shape_data_union->data;
+		// Move pointer forward, to where the infos form shape2 start
+		part_infos = part_infos + shape1->number_of_parts;
+		for (int i = 0; i < shape2->number_of_parts; i++){
+			/*
+			 * Iterate over the number of parts in shape2 and increase the pan_part_start by the number of coordinates from shape1
+			 */
+			part_infos[i].pan_part_start = part_infos[i].pan_part_start + shape1->number_of_coordinates;
+		}
+		
+		
+		/*
+		 * copy coodinates from shape1 and shape2 to new shape
+		 */
+				
+		if (shape1->number_of_coordinates > 0 && shape2->number_of_coordinates > 0) {
+			// If there is at least one coordinate (struct) in both shapes copy coordinates
+			
+			/*
+			 * copy coordinates from shape1
+			 * source is data in shape1 plus the length of the part information, thus the beginning of the coordinates, destination is the target data plus the length the part information for the new shape, and the length is the size of the coordinates from shape1
+			 */
+			memcpy(shape_data_union->data + number_of_parts_union * sizeof(struct atlas_shape_part_info_s),
+				   shape1->data + shape1->number_of_parts * sizeof(struct atlas_shape_part_info_s),
+				   shape1->number_of_coordinates * sizeof(struct atlas_shape_coordinate_s));
+			
+			// temporary data pointer, source for copying coordinates from shape2
+			int tmp_data_index = number_of_parts_union * sizeof(struct atlas_shape_part_info_s)
+			+  shape1->number_of_coordinates * sizeof(struct atlas_shape_coordinate_s);
+			
+			/*
+			 * copy coordinates from shape2
+			 * source is data in shape2 plus the length of the part information, thus the beginning of the coordinates, destination is the tmp_data_index (see above), and the length is the size of the coordinates from shape2
+			 */
+			memcpy(shape_data_union->data + tmp_data_index,
+				   shape2->data + shape2->number_of_parts * sizeof(struct atlas_shape_part_info_s),
+				   shape2->number_of_coordinates * sizeof(struct atlas_shape_coordinate_s));
+		}
+		
+		
+		// create lazy object
+		lz_obj result = lz_obj_new(shape_data_union, length_of_data_union, ^{
+			free(shape_data_union);
+		}, 0);
+		
+		// return result;
+		return result;
+	} else {
+		// Error allocating memory
+		return 0;
+	}
 }
 
 /*
@@ -250,6 +330,10 @@ lz_obj atlas_shape_create_difference(){
  * check if the two shapes are equal
  * returns 0 if shapes are unequal, returns 1 if both shapes are equal
  */
+// =====> =====> TODO !!! gelten zwei shapes als gleich, wenn deren interne struktur gleich ist, oder müssen die parts paarweise geprüft werden, also z.b. point an "stelle 7" und point an "stelle 25" und wenn alle passen, dann erst gleich? 
+
+// =====> =====> TODO !!! neue funktion für semantische gleichheit .... diese funktion umbennen
+
 int atlas_shape_is_equal(lz_obj obj1, lz_obj obj2){
 	__block struct atlas_shape_data_s * shape1;
 	__block struct atlas_shape_data_s * shape2;
@@ -284,8 +368,8 @@ int atlas_shape_is_equal(lz_obj obj1, lz_obj obj2){
 	 * memcmp returns 0 when all bytes by the specified length are equal. A non-zero value otherwise.
 	 */
 	if (0 != memcmp((struct atlas_shape_part_info_s *)(shape1->data), 
-			   (struct atlas_shape_part_info_s *)(shape2->data), 
-			   length_of_data )) {
+					(struct atlas_shape_part_info_s *)(shape2->data), 
+					length_of_data )) {
 		return 0;
 	}
 	
@@ -395,7 +479,7 @@ int lines_intersect(struct atlas_shape_coordinate_s l1_s,
 		l2_m = (l2_e.latitude - l2_s.latitude)/(l2_e.longitude - l2_s.longitude);
 		// y-intercept for line 2
 		l2_n = l2_s.latitude - l2_s.longitude*l2_m;
-				
+		
 		if (fabs(l1_m) == fabs(l2_m)) {
 			// lines are in parallel, check if absolute value of slope is equal
 			if (l1_n == l2_n) {
@@ -405,7 +489,7 @@ int lines_intersect(struct atlas_shape_coordinate_s l1_s,
 				// lines horizontally run in parallel and never meet
 				return 0;
 			}
-
+			
 		}
 		
 		// solving equation for x: l1_m*x + l1_n = l2_m*x + l2_n <==> x = (l2_n - l1_n) / (l1_m - l2_m)
@@ -417,7 +501,6 @@ int lines_intersect(struct atlas_shape_coordinate_s l1_s,
 		double intersect_y_2 = l2_m * intersect_x + l2_n;
 		
 		// check, if results are equal
-		// =====> =====> TODO !!! besser? WIE ?
 		if (fabs( intersect_y - intersect_y_2 ) > 1.0E-10){
 			return 0;
 		}
