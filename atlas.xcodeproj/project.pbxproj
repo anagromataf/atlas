@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F018F10C116228BD001BB51E /* atlas_shape_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F018F10A116228BD001BB51E /* atlas_shape_impl.c */; };
 		F018F15011624091001BB51E /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
+		F08161A611749D8C0089A37D /* atlas_shape_impl_geometry.h in Headers */ = {isa = PBXBuildFile; fileRef = F08161A411749D8C0089A37D /* atlas_shape_impl_geometry.h */; };
+		F08161A711749D8C0089A37D /* atlas_shape_impl_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = F08161A511749D8C0089A37D /* atlas_shape_impl_geometry.c */; };
 		F643B762115B5DCC00832707 /* check_atlas.c in Sources */ = {isa = PBXBuildFile; fileRef = F643B761115B5DCC00832707 /* check_atlas.c */; };
 		F643B76A115B5E6F00832707 /* libatlas.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC0630554660B00DB518D /* libatlas.dylib */; };
 		F643B76C115B5E8C00832707 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B76B115B5E8C00832707 /* libcheck.dylib */; };
@@ -49,13 +51,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D6CB26F1174B35D002C77D5 /* test_shape_impl_equal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_equal.h; path = test/test_shape_impl_equal.h; sourceTree = "<group>"; };
+		0D6CB2701174B35D002C77D5 /* test_shape_impl_line_intersect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_line_intersect.h; path = test/test_shape_impl_line_intersect.h; sourceTree = "<group>"; };
+		0D6CB2711174B35D002C77D5 /* test_shape_impl_union.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_union.h; path = test/test_shape_impl_union.h; sourceTree = "<group>"; };
 		D2AAC0630554660B00DB518D /* libatlas.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libatlas.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F018F10A116228BD001BB51E /* atlas_shape_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_shape_impl.c; path = atlas/atlas_shape_impl.c; sourceTree = "<group>"; };
 		F018F10B116228BD001BB51E /* atlas_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_shape_impl.h; path = atlas/atlas_shape_impl.h; sourceTree = "<group>"; };
 		F018F119116237F5001BB51E /* test_shape_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl.h; path = test/test_shape_impl.h; sourceTree = "<group>"; };
-		F03A3AA2116C73BE00B4F2C3 /* test_shape_impl_line_intersect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_line_intersect.h; sourceTree = "<group>"; };
-		F07C5DEA117459FA00CC8B53 /* test_shape_impl_union.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_union.h; sourceTree = "<group>"; };
-		F0801768116B4C9000985EEE /* test_shape_impl_equal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_shape_impl_equal.h; sourceTree = "<group>"; };
+		F08161A411749D8C0089A37D /* atlas_shape_impl_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_shape_impl_geometry.h; path = atlas/atlas_shape_impl_geometry.h; sourceTree = "<group>"; };
+		F08161A511749D8C0089A37D /* atlas_shape_impl_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_shape_impl_geometry.c; path = atlas/atlas_shape_impl_geometry.c; sourceTree = "<group>"; };
 		F643B75D115B5D8C00832707 /* check_atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = check_atlas; sourceTree = BUILT_PRODUCTS_DIR; };
 		F643B761115B5DCC00832707 /* check_atlas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_atlas.c; path = test/check_atlas.c; sourceTree = "<group>"; };
 		F643B76B115B5E8C00832707 /* libcheck.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcheck.dylib; path = /opt/local/lib/libcheck.dylib; sourceTree = "<absolute>"; };
@@ -116,20 +120,30 @@
 		F018F11811623737001BB51E /* shape */ = {
 			isa = PBXGroup;
 			children = (
+				F08161A311749CF10089A37D /* geometry */,
 				F018F10B116228BD001BB51E /* atlas_shape_impl.h */,
 				F018F10A116228BD001BB51E /* atlas_shape_impl.c */,
 			);
 			name = shape;
 			sourceTree = "<group>";
 		};
+		F08161A311749CF10089A37D /* geometry */ = {
+			isa = PBXGroup;
+			children = (
+				F08161A411749D8C0089A37D /* atlas_shape_impl_geometry.h */,
+				F08161A511749D8C0089A37D /* atlas_shape_impl_geometry.c */,
+			);
+			name = geometry;
+			sourceTree = "<group>";
+		};
 		F643B74B115B5D0100832707 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				0D6CB26F1174B35D002C77D5 /* test_shape_impl_equal.h */,
+				0D6CB2701174B35D002C77D5 /* test_shape_impl_line_intersect.h */,
+				0D6CB2711174B35D002C77D5 /* test_shape_impl_union.h */,
 				F018F119116237F5001BB51E /* test_shape_impl.h */,
 				F643B761115B5DCC00832707 /* check_atlas.c */,
-				F0801768116B4C9000985EEE /* test_shape_impl_equal.h */,
-				F03A3AA2116C73BE00B4F2C3 /* test_shape_impl_line_intersect.h */,
-				F07C5DEA117459FA00CC8B53 /* test_shape_impl_union.h */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -179,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B964115B8B7A00832707 /* atlas.h in Headers */,
+				F08161A611749D8C0089A37D /* atlas_shape_impl_geometry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F643B92B115B8A7500832707 /* atlas_base_impl.c in Sources */,
+				F08161A711749D8C0089A37D /* atlas_shape_impl_geometry.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

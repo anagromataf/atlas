@@ -25,6 +25,7 @@
 
 #include <check.h>
 #include "atlas_shape_impl.h"
+#include "atlas_shape_impl_geometry.h"
 
 START_TEST (test_shape_impl_line_intersect) {
 	
@@ -36,7 +37,9 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_1 = {7.5, -25.0};
 	struct atlas_shape_coordinate_s c_l2e_1 = {7.5, 99.0};
 	
-	fail_unless(lines_intersect(c_l1s_1, c_l1e_1, c_l2s_1, c_l2e_1) == 0);
+	
+	struct atlas_shape_coordinate_s	result1;
+	fail_unless(atlas_shape_lines_intersect(&result1, &c_l1s_1, &c_l1e_1, &c_l2s_1, &c_l2e_1) == 0);
 	
 //	printf("----2------\n");
 //	printf("first line is vertical and they intersect outside of box\n");
@@ -47,7 +50,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_2 = {-1, -1};
 	struct atlas_shape_coordinate_s c_l2e_2 = {1,1};
 	
-	fail_unless(lines_intersect(c_l1s_2, c_l1e_2, c_l2s_2, c_l2e_2) == 0);
+	struct atlas_shape_coordinate_s	result2;
+	fail_unless(atlas_shape_lines_intersect(&result2, &c_l1s_2, &c_l1e_2, &c_l2s_2, &c_l2e_2) == 0);
 	
 //	printf("----3------\n");
 //	printf("second line is vertical and they intersect\n");
@@ -58,7 +62,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_3 = {1,-20};
 	struct atlas_shape_coordinate_s c_l2e_3 = {1,20};
 	
-	fail_unless(lines_intersect(c_l1s_3, c_l1e_3, c_l2s_3, c_l2e_3) == 1);
+	struct atlas_shape_coordinate_s	result3;
+	fail_unless(atlas_shape_lines_intersect(&result3, &c_l1s_3, &c_l1e_3, &c_l2s_3, &c_l2e_3) == 1);
 	
 //	printf("----4------\n");
 //	printf("both lines are horizontally parallel but don't meet\n");
@@ -69,7 +74,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_4 = {-2,2};
 	struct atlas_shape_coordinate_s c_l2e_4 = {2,2};
 	
-	fail_unless(lines_intersect(c_l1s_4, c_l1e_4, c_l2s_4, c_l2e_4) == 0);
+	struct atlas_shape_coordinate_s	result4;
+	fail_unless(atlas_shape_lines_intersect(&result4, &c_l1s_4, &c_l1e_4, &c_l2s_4, &c_l2e_4) == 0);
 	
 //	printf("----5------\n");
 //	printf("lines are identical, but slope points in different direction\n");
@@ -80,7 +86,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_5 = {5,5};
 	struct atlas_shape_coordinate_s c_l2e_5 = {-5,-5};
 	
-	fail_unless(lines_intersect(c_l1s_5, c_l1e_5, c_l2s_5, c_l2e_5) == 1);
+	struct atlas_shape_coordinate_s	result5;
+	fail_unless(atlas_shape_lines_intersect(&result5, &c_l1s_5, &c_l1e_5, &c_l2s_5, &c_l2e_5) == 1);
 	
 //	printf("----6------\n");
 //	printf("lines intersect\n");
@@ -91,7 +98,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_6 = {-6,4};
 	struct atlas_shape_coordinate_s c_l2e_6 = {2,0};
 	
-	fail_unless(lines_intersect(c_l1s_6, c_l1e_6, c_l2s_6, c_l2e_6) == 1);
+	struct atlas_shape_coordinate_s	result6;
+	fail_unless(atlas_shape_lines_intersect(&result6, &c_l1s_6, &c_l1e_6, &c_l2s_6, &c_l2e_6) == 1);
 	
 //	printf("----7------\n");
 //	printf("lines intersect outside of box\n");
@@ -102,7 +110,8 @@ START_TEST (test_shape_impl_line_intersect) {
 	struct atlas_shape_coordinate_s c_l2s_7 = {2,5};
 	struct atlas_shape_coordinate_s c_l2e_7 = {6,-1};
 	
-	fail_unless(lines_intersect(c_l1s_7, c_l1e_7, c_l2s_7, c_l2e_7) == 0);
+	struct atlas_shape_coordinate_s	result7;
+	fail_unless(atlas_shape_lines_intersect(&result7, &c_l1s_7, &c_l1e_7, &c_l2s_7, &c_l2e_7) == 0);
 	
     
 } END_TEST
