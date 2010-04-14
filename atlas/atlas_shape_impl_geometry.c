@@ -23,11 +23,14 @@
 
 
 #include <stdio.h>
+#include <stdint.h>
 #include <float.h>
 #include <math.h>
 
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
+
+const double PRECISION = 1.0E-15;
 
 /*
  * Checks, if two lines intersect. Returns the point (single coordinate) if they intersect, 1 if they lie on top of each other, 0 if they don't
@@ -124,7 +127,7 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		double intersect_y_2 = l2_m * intersect_x + l2_n;
 		
 		// check, if results are equal
-		if (fabs( intersect_y - intersect_y_2 ) > 1.0E-10){
+		if (fabs( intersect_y - intersect_y_2 ) > PRECISION){
 			return 0;
 		}
 	}
@@ -154,3 +157,25 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 	
 	return 0;
 }
+
+int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, struct atlas_shape_coordinate_s * coord2){
+	printf("TEST: fabs_lat is %e\n", (fabs(coord1->latitude - coord2->latitude)));
+	printf("TEST: fabs_lon is %e\n", (fabs(coord1->longitude - coord2->longitude)));
+	
+	if ((fabs(coord1->latitude - coord2->latitude) > PRECISION)
+		|| (fabs(coord1->longitude - coord2->longitude) > PRECISION)){
+		return 0;
+	} else {
+		return 1;
+	}
+
+}
+
+int atlas_shape_polygon_equal(struct atlas_shape_coordinate_s * coords1, 
+							  uint16_t num_coords1,
+							  struct atlas_shape_coordinate_s * coords2,
+							  uint16_t num_coords2){
+	return 0;
+}
+
+

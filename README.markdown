@@ -25,6 +25,8 @@ The equality of two doubles is checked by calculating the difference, taking the
 
 Example: Given the lines ((-9,-9),(10,10)) and ((-6,4),(2,0)) the equations are f(x)=x and g(x)=-x/2+1. Setting those equal x is 2/3 and y is - x substituted in f(x) and g(x) - 2/3. The computer does not work with fractions. Having used this test case the maximum precision to compare the absolute value of the difference with is 1.0E-15.
 
+Example: When comparing points, 1.0/99999999.0 and 1.0/99999998.0 (each about 1.0E-8) are the "maximum" input.
+
 
 
 ## atlas_shape_impl

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D43DC731175C1AB00AC026A /* test_shape_impl_geom_equal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D43DC721175C1AB00AC026A /* test_shape_impl_geom_equal.h */; };
 		F018F10C116228BD001BB51E /* atlas_shape_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F018F10A116228BD001BB51E /* atlas_shape_impl.c */; };
 		F018F15011624091001BB51E /* liblazyObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F643B7B4115B60FD00832707 /* liblazyObject.a */; };
 		F08161A611749D8C0089A37D /* atlas_shape_impl_geometry.h in Headers */ = {isa = PBXBuildFile; fileRef = F08161A411749D8C0089A37D /* atlas_shape_impl_geometry.h */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D43DC721175C1AB00AC026A /* test_shape_impl_geom_equal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_geom_equal.h; path = test/test_shape_impl_geom_equal.h; sourceTree = "<group>"; };
 		0D6CB26F1174B35D002C77D5 /* test_shape_impl_equal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_equal.h; path = test/test_shape_impl_equal.h; sourceTree = "<group>"; };
 		0D6CB2701174B35D002C77D5 /* test_shape_impl_line_intersect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_line_intersect.h; path = test/test_shape_impl_line_intersect.h; sourceTree = "<group>"; };
 		0D6CB2711174B35D002C77D5 /* test_shape_impl_union.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_shape_impl_union.h; path = test/test_shape_impl_union.h; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				0D6CB2711174B35D002C77D5 /* test_shape_impl_union.h */,
 				F018F119116237F5001BB51E /* test_shape_impl.h */,
 				F643B761115B5DCC00832707 /* check_atlas.c */,
+				0D43DC721175C1AB00AC026A /* test_shape_impl_geom_equal.h */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			files = (
 				F643B964115B8B7A00832707 /* atlas.h in Headers */,
 				F08161A611749D8C0089A37D /* atlas_shape_impl_geometry.h in Headers */,
+				0D43DC731175C1AB00AC026A /* test_shape_impl_geom_equal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

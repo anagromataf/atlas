@@ -30,6 +30,7 @@
 #include "test_shape_impl_equal.h"
 #include "test_shape_impl_line_intersect.h"
 #include "test_shape_impl_union.h"
+#include "test_shape_impl_geom_equal.h"
 
 #pragma mark -
 #pragma mark Atlas Suites
@@ -46,6 +47,7 @@ Suite * atlas_suite(void) {
 	tcase_add_test(tc_core, test_shape_impl_equal);
 	tcase_add_test(tc_core, test_shape_impl_line_intersect);
 	tcase_add_test(tc_core, test_shape_impl_union);
+	tcase_add_test(tc_core, test_shape_impl_geom_equal);
 
     
     suite_add_tcase(s, tc_core);
