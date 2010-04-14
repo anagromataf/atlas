@@ -110,9 +110,11 @@ atlas_rdf_term_create_iri(const char * value,
     // TODO: Validate input
     
     int length = strlen(value);
+    
     int size = sizeof(struct atlas_rdf_term_value_s) + length + 1;
     struct atlas_rdf_term_value_s * iri = malloc(size);
     assert(iri != 0);
+    
     iri->type = IRI;
     memcpy(iri->value, value, length + 1);
     
@@ -129,9 +131,11 @@ atlas_rdf_term_create_blank_node(const char * value,
     // TODO: Validate input
     
     int length = strlen(value);
+    
     int size = sizeof(struct atlas_rdf_term_value_s) + length + 1;
     struct atlas_rdf_term_value_s * bn = malloc(size);
     assert(bn != 0);
+    
     bn->type = BLANK_NODE;
     memcpy(bn->value, value, length + 1);
     
@@ -159,6 +163,7 @@ atlas_rdf_term_create_string(const char * value,
     int size = sizeof(struct atlas_rdf_term_value_s) + value_length + lang_length + 2;
     struct atlas_rdf_term_value_s * str = malloc(size);
     assert(str != 0);
+    
     str->type = STRING_LITERAL;
     memcpy(str->value, value, value_length + 1);
     if (lang != 0) {
@@ -180,9 +185,11 @@ atlas_rdf_term_create_typed(const char * value,
     if (type) {
         
         int length = strlen(value);
+        
         int size = sizeof(struct atlas_rdf_term_value_s) + length + 1;
         struct atlas_rdf_term_value_s * tl = malloc(size);
         assert(tl != 0);
+        
         tl->type = TYPED_LITERAL;
         memcpy(tl->value, value, length + 1);
         
@@ -203,6 +210,7 @@ atlas_rdf_term_create_boolean(int value,
     int size = sizeof(struct atlas_rdf_term_boolean_s);
     struct atlas_rdf_term_boolean_s * bool = malloc(size);
     assert(bool != 0);
+    
     bool->type = BOOLEAN_LITERAL;
     bool->value = value;
     
@@ -219,6 +227,7 @@ atlas_rdf_term_create_datetime(time_t value,
     int size = sizeof(struct atlas_rdf_term_datetime_s);
     struct atlas_rdf_term_datetime_s * dt = malloc(size);
     assert(dt != 0);
+    
     dt->type = DATETIME_LITERAL;
     dt->value = value;
     
@@ -235,6 +244,7 @@ atlas_rdf_term_create_double(double value,
     int size = sizeof(struct atlas_rdf_term_double_s);
     struct atlas_rdf_term_double_s * dbl = malloc(size);
     assert(dbl != 0);
+    
     dbl->type = DOUBLE_LITERAL;
     dbl->value = value;
     
@@ -247,14 +257,47 @@ atlas_rdf_term_create_double(double value,
 atlas_rdf_term_t
 atlas_rdf_term_create_integer(mpz_t value,
                               atlas_error_handler err) {
-    return 0;
+    
+    // TODO: Double check the copy of this type
+    
+    int size = sizeof(struct atlas_rdf_term_integer_s) + sizeof(mp_limb_t) * value->_mp_size;
+    struct atlas_rdf_term_integer_s * integer = malloc(size);
+    assert(integer != 0);
+    
+    integer->type = INTEGER_LITERAL;
+    integer->value._mp_alloc = value->_mp_size;
+    integer->value._mp_size = value->_mp_size;
+    integer->value._mp_d = memcpy((char *)(integer) + sizeof(struct atlas_rdf_term_integer_s),
+                                  value->_mp_d,
+                                  abs(integer->value._mp_size));
+    
+    return lz_obj_new(integer, size, ^{
+        free(integer);
+    }, 0);
 }
 
 
 atlas_rdf_term_t
 atlas_rdf_term_create_decimal(mpf_t value,
                               atlas_error_handler err) {
-    return 0;
+    
+    // TODO: Double check the copy of this type
+    
+    int size = sizeof(struct atlas_rdf_term_decimal_s) + sizeof(mp_limb_t) * value->_mp_size;
+    struct atlas_rdf_term_decimal_s * decimal = malloc(size);
+    assert(decimal != 0);
+    
+    decimal->type = DECIMAL_LITERAL;
+    decimal->value._mp_prec = value->_mp_prec;
+    decimal->value._mp_size = value->_mp_size;
+    decimal->value._mp_exp = value->_mp_exp;
+    decimal->value._mp_d = memcpy((char *)decimal + sizeof(struct atlas_rdf_term_decimal_s),
+                                  value->_mp_d,
+                                  abs(decimal->value._mp_size));
+    
+    return lz_obj_new(decimal, size, ^{
+        free(decimal);
+    }, 0);
 }
 
 

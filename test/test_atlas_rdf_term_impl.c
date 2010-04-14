@@ -194,7 +194,7 @@ START_TEST (test_create_rdf_term_decimal) {
     term = atlas_rdf_term_create_decimal(f, ^(int err, const char * msg){});
     fail_if(term == 0);
     if (term) {
-        fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
+        fail_unless(atlas_rdf_term_type(term) == DECIMAL_LITERAL);
         lz_release(term);
     }
     
