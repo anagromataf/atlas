@@ -126,13 +126,15 @@ atlas_rdf_term_t
 atlas_rdf_term_typed_type(atlas_rdf_term_t term);
 
 void
-atlas_rdf_term_integer_value(atlas_rdf_term_t term, mpz_t result);
+atlas_rdf_term_integer_value(atlas_rdf_term_t term,
+                             mpz_t result);
 
 double
 atlas_rdf_term_double_value(atlas_rdf_term_t term);
 
 void
-atlas_rdf_term_decimal_value(atlas_rdf_term_t term, mpf_t result);
+atlas_rdf_term_decimal_value(atlas_rdf_term_t term,
+                             mpf_t result);
 
 time_t
 atlas_rdf_term_datetime_value(atlas_rdf_term_t term);
@@ -149,8 +151,7 @@ int atlas_rdf_term_ebv(atlas_rdf_term_t term);
 #pragma mark -
 #pragma mark Operation
 
-int atlas_rdf_term_compare(atlas_rdf_term_t term1,
-                           atlas_rdf_term_t term2,
-                           atlas_error_handler err);
+int atlas_rdf_term_eq(atlas_rdf_term_t term1,
+                      atlas_rdf_term_t term2);
 
 #endif // _ATLAS_TYPES_RDF_TERM_H_

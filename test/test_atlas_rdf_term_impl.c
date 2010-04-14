@@ -317,12 +317,88 @@ START_TEST (test_create_rdf_term_decimal) {
 } END_TEST
 
 #pragma mark -
+#pragma mark Test RDF Term Equality
+
+START_TEST (test_iri_eq_iri) {
+    
+    atlas_rdf_term_t term1, term2;
+	
+    // create iri
+    term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_iri("http://example.de", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_if(atlas_rdf_term_eq(term1, term2));
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_unless(atlas_rdf_term_eq(term1, term2));
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    lz_wait_for_completion();
+    
+} END_TEST
+
+START_TEST (test_iri_eq_blank_node) {
+    
+    atlas_rdf_term_t term1, term2;
+	
+    // create iri
+    term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_if(atlas_rdf_term_eq(term1, term2));
+        lz_release(term1);
+        lz_release(term2);
+    }
+
+    lz_wait_for_completion();
+    
+} END_TEST
+
+START_TEST (test_iri_eq_decimal) {
+    
+    atlas_rdf_term_t term1, term2;
+	char * str = "3.14159265358979";
+    mpf_t f;
+    mpf_init_set_str(f, str, 10);
+    
+    // create iri
+    term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_decimal(f, ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_if(atlas_rdf_term_eq(term1, term2));
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    lz_wait_for_completion();
+    mpf_clear(f);
+    
+} END_TEST
+
+// TODO: Write more tests for the function 'atlas_rdf_term_eq()'.
+
+#pragma mark -
 #pragma mark Fixtures
 
-void setup() {
+static void setup() {
 }
 
-void teardown() {
+static void teardown() {
 }
 
 #pragma mark -
@@ -332,20 +408,30 @@ Suite * rdf_term_suite(void) {
     
     Suite *s = suite_create("RDF Term");
     
-    TCase *tc_core = tcase_create("Core");
-    tcase_add_checked_fixture (tc_core, setup, teardown);
+    TCase *tc_create = tcase_create("Create");
+    //tcase_add_checked_fixture (tc_create, setup, teardown);
     
-    tcase_add_test(tc_core, test_create_rdf_term_iri);
-    tcase_add_test(tc_core, test_create_rdf_term_blank_node);
-    tcase_add_test(tc_core, test_create_rdf_term_string);
-    tcase_add_test(tc_core, test_create_rdf_term_typed_literal);
-    tcase_add_test(tc_core, test_create_rdf_term_boolean);
-    tcase_add_test(tc_core, test_create_rdf_term_datetime);
-    tcase_add_test(tc_core, test_create_rdf_term_integer);
-    tcase_add_test(tc_core, test_create_rdf_term_double);
-    tcase_add_test(tc_core, test_create_rdf_term_decimal);
+    tcase_add_test(tc_create, test_create_rdf_term_iri);
+    tcase_add_test(tc_create, test_create_rdf_term_blank_node);
+    tcase_add_test(tc_create, test_create_rdf_term_string);
+    tcase_add_test(tc_create, test_create_rdf_term_typed_literal);
+    tcase_add_test(tc_create, test_create_rdf_term_boolean);
+    tcase_add_test(tc_create, test_create_rdf_term_datetime);
+    tcase_add_test(tc_create, test_create_rdf_term_integer);
+    tcase_add_test(tc_create, test_create_rdf_term_double);
+    tcase_add_test(tc_create, test_create_rdf_term_decimal);
+    
+    suite_add_tcase(s, tc_create);
+    
+    
+    TCase *tc_eq = tcase_create("Equality");
+    //tcase_add_checked_fixture (tc_create, setup, teardown);
+    
+    tcase_add_test(tc_eq, test_iri_eq_iri);
+    tcase_add_test(tc_eq, test_iri_eq_blank_node);
+    tcase_add_test(tc_eq, test_iri_eq_decimal);
 	
-    suite_add_tcase(s, tc_core);
+    suite_add_tcase(s, tc_eq);
     
     return s;
 }

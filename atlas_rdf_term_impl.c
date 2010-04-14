@@ -199,6 +199,8 @@ atlas_rdf_term_create_typed(const char * value,
                             atlas_rdf_term_t type,
                             atlas_error_handler err) {
     
+    // TODO: Check if the type can be represented directly
+    
     // check if the term is a iri 
     if (type && atlas_rdf_term_type(type) == IRI) {
         
@@ -295,8 +297,6 @@ atlas_rdf_term_t
 atlas_rdf_term_create_integer(mpz_t value,
                               atlas_error_handler err) {
     
-    // TODO: Double check the copy of this type
-    
     // calculate the amount of space needed to store this type
     // and allocate memory
     int size = sizeof(struct atlas_rdf_term_integer_s) + sizeof(mp_limb_t) * abs(value->_mp_size);
@@ -321,9 +321,7 @@ atlas_rdf_term_create_integer(mpz_t value,
 atlas_rdf_term_t
 atlas_rdf_term_create_decimal(mpf_t value,
                               atlas_error_handler err) {
-    
-    // TODO: Double check the copy of this type
-    
+
     // calculate the amount of space needed to store this type
     // and allocate memory
     int size = sizeof(struct atlas_rdf_term_decimal_s) + sizeof(mp_limb_t) * (value->_mp_prec + 1);
@@ -441,14 +439,12 @@ atlas_rdf_term_literal_value(atlas_rdf_term_t term) {
                 }
                 break;
             }
-                
+            
             case DOUBLE_LITERAL:
             {
-                // TODO: Set the buffer to an appropriate size
                 struct atlas_rdf_term_double_s * dl = data;
-                int buff_size = 24;
-                char * buffer = malloc(buff_size);
-                snprintf(buffer, buff_size, "%e", dl->value);
+                char * buffer;
+                asprintf(&buffer, "%e", dl->value);
                 result = buffer;
                 break;
             }
@@ -471,7 +467,7 @@ atlas_rdf_term_literal_value(atlas_rdf_term_t term) {
                 struct atlas_rdf_term_decimal_s *decimal = data;
                 char * buffer;
                 mpf_t f = { decimal->value };
-                int length = gmp_asprintf(&buffer, "%.Ff", f);
+                gmp_asprintf(&buffer, "%.Ff", f);
                 result = buffer;
                 break;
             }
@@ -481,7 +477,7 @@ atlas_rdf_term_literal_value(atlas_rdf_term_t term) {
                 struct atlas_rdf_term_integer_s *integer = data;
                 char * buffer;
                 mpz_t z = { integer->value };
-                int length = gmp_asprintf(&buffer, "%Zd", z);
+                gmp_asprintf(&buffer, "%Zd", z);
                 result = buffer;
                 break;
             }
@@ -598,16 +594,329 @@ atlas_rdf_term_boolean_value(atlas_rdf_term_t term) {
 #pragma mark Effective Boolean Value
 
 int atlas_rdf_term_ebv(atlas_rdf_term_t term) {
+    assert(term != 0);
+    __block int result;
+    lz_obj_sync(term, ^(void * data, uint32_t length){
+        
+        struct atlas_rdf_term_s * literal = data;
+        
+        switch (literal->type) {
+            case IRI:
+            {
+                struct atlas_rdf_term_value_s * iri = data;  
+                break;
+            }
+                
+            case BLANK_NODE:
+            {
+                struct atlas_rdf_term_value_s * bn = data;  
+                break;
+            }  
+                
+            case STRING_LITERAL:
+            {
+                struct atlas_rdf_term_value_s * sl = data;
+                break;
+            }
+                
+            case TYPED_LITERAL:
+            {
+                struct atlas_rdf_term_value_s * sl = data;
+                break;
+            }
+                
+            case BOOLEAN_LITERAL:
+            {
+                struct atlas_rdf_term_boolean_s * bool = data;
+                break;
+            }
+                
+            case DOUBLE_LITERAL:
+            {
+                struct atlas_rdf_term_double_s * dl = data;
+                break;
+            }
+                
+            case DATETIME_LITERAL:
+            {
+                struct atlas_rdf_term_datetime_s * dt = data;
+                break;
+            }
+                
+            case DECIMAL_LITERAL:
+            {
+                struct atlas_rdf_term_decimal_s *decimal = data;
+                break;
+            }
+                
+            case INTEGER_LITERAL:
+            {
+                struct atlas_rdf_term_integer_s *integer = data;
+                break;
+            }
+                
+            default:
+                assert(0);
+                break;
+        }
+    });
+    return result;
 }
 
 
 #pragma mark -
 #pragma mark Operation
 
-int atlas_rdf_term_compare(atlas_rdf_term_t term1,
-                           atlas_rdf_term_t term2,
-                           atlas_error_handler err) {
+int atlas_rdf_term_eq(atlas_rdf_term_t term1,
+                      atlas_rdf_term_t term2) {
+    if (lz_obj_same(term1, term2)) {
+        return 1;
+    } else {
+        __block int result;
+        lz_obj_sync(term1, ^(void * data, uint32_t length){
+            struct atlas_rdf_term_s * t1 = data;
+            switch (t1->type) {
+                case IRI:
+                {
+                    struct atlas_rdf_term_value_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_value_s * t2 = data;
+                        switch (t2->type) {
+                            case IRI:
+                                result = strcmp(t1->value, t2->value) == 0 ? 1 : 0;
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case BLANK_NODE:
+                {
+                    struct atlas_rdf_term_value_s * t1 = data;  
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_value_s * t2 = data;
+                        switch (t2->type) {
+                            case BLANK_NODE:
+                                result = strcmp(t1->value, t2->value) == 0 ? 1 : 0;
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }  
+                    
+                case STRING_LITERAL:
+                {
+                    struct atlas_rdf_term_value_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_value_s * t2 = data;
+                        switch (t2->type) {
+                            case STRING_LITERAL:
+                                if (strcmp(t1->value, t2->value) != 0) {
+                                    result = 0;
+                                } else {
+                                    result = strcmp(t1->value + strlen(t1->value) + 1,
+                                                    t2->value + strlen(t2->value) + 1) == 0 ? 1 : 0;
+                                }
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case TYPED_LITERAL:
+                {
+                    struct atlas_rdf_term_value_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_value_s * t2 = data;
+                        switch (t2->type) {
+                            case TYPED_LITERAL:
+                                if (strcmp(t1->value, t2->value) != 0) {
+                                    result = 0;
+                                } else {
+                                    result = atlas_rdf_term_eq(lz_obj_weak_ref(term1, 0),
+                                                               lz_obj_weak_ref(term2, 0));
+                                }
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case BOOLEAN_LITERAL:
+                {
+                    struct atlas_rdf_term_boolean_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_boolean_s * t2 = data;
+                        switch (t2->type) {
+                            case BOOLEAN_LITERAL:
+                                result = (t1->value == t2->value || t1->value != 0 && t2->value != 0) ? 1 : 0;
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case DOUBLE_LITERAL:
+                {
+                    struct atlas_rdf_term_double_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_s * t2 = data;
+                        switch (t2->type) {
+                            case DOUBLE_LITERAL:
+                            {
+                                struct atlas_rdf_term_double_s * t2 = data;
+                                result = t1->value == t2->value;
+                                break;
+                            }
+
+                            case DECIMAL_LITERAL:
+                            {
+                                struct atlas_rdf_term_decimal_s * t2 = data;
+                                mpf_t f = { t2->value };
+                                result = mpf_cmp_d(f, t1->value) == 0 ? 1 : 0;
+                                break;
+                            }
+                                
+                            case INTEGER_LITERAL:
+                            {
+                                struct atlas_rdf_term_integer_s * t2 = data;
+                                mpz_t f = { t2->value };
+                                result = mpz_cmp_d(f, t1->value) == 0 ? 1 : 0;
+                                break;
+                            }
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case DECIMAL_LITERAL:
+                {
+                    struct atlas_rdf_term_decimal_s *t1 = data;
+                    mpf_t f1 = { t1->value };
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_s * t2 = data;
+                        switch (t2->type) {
+                            case DOUBLE_LITERAL:
+                            {
+                                struct atlas_rdf_term_double_s * t2 = data;
+                                result = mpf_cmp_d(f1, t2->value) == 0 ? 1 : 0;
+                                break;                            
+                            }
+                                
+                            case DECIMAL_LITERAL:
+                            {
+                                struct atlas_rdf_term_decimal_s * t2 = data;
+                                mpf_t f2 = { t2->value };
+                                result = mpf_cmp(f1, f2) == 0 ? 1 : 0;
+                                break;
+                            }
+                                
+                            case INTEGER_LITERAL:
+                            {
+                                struct atlas_rdf_term_integer_s * t2 = data;
+                                mpz_t z = { t2->value };
+                                mpf_t f2;
+                                mpf_init(f2);
+                                mpf_set_z(f2,z);
+                                result = mpf_cmp(f1, f2) == 0 ? 1 : 0;
+                                mpf_clear(f2);
+                                break;
+                            }
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case INTEGER_LITERAL:
+                {
+                    struct atlas_rdf_term_integer_s *t1 = data;
+                    mpz_t z1 = { t1->value };
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_s * t2 = data;
+                        switch (t2->type) {
+                            case DOUBLE_LITERAL:
+                            {
+                                struct atlas_rdf_term_double_s * t2 = data;
+                                result = mpz_cmp_d(z1, t2->value) == 0 ? 1 : 0;
+                                break;                            
+                            }
+                                
+                            case DECIMAL_LITERAL:
+                            {
+                                struct atlas_rdf_term_decimal_s * t2 = data;
+                                mpf_t f2 = { t2->value };
+                                mpf_t f1;
+                                mpf_init(f1);
+                                mpf_set_z(f1,z1);
+                                result = mpf_cmp(f1, f2) == 0 ? 1 : 0;
+                                mpf_clear(f1);
+                                break;
+                            }
+                                
+                            case INTEGER_LITERAL:
+                            {
+                                struct atlas_rdf_term_integer_s * t2 = data;
+                                mpz_t z2 = { t2->value };
+                                result = mpz_cmp(z1, z2) == 0 ? 1 : 0;
+                                break;
+                            }
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                case DATETIME_LITERAL:
+                {
+                    struct atlas_rdf_term_datetime_s * t1 = data;
+                    lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        struct atlas_rdf_term_datetime_s * t2 = data;
+                        switch (t2->type) {
+                            case DATETIME_LITERAL:
+                                result = t1->value == t2->value;
+                                break;
+                                
+                            default:
+                                result = 0;
+                        }
+                    });
+                    break;
+                }
+                    
+                    
+                default:
+                    result = 0;
+            }
+        });
+        return result;        
+    }
 }
+
+#pragma mark -
+#pragma mark Compare Functions
 
 
 
