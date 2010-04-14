@@ -367,9 +367,122 @@ atlas_rdf_term_is_type(atlas_rdf_term_t term,
 #pragma mark -
 #pragma mark Representation of a RDF Term
 
-void
-atlas_rdf_term_repr(atlas_rdf_term_t term,
-                    void (^handler)(const char * repr)) {
+char *
+atlas_rdf_term_repr(atlas_rdf_term_t term) {
+    assert(term != 0);
+
+    __block char * result;
+    lz_obj_sync(term, ^(void * data, uint32_t length){
+        
+        struct atlas_rdf_term_s * t = data;
+        
+        switch (t->type) {
+            case IRI:
+            {
+                struct atlas_rdf_term_value_s *t = data;  
+                char * buffer;
+                asprintf(&buffer, "<%s>", t->value);
+                result = buffer;
+                break;
+            }
+                
+            case BLANK_NODE:
+            {
+                struct atlas_rdf_term_value_s *t = data;  
+                char * buffer;
+                asprintf(&buffer, "_:%s", t->value);
+                result = buffer;
+                break;
+            }  
+                
+            case STRING_LITERAL:
+            {
+                struct atlas_rdf_term_value_s *t = data;
+                char * buffer;
+                int offset = strlen(t->value) + 1;
+                if (strlen(t->value + offset) == 0) {
+                    // TODO: Escape ", ' etc.
+                    asprintf(&buffer, "\"%s\"", t->value);
+                } else {
+                    asprintf(&buffer, "\"%s\"@%s", t->value, t->value + offset);
+                }
+                result = buffer;
+                break;
+            }
+                
+            case TYPED_LITERAL:
+            {
+                struct atlas_rdf_term_value_s *t = data;
+                char * buffer;
+                char * type = atlas_rdf_term_iri_value(lz_obj_weak_ref(term, 0));
+                assert(type);
+                asprintf(&buffer, "\"%s\"^^<%s>", t->value, type);
+                free(type);
+                result = buffer;
+                break;
+            }
+                
+            case BOOLEAN_LITERAL:
+            {
+                struct atlas_rdf_term_boolean_s *t = data;
+                char * buffer;
+                if (t->value == 0) {
+                    asprintf(&buffer, "false");
+                } else {
+                    asprintf(&buffer, "true");
+                }
+                result = buffer;
+                break;
+            }
+                
+            case DOUBLE_LITERAL:
+            {
+                struct atlas_rdf_term_double_s *t = data;
+                char * buffer;
+                asprintf(&buffer, "%e", t->value);
+                result = buffer;
+                break;
+            }
+                
+            case DATETIME_LITERAL:
+            {
+                struct atlas_rdf_term_datetime_s *t = data;
+                int buff_size = 73;
+                char * buffer = malloc(buff_size);
+                struct tm time_tmp;
+                gmtime_r(&(t->value), &time_tmp);
+                int length = strftime(buffer, buff_size, "\"%Y-%m-%dT%H:%M:%S+00:00\"^^<http://www.w3.org/2001/XMLSchema#dateTime>", &time_tmp);
+                assert(length != 0);
+                result = buffer;
+                break;
+            }
+                
+            case DECIMAL_LITERAL:
+            {
+                struct atlas_rdf_term_decimal_s *t = data;
+                char * buffer;
+                mpf_t f = { t->value };
+                gmp_asprintf(&buffer, "%.Ff", f);
+                result = buffer;
+                break;
+            }
+                
+            case INTEGER_LITERAL:
+            {
+                struct atlas_rdf_term_integer_s *t = data;
+                char * buffer;
+                mpz_t z = { t->value };
+                gmp_asprintf(&buffer, "%Zd", z);
+                result = buffer;
+                break;
+            }
+                
+            default:
+                assert(0);
+                break;
+        }
+    });
+    return result;
 }
 
 

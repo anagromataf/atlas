@@ -146,8 +146,8 @@
 		F643B74F115B5D0D00832707 /* Lib Atlas */ = {
 			isa = PBXGroup;
 			children = (
-				F63BA69F1175F08E00A409AF /* atlas_rdf_term_impl.c */,
 				F63BA6A01175F08E00A409AF /* atlas_rdf_term_impl.h */,
+				F63BA69F1175F08E00A409AF /* atlas_rdf_term_impl.c */,
 				F643B928115B8A7500832707 /* atlas_base_impl.h */,
 				F643B929115B8A7500832707 /* atlas_base_impl.c */,
 			);

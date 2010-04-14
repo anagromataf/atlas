@@ -47,6 +47,11 @@ START_TEST (test_create_rdf_term_iri) {
         fail_unless(strcmp(value, "http://example.com") == 0);
         free(value);
         
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
+        
         lz_release(term);
     }
     
@@ -70,6 +75,11 @@ START_TEST (test_create_rdf_term_blank_node) {
         char * value = atlas_rdf_term_blank_node_value(term);
         fail_unless(strcmp(value, "foo") == 0);
         free(value);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }
@@ -100,6 +110,11 @@ START_TEST (test_create_rdf_term_string) {
         fail_unless(strcmp(value, "") == 0);
         free(lang);
         
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
+        
         lz_release(term);
     }
     
@@ -119,6 +134,11 @@ START_TEST (test_create_rdf_term_string) {
         char * lang = atlas_rdf_term_string_lang(term);
         fail_unless(strcmp(value, "de_de") == 0);
         free(lang);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }
@@ -149,6 +169,11 @@ START_TEST (test_create_rdf_term_typed_literal) {
             fail_unless(strcmp(value, "foo") == 0);
             free(value);
             
+            // print repr
+            char * repr = atlas_rdf_term_repr(term);
+            printf("%s\n", repr);
+            free(repr);
+            
             lz_release(term);
         }
         lz_release(type);
@@ -175,6 +200,11 @@ START_TEST (test_create_rdf_term_boolean) {
         fail_unless(strcmp(value, "true") == 0);
         free(value);
         
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
+        
         lz_release(term);
     }
     
@@ -189,6 +219,11 @@ START_TEST (test_create_rdf_term_boolean) {
         char * value = atlas_rdf_term_literal_value(term);
         fail_unless(strcmp(value, "false") == 0);
         free(value);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }
@@ -213,6 +248,11 @@ START_TEST (test_create_rdf_term_datetime) {
         char * value = atlas_rdf_term_literal_value(term);
         fail_unless(strcmp(value, "1970-01-01T00:00:00+00:00") == 0);
         free(value);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }
@@ -250,6 +290,11 @@ START_TEST (test_create_rdf_term_integer) {
         fail_unless(mpz_cmp(i, x) == 0);
         mpz_clear(x);
         
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
+        
         lz_release(term);
     }
     
@@ -273,6 +318,11 @@ START_TEST (test_create_rdf_term_double) {
         char * value = atlas_rdf_term_literal_value(term);
         fail_unless(strcmp(value, "4.700000e+00") == 0);
         free(value);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }
@@ -308,6 +358,11 @@ START_TEST (test_create_rdf_term_decimal) {
         atlas_rdf_term_decimal_value(term, x);
         fail_unless(mpf_cmp(f, x) == 0);
         mpf_clear(x);
+        
+        // print repr
+        char * repr = atlas_rdf_term_repr(term);
+        printf("%s\n", repr);
+        free(repr);
         
         lz_release(term);
     }

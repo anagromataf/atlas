@@ -103,9 +103,8 @@ atlas_rdf_term_is_type(atlas_rdf_term_t term,
 #pragma mark -
 #pragma mark Representation of a RDF Term
 
-void
-atlas_rdf_term_repr(atlas_rdf_term_t term,
-                    void (^handler)(const char * repr));
+char *
+atlas_rdf_term_repr(atlas_rdf_term_t term);
 
 #pragma mark -
 #pragma mark Access Details of a RDF Literal Term
@@ -146,12 +145,14 @@ atlas_rdf_term_boolean_value(atlas_rdf_term_t term);
 #pragma mark -
 #pragma mark Effective Boolean Value
 
-int atlas_rdf_term_ebv(atlas_rdf_term_t term);
+int
+atlas_rdf_term_ebv(atlas_rdf_term_t term);
 
 #pragma mark -
 #pragma mark Operation
 
-int atlas_rdf_term_eq(atlas_rdf_term_t term1,
-                      atlas_rdf_term_t term2);
+int
+atlas_rdf_term_eq(atlas_rdf_term_t term1,
+                  atlas_rdf_term_t term2);
 
 #endif // _ATLAS_TYPES_RDF_TERM_H_
