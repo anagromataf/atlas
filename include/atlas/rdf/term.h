@@ -110,16 +110,36 @@ atlas_rdf_term_repr(atlas_rdf_term_t term,
 #pragma mark -
 #pragma mark Access Details of a RDF Literal Term
 
-void
-atlas_rdf_term_literal_value(atlas_rdf_term_t term,
-                             void (^handler)(const char * value));
+char *
+atlas_rdf_term_iri_value(atlas_rdf_term_t term);
 
-void
-atlas_rdf_term_literal_lang(atlas_rdf_term_t term,
-                            void (^handler)(const char * lang));
+char *
+atlas_rdf_term_blank_node_value(atlas_rdf_term_t term);
+
+char *
+atlas_rdf_term_literal_value(atlas_rdf_term_t term);
+
+char *
+atlas_rdf_term_string_lang(atlas_rdf_term_t term);
 
 atlas_rdf_term_t
-atlas_rdf_term_literal_type(atlas_rdf_term_t term);
+atlas_rdf_term_typed_type(atlas_rdf_term_t term);
+
+void
+atlas_rdf_term_integer_value(atlas_rdf_term_t term, mpz_t result);
+
+double
+atlas_rdf_term_double_value(atlas_rdf_term_t term);
+
+void
+atlas_rdf_term_decimal_value(atlas_rdf_term_t term, mpf_t result);
+
+time_t
+atlas_rdf_term_datetime_value(atlas_rdf_term_t term);
+
+int
+atlas_rdf_term_boolean_value(atlas_rdf_term_t term);
+
 
 #pragma mark -
 #pragma mark Effective Boolean Value
