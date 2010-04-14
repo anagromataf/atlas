@@ -25,6 +25,6 @@
 #define _ATLAS_H_
 
 #include <atlas/base.h>
-#include <atlas/types/rdf/term.h>
+#include <atlas/rdf/term.h>
 
 #endif // _ATLAS_H_

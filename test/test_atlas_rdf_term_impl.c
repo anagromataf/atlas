@@ -26,7 +26,7 @@
 #include <lazy.h>
 #include <stdio.h>
 
-#include "atlas_rdf_term_impl.h"
+#include <atlas.h>
 
 #pragma mark -
 #pragma mark Test Create RDF Term
