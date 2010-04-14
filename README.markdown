@@ -18,6 +18,12 @@ When defining a polygon, the coordinates must be listed in a counter-clockwise w
 Polygons can be nested. To exclude the area of a polygon from the surrounding polygon, it must be located inside. When further checks are applied, i.e. if a point belongs to the area of the (outside) polygon, the convention is, that edges always belong to the inside part.
 Example: One polygon that contains a second polygon inside, thus, excluding the area. If the point is on top of an edge of the outside polygon, it is *inside*. If the point is on top of an edge of the second inside polygon, it is *not inside*.
 
+### Precision of Doubles
+In the geometry file (atlas_shape_impl_geometry) doubles need to be compared. Doubles appear to have a limited precision.
+
+The equality of two doubles is checked by calculating the difference, taking the absolute value and then comparing the difference by larger-than 1.0E-15.
+
+Example: Given the lines ((-9,-9),(10,10)) and ((-6,4),(2,0)) the equations are f(x)=x and g(x)=-x/2+1. Setting those equal x is 2/3 and y is - x substituted in f(x) and g(x) - 2/3. The computer does not work with fractions. Having used this test case the maximum precision to compare the absolute value of the difference with is 1.0E-15.
 
 
 
