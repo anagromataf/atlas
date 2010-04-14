@@ -168,7 +168,84 @@ int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, struct atl
 	} else {
 		return 1;
 	}
+}
 
+int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1, 
+						  uint16_t num_coords1,
+						  struct atlas_shape_coordinate_s * coords2,
+						  uint16_t num_coords2){
+	// First case: The starting and ending point have to be equal, if not, no further checks are necessary
+	if (!atlas_shape_point_equal(coords1, coords2) || !atlas_shape_point_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)) {
+		return 0;
+	}
+	
+	// create a temporary pointers back to where the coordinates begin
+	struct atlas_shape_coordinate_s * tmp_c1_ptr = coords1;
+	struct atlas_shape_coordinate_s * tmp_c2_ptr = coords2;
+	
+	// each point of the first arc must be on a line segment of the second arc, if not return 0
+	for (int i = 0; i < num_coords1; i++) {
+		for (int j = 0; j < num_coords2 - 1; j++) {
+			// check, if the current point (i) is on line between j and j+1
+			if (atlas_shape_pol(tmp_c1_ptr, tmp_c2_ptr, tmp_c2_ptr + 1) == 0) {
+				// if not, done
+				return 0;
+			}
+			// advance pointer to check next line segment
+			tmp_c2_ptr++;
+		}
+		/*
+		 * Once all line segments are checked with the first point, continue with next point. The pointer for the coordinate pair to create a line segment has to be set back to the start of the coordinate array.
+		 */
+		tmp_c2_ptr = coords2;
+		// Once all inside loops are finished, advance pointer to next point
+		tmp_c1_ptr++;
+	}
+	// also reset pointer after the outer loop is completed
+	tmp_c1_ptr = coords1;
+	
+	
+	/*
+	 * The following lop is completely analog to the previous one. The difference is, that the points are not taken from the first arc, but from the second one. These points are checked to be on a line segment of arc 1.
+	 */
+	for (int i = 0; i < num_coords2; i++) {
+		for (int j = 0; j < num_coords1 - 1; j++) {
+			if (atlas_shape_pol(tmp_c2_ptr, tmp_c1_ptr, tmp_c1_ptr + 1) == 0) {
+				return 0;
+			}
+			tmp_c1_ptr++;
+		}
+		tmp_c1_ptr = coords1;
+		tmp_c2_ptr++;
+	}
+	tmp_c2_ptr = coords2;
+	
+	// if all checks passed, return 1
+	return 1;
+}	
+
+int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
+					struct atlas_shape_coordinate_s * l1,
+					struct atlas_shape_coordinate_s * l2){
+	if ((l1->longitude - l2->longitude) == 0 && point->longitude == l1->longitude){
+		/*
+		 * prevent division by zero, line is vertical, latitude of point does not matter anymore, only the longtitude has to be equal
+		 */
+		return 1;
+	}
+	
+	// slope for line
+	double m = (l2->latitude - l1->latitude)/(l2->longitude - l1->longitude);
+	// y-intercept for line
+	double n = l1->latitude - l1->longitude*m;
+	// subsitute x in line equation
+	double f_of_x = m*point->longitude + n;
+	// if result of function is equal to the y of the point, the point is on the line
+	if (fabs(f_of_x - point->latitude) < PRECISION) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 int atlas_shape_polygon_equal(struct atlas_shape_coordinate_s * coords1, 

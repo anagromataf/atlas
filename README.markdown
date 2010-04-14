@@ -113,3 +113,19 @@ Depending on the case, the returned value (`return`) differs. `coordinate` defin
 1. `return` = 0
 2. `return` = 1
 3. `return` = 1 and `coordinate` is set to the point of intersection
+
+
+### atlas_shape_arc_equal
+The first case of comparing two arcs is to check, if their starting and ending points are equal. If that is not the case, no further checks are necessary.
+
+Two following case can occur: One arc is a straight line from one point to another. A second arc has many points, that are all on top of the line represented by the first arc. The two lines would be equal, but are represented differently. 
+
+Example: 
+Arc 1: (0,0) (5,5) (6,6) (7,7) (8,8) (9,9)
+Arc 2: (0,0) (1,1) (2,2) (3,3) (9,9)
+Obviously both are the same line/arc. The density of points specifying the arc is unknown. Due to that, each point from the first arc has to be on a line segment of the second arc, and every point from the second arc has to be on a line segment from the first arc.
+
+The function atlas_shape_pol (point on line) performs the check if a point is on top of a line.
+
+### atlas_shape_polygon_equal (TODO)
+This function will compare two polygons for equality. It might be possible to use the function to compare arcs. As polygons form closed circles, a common start coordinate would have to be determined and from there on the arc comparison is used.
