@@ -45,6 +45,11 @@ atlas_rdf_graph_create(int number_of_statements,
                        atlas_rdf_statement_t * statements,
                        atlas_error_handler err);
 
+atlas_rdf_graph_t
+atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
+                             atlas_rdf_graph_t graph2,
+                             atlas_error_handler err);
+
 #pragma mark -
 #pragma mark Access Details of a RDF Graph
 
