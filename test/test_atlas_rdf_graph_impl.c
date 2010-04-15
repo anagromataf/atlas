@@ -57,16 +57,19 @@ START_TEST (test_create_rdf_graph) {
     obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
     
     // setup the statements
-    atlas_rdf_statement_t statements[2];
+    atlas_rdf_statement_t statements[3];
     statements[0].subject = sub1;
     statements[0].predicate = pred1;
     statements[0].object = obj1;
     statements[1].subject = sub1;
     statements[1].predicate = pred2;
     statements[1].object = obj2;
+    statements[2].subject = sub1;
+    statements[2].predicate = pred2;
+    statements[2].object = obj2;
     
     // create the graph
-    atlas_rdf_graph_t graph = atlas_rdf_graph_create(2, statements, ^(int err, const char * msg){});
+    atlas_rdf_graph_t graph = atlas_rdf_graph_create(3, statements, ^(int err, const char * msg){});
     fail_if(graph == 0);
     if (graph) {
         fail_unless(atlas_rdf_graph_length(graph) == 2);
@@ -80,10 +83,15 @@ START_TEST (test_create_rdf_graph) {
         atlas_rdf_graph_apply(graph, ^(atlas_rdf_term_t subject,
                                        atlas_rdf_term_t predicate,
                                        atlas_rdf_term_t object){
-            printf("%s %s %s.\n",
-                   atlas_rdf_term_repr(subject),
-                   atlas_rdf_term_repr(predicate),
-                   atlas_rdf_term_repr(object));
+            
+            char * s, * p, * o;
+            s = atlas_rdf_term_repr(subject);
+            p = atlas_rdf_term_repr(predicate);
+            o = atlas_rdf_term_repr(object);
+            printf("%s %s %s.\n", s, p, o);
+            free(s);
+            free(p);
+            free(o);
             
             // both subjects should be the same
             fail_unless(atlas_rdf_term_eq(sub1, subject));

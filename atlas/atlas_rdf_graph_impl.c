@@ -64,7 +64,7 @@ atlas_rdf_graph_create(int number_of_statements,
     int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
         // return the position in the reference lis if the term exists
         for (int i=0; i<num_refs; i++) {
-            if (lz_obj_same(refs[i], term)) { return i; }
+            if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
         }
         
         // term not in list
@@ -74,7 +74,12 @@ atlas_rdf_graph_create(int number_of_statements,
         return num_refs - 1;
     };
     
+    // the number of unique statements in the graph
+    int num_graph_st = 0;
+    
     int error = 0;
+    int loop = 0;
+    
     for (int loop = 0; loop < number_of_statements; loop++) {
         atlas_rdf_statement_t stm = statements[loop];
         
@@ -103,9 +108,29 @@ atlas_rdf_graph_create(int number_of_statements,
         }
         
         // add position of the terms in the reference list in the graph
-        graph[loop].subject = term_in_refs(stm.subject);
-        graph[loop].predicate = term_in_refs(stm.predicate);
-        graph[loop].object = term_in_refs(stm.object);
+        graph[num_graph_st].subject = term_in_refs(stm.subject);
+        graph[num_graph_st].predicate = term_in_refs(stm.predicate);
+        graph[num_graph_st].object = term_in_refs(stm.object);
+
+        // avoid putting the same statement into the graph twice
+        int st_in_graph = 0;
+        for (int i=0; i < num_graph_st; i++) {
+            if (graph[i].subject == graph[num_graph_st].subject &&
+                graph[i].predicate == graph[num_graph_st].predicate &&
+                graph[i].object == graph[num_graph_st].object) {
+                st_in_graph++;
+                break;
+            }
+        }
+        if (!st_in_graph) {
+            num_graph_st++;
+        }
+    }
+    
+    // resize the graph memory if needed
+    if (number_of_statements > num_graph_st) {
+        size = sizeof(__graph) * num_graph_st;
+        graph = realloc(graph, sizeof(__graph) * num_graph_st);
     }
     
     // an error occurred while setting up the graph
