@@ -234,6 +234,107 @@ START_TEST (test_create_rdf_graph_union) {
     
 } END_TEST
 
+
+START_TEST (test_create_rdf_graph_intersection) {
+    
+    // create some terms to store in the graph
+    atlas_rdf_term_t sub1, pred1, obj1, pred2, obj2, obj3;
+    sub1 = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+    pred2 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
+    obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    obj3 = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
+    
+    // setup the statements
+    atlas_rdf_statement_t statements_g1[2];
+    statements_g1[0].subject = sub1;
+    statements_g1[0].predicate = pred1;
+    statements_g1[0].object = obj1;
+    statements_g1[1].subject = sub1;
+    statements_g1[1].predicate = pred2;
+    statements_g1[1].object = obj2;
+    
+    atlas_rdf_statement_t statements_g2[2];
+    statements_g2[0].subject = sub1;
+    statements_g2[0].predicate = pred2;
+    statements_g2[0].object = obj2;
+    statements_g2[1].subject = sub1;
+    statements_g2[1].predicate = pred2;
+    statements_g2[1].object = obj3;
+    
+    atlas_rdf_statement_t statements_intersection[1];
+    statements_intersection[0].subject = sub1;
+    statements_intersection[0].predicate = pred2;
+    statements_intersection[0].object = obj2;
+    
+    // create both graphs
+    atlas_rdf_graph_t graph1 = atlas_rdf_graph_create(2, statements_g1, ^(int err, const char * msg){});
+    atlas_rdf_graph_t graph2 = atlas_rdf_graph_create(2, statements_g2, ^(int err, const char * msg){});
+    
+    fail_if(graph1 == 0);
+    fail_if(graph2 == 0);
+    if (graph1 && graph2) {
+        
+        // create the intersection
+        atlas_rdf_graph_t intersection = atlas_rdf_graph_create_intersection(graph1, graph2, ^(int err, const char * msg){});
+        fail_if(intersection == 0);
+        
+        // release the olf graphs
+//        lz_release(graph1);
+//        lz_release(graph2);
+        
+        fail_unless(atlas_rdf_graph_length(intersection) == 1);
+        
+        // create a semaphore, because the block which is applied to
+        // the statements is called concurrent
+        dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
+        __block int check[1] = {0};
+        
+        // check if both terms are in the graph
+        atlas_rdf_graph_apply(intersection, ^(atlas_rdf_term_t subject,
+                                              atlas_rdf_term_t predicate,
+                                              atlas_rdf_term_t object){
+            
+            char * s, * p, * o;
+            s = atlas_rdf_term_repr(subject);
+            p = atlas_rdf_term_repr(predicate);
+            o = atlas_rdf_term_repr(object);
+            printf("%s %s %s.\n", s, p, o);
+            free(s);
+            free(p);
+            free(o);
+            
+            // apply the block to all statements and count there appearance in the graph
+            for (int i=0; i<1; i++) {
+                if (atlas_rdf_term_eq(statements_intersection[i].subject, subject) &&
+                    atlas_rdf_term_eq(statements_intersection[i].predicate, predicate) &&
+                    atlas_rdf_term_eq(statements_intersection[i].object, object)) {
+                    dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+                    check[i]++;
+                    dispatch_semaphore_signal(check_lock);
+                }
+            }
+        });
+        
+        // each statement should only be once in the graph
+        fail_unless(check[0] == 1);
+        
+        dispatch_release(check_lock);
+        lz_release(intersection);
+    }
+    
+    lz_release(sub1);
+    lz_release(pred1);
+    lz_release(obj1);
+    lz_release(pred2);
+    lz_release(obj2);
+    
+    lz_wait_for_completion();
+    
+} END_TEST
+
+
 #pragma mark -
 #pragma mark Fixtures
 
@@ -258,6 +359,7 @@ Suite * rdf_graph_suite(void) {
     tcase_add_test(tc_create, test_create_rdf_graph);
     tcase_add_test(tc_create, test_create_rdf_graph_empty);
     tcase_add_test(tc_create, test_create_rdf_graph_union);
+    tcase_add_test(tc_create, test_create_rdf_graph_intersection);
     
     suite_add_tcase(s, tc_create);
     
