@@ -107,7 +107,7 @@ START_TEST (test_create_rdf_term_string) {
         
         // check language tag
         char * lang = atlas_rdf_term_string_lang(term);
-        fail_unless(strcmp(value, "") == 0);
+        fail_unless(strcmp(lang, "") == 0);
         free(lang);
         
         // print repr
@@ -132,7 +132,7 @@ START_TEST (test_create_rdf_term_string) {
         
         // check language tag
         char * lang = atlas_rdf_term_string_lang(term);
-        fail_unless(strcmp(value, "de_de") == 0);
+        fail_unless(strcmp(lang, "de_de") == 0);
         free(lang);
         
         // print repr
@@ -451,9 +451,11 @@ START_TEST (test_iri_eq_decimal) {
 #pragma mark Fixtures
 
 static void setup() {
+    printf(">>>\n");
 }
 
 static void teardown() {
+    printf("<<<\n");
 }
 
 #pragma mark -
@@ -464,7 +466,7 @@ Suite * rdf_term_suite(void) {
     Suite *s = suite_create("RDF Term");
     
     TCase *tc_create = tcase_create("Create");
-    //tcase_add_checked_fixture (tc_create, setup, teardown);
+    tcase_add_checked_fixture (tc_create, setup, teardown);
     
     tcase_add_test(tc_create, test_create_rdf_term_iri);
     tcase_add_test(tc_create, test_create_rdf_term_blank_node);
@@ -480,7 +482,7 @@ Suite * rdf_term_suite(void) {
     
     
     TCase *tc_eq = tcase_create("Equality");
-    //tcase_add_checked_fixture (tc_create, setup, teardown);
+    tcase_add_checked_fixture (tc_eq, setup, teardown);
     
     tcase_add_test(tc_eq, test_iri_eq_iri);
     tcase_add_test(tc_eq, test_iri_eq_blank_node);
