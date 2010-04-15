@@ -28,26 +28,27 @@
 
 #include <lazy.h>
 #include <stdint.h>
-#include <gmp.h>
+#include <atlas/gmp.h>
 #include <time.h>
 
 typedef lz_obj atlas_rdf_term_t;
 
-typedef uint8_t atlas_rdf_term_type_t;
+typedef uint16_t atlas_rdf_term_type_t;
 
-#define TERM 1
-#define RESOURCE 2
-#define BLANK_NODE 3
-#define IRI 4
-#define LITERAL 5
-#define STRING_LITERAL 6
-#define TYPED_LITERAL 7
-#define BOOLEAN_LITERAL 8
-#define NUMERIC_LITERAL 9
-#define INTEGER_LITERAL 10
-#define DOUBLE_LITERAL 11
-#define DECIMAL_LITERAL 12
-#define DATETIME_LITERAL 13
+#define TERM                0b0000000000000001
+#define RESOURCE            0b0000000000000011
+#define BLANK_NODE          0b0000000000000111
+#define IRI                 0b0000000000001011
+#define LITERAL             0b0000000000010001
+#define STRING_LITERAL      0b0000000000110001
+#define TYPED_LITERAL       0b0000000001010001
+#define BOOLEAN_LITERAL     0b0000000011010001
+#define DATETIME_LITERAL    0b0000000101010001
+#define NUMERIC_LITERAL     0b0000001001010001
+#define INTEGER_LITERAL     0b0000011001010001
+#define DOUBLE_LITERAL      0b0000101001010001
+#define DECIMAL_LITERAL     0b0001001001010001
+
 
 #pragma mark -
 #pragma mark Create a RDF Term

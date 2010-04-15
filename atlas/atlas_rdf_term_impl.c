@@ -360,7 +360,12 @@ atlas_rdf_term_type(atlas_rdf_term_t term) {
 int
 atlas_rdf_term_is_type(atlas_rdf_term_t term,
                        atlas_rdf_term_type_t type) {
-    return 0;
+    __block int result;
+    lz_obj_sync(term, ^(void * data, uint32_t length){
+        struct atlas_rdf_term_s * t = data;
+        result = (t->type & type);
+    });
+    return result;
 }
 
 
