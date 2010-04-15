@@ -1,8 +1,8 @@
 /*
- *  atlas.h
+ *  atlas_rdf_graph_impl.h
  *  atlas
  *
- *  Created by Tobias Kräntzer on 25.03.10.
+ *  Created by Tobias Kräntzer on 14.04.10.
  *  Copyright 2010 Fraunhofer Institut für Software- und Systemtechnik ISST.
  *
  *  This file is part of atlas.
@@ -21,10 +21,9 @@
  *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ATLAS_H_
-#define _ATLAS_H_
+#ifndef _ATLAS_RDF_GRAPH_IMPL_H_
+#define _ATLAS_RDF_GRAPH_IMPL_H_
 
-#include <atlas/rdf/term.h>
 #include <atlas/rdf/graph.h>
 
-#endif // _ATLAS_H_
+#endif // _ATLAS_RDF_GRAPH_IMPL_H_
