@@ -445,6 +445,54 @@ START_TEST (test_iri_eq_decimal) {
     
 } END_TEST
 
+START_TEST (test_str_eq_str) {
+    
+    atlas_rdf_term_t term1, term2;
+	
+    term1 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_if(atlas_rdf_term_eq(term1, term2) == 0);
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    term1 = atlas_rdf_term_create_string("b", "b", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_unless(atlas_rdf_term_eq(term1, term2) == 0);
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    term1 = atlas_rdf_term_create_string("a", "a", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_unless(atlas_rdf_term_eq(term1, term2) == 0);
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    term1 = atlas_rdf_term_create_string("b", "a", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    fail_if(term1 == 0);
+    fail_if(term2 == 0);
+    if (term1 && term2) {
+        fail_unless(atlas_rdf_term_eq(term1, term2) == 0);
+        lz_release(term1);
+        lz_release(term2);
+    }
+    
+    lz_wait_for_completion();
+    
+} END_TEST
+
 // TODO: Write more tests for the function 'atlas_rdf_term_eq()'.
 
 #pragma mark -
@@ -487,7 +535,8 @@ Suite * rdf_term_suite(void) {
     tcase_add_test(tc_eq, test_iri_eq_iri);
     tcase_add_test(tc_eq, test_iri_eq_blank_node);
     tcase_add_test(tc_eq, test_iri_eq_decimal);
-	
+    tcase_add_test(tc_eq, test_str_eq_str);
+    
     suite_add_tcase(s, tc_eq);
     
     return s;
