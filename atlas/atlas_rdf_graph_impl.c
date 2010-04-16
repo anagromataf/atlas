@@ -362,6 +362,154 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
     return result;
 }
 
+atlas_rdf_graph_t
+atlas_rdf_graph_create_difference(atlas_rdf_graph_t graph1,
+                                  atlas_rdf_graph_t graph2,
+                                  atlas_error_handler err) {
+    assert(graph1 != 0);
+    assert(graph2 != 0);
+    
+    __block atlas_rdf_graph_t result;
+    lz_obj_sync(graph1, ^(void * data1, uint32_t length1){
+        lz_obj_sync(graph2, ^(void * data2, uint32_t length2){
+            
+            // calculate the amount of space needed
+            // and allocate memory (worst case: size of both graphs)
+            int size = length1 + length2;
+            __graph * graph = malloc(size);
+            assert(graph != 0);
+            
+            // number of statements in both graphs
+            int num_statements_g1 = length1 / sizeof(__graph);
+            int num_statements_g2 = length2 / sizeof(__graph);
+            int num_statements_max = size / sizeof(__graph);
+            
+            // number of statements in the result graph
+            __block int num_statements = 0;
+            
+            // number of references
+            int num_ref_g1 = lz_obj_num_ref(graph1);
+            int num_ref_g2 = lz_obj_num_ref(graph2);
+            int num_ref_max = num_ref_g1 + num_ref_g2;
+            
+            // number of references used in the result set
+            __block int num_refs = 0;
+            
+            // setup a temporary list for all therm,
+            // which are used in this graph
+            __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * num_ref_max);
+            assert(refs);
+            
+            // function to find a term in the temporary list and return its position
+            // if the term is not in the list, append it
+            int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
+                // return the position in the reference lis if the term exists
+                for (int i=0; i<num_refs; i++) {
+                    if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
+                }
+                
+                // term not in list
+                // add term to the list
+                refs[num_refs] = term;
+                num_refs++;
+                return num_refs - 1;
+            };
+            
+            
+            // iterate over the first graph and check for each
+            // statement if it is in the second graph
+            // if not, put it into the result set
+            // and vice versa
+            // OPTIMIZE: Find a better solution
+            for (int o_loop = 0; o_loop < num_statements_g1; o_loop++) {
+                
+                int st_in_graph2 = 0;
+                
+                __graph stm1 = ((__graph *)data1)[o_loop];
+                
+                atlas_rdf_term_t subject1 = lz_obj_weak_ref(graph1, stm1.subject);
+                atlas_rdf_term_t predicate1 = lz_obj_weak_ref(graph1, stm1.predicate);
+                atlas_rdf_term_t object1 = lz_obj_weak_ref(graph1, stm1.object);
+                
+                for (int i_loop = 0; i_loop < num_statements_g2; i_loop++) {
+                    
+                    __graph stm2 = ((__graph *)data2)[i_loop];
+                    
+                    atlas_rdf_term_t subject2 = lz_obj_weak_ref(graph2, stm2.subject);
+                    atlas_rdf_term_t predicate2 = lz_obj_weak_ref(graph2, stm2.predicate);
+                    atlas_rdf_term_t object2 = lz_obj_weak_ref(graph2, stm2.object);
+                    
+                    if (0 != atlas_rdf_term_eq(subject1, subject2)) {
+                        if (0 != atlas_rdf_term_eq(predicate1, predicate2)) {
+                            if (0 != atlas_rdf_term_eq(object1, object2)) {
+                                st_in_graph2 = 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (st_in_graph2 == 0) {
+                    graph[num_statements].object = term_in_refs(object1);
+                    graph[num_statements].predicate = term_in_refs(predicate1);
+                    graph[num_statements].subject = term_in_refs(subject1);
+                    num_statements++;
+                }
+            }
+            
+            for (int o_loop = 0; o_loop < num_statements_g2; o_loop++) {
+                
+                int st_in_graph1 = 0;
+                
+                __graph stm2 = ((__graph *)data2)[o_loop];
+                
+                atlas_rdf_term_t subject2 = lz_obj_weak_ref(graph2, stm2.subject);
+                atlas_rdf_term_t predicate2 = lz_obj_weak_ref(graph2, stm2.predicate);
+                atlas_rdf_term_t object2 = lz_obj_weak_ref(graph2, stm2.object);
+                
+                for (int i_loop = 0; i_loop < num_statements_g1; i_loop++) {
+                    
+                    __graph stm1 = ((__graph *)data1)[i_loop];
+                    
+                    atlas_rdf_term_t subject1 = lz_obj_weak_ref(graph1, stm1.subject);
+                    atlas_rdf_term_t predicate1 = lz_obj_weak_ref(graph1, stm1.predicate);
+                    atlas_rdf_term_t object1 = lz_obj_weak_ref(graph1, stm1.object);
+                    
+                    if (0 != atlas_rdf_term_eq(subject1, subject2)) {
+                        if (0 != atlas_rdf_term_eq(predicate1, predicate2)) {
+                            if (0 != atlas_rdf_term_eq(object1, object2)) {
+                                st_in_graph1 = 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (st_in_graph1 == 0) {
+                    graph[num_statements].object = term_in_refs(object2);
+                    graph[num_statements].predicate = term_in_refs(predicate2);
+                    graph[num_statements].subject = term_in_refs(subject2);
+                    num_statements++;
+                }
+            }
+            
+            
+            // resize the graph memory if needed
+            if (num_statements_max > num_statements) {
+                size = sizeof(__graph) * num_statements;
+                graph = realloc(graph, sizeof(__graph) * num_statements);
+            }
+            
+            // create a lazy object
+            result = lz_obj_new_v(graph, size, ^{
+                free(graph);
+            }, num_refs, refs);
+            
+            // free the temporary list holding the references
+            free(refs);
+        });
+    });
+    return result;
+}
+
 #pragma mark -
 #pragma mark Access Details of a RDF Graph
 
