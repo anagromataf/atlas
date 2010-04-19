@@ -48,13 +48,13 @@ atlas_rdf_graph_create(int number_of_statements,
                        atlas_rdf_statement_t * statements,
                        atlas_error_handler err) {
     
-    // calculate the amount of space needed to
+    // calculate the amount of space needed for the result graph
     // and allocate memory
     int size = sizeof(__graph) * number_of_statements;
     __graph * graph = malloc(size);
     assert(graph != 0);
     
-    // setup a temporary list for all therm, which are used in this graph
+    // setup a temporary list for all tems, which are used in this graph
     __block int num_refs = 0;
     __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * number_of_statements * 3);
     assert(refs);
@@ -62,7 +62,7 @@ atlas_rdf_graph_create(int number_of_statements,
     // function to find a term in the temporary list and return its position
     // if the term is not in the list, append it
     int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
-        // return the position in the reference lis if the term exists
+        // return the position in the reference list if the term exists
         for (int i=0; i<num_refs; i++) {
             if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
         }
@@ -78,7 +78,6 @@ atlas_rdf_graph_create(int number_of_statements,
     int num_graph_st = 0;
     
     int error = 0;
-    int loop = 0;
     
     for (int loop = 0; loop < number_of_statements; loop++) {
         atlas_rdf_statement_t stm = statements[loop];
@@ -134,7 +133,7 @@ atlas_rdf_graph_create(int number_of_statements,
     }
     
     // an error occurred while setting up the graph
-    // free allocated memory and  return 0
+    // free allocated memory and return 0
     // the error handler has already been called
     if (error) {
         free(refs);
@@ -170,7 +169,7 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
     lz_obj_sync(graph1, ^(void * data1, uint32_t length1){
         lz_obj_sync(graph2, ^(void * data2, uint32_t length2){
             
-            // calculate the amount of space needed to
+            // calculate the amount of space needed for the result graph
             // and allocate memory (worst case: both graphs are distinct)
             int size = length1 + length2;
             __graph * graph = malloc(size);
@@ -183,8 +182,8 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
             // number of statements in the result graph
             __block int num_statements = 0;
             
-            // setup a temporary list for all therm,
-            // which are used in this graph
+            // setup a temporary list for all terms
+            // which are used in the result graph
             __block int num_refs = 0;
             __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) *
                                                      (lz_obj_num_ref(graph1) + lz_obj_num_ref(graph2)));
@@ -193,7 +192,7 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
             // function to find a term in the temporary list and return its position
             // if the term is not in the list, append it
             int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
-                // return the position in the reference lis if the term exists
+                // return the position in the reference list if the term exists
                 for (int i=0; i<num_refs; i++) {
                     if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
                 }
@@ -211,7 +210,8 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
                 for (int loop = 0; loop < num; loop++) {
                     __graph stm = data[loop];
                     
-                    // add position of the terms in the reference list in the graph
+                    // add position of the terms in the reference list to
+                    // the statement
                     graph[num_statements].subject = term_in_refs(lz_obj_weak_ref(g, stm.subject));
                     graph[num_statements].predicate = term_in_refs(lz_obj_weak_ref(g, stm.predicate));
                     graph[num_statements].object = term_in_refs(lz_obj_weak_ref(g, stm.object));
@@ -226,6 +226,9 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
                             break;
                         }
                     }
+                    
+                    // only increment the counter of statements in the result graph,
+                    // if the current statement in not already there
                     if (!st_in_graph) {
                         num_statements++;
                     }
@@ -265,7 +268,7 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
     lz_obj_sync(graph1, ^(void * data1, uint32_t length1){
         lz_obj_sync(graph2, ^(void * data2, uint32_t length2){
             
-            // calculate the amount of space needed to
+            // calculate the amount of space needed for the result garph
             // and allocate memory (worst case: size of the smallest graph)
             int size = length1 < length2 ? length1 : length2;
             __graph * graph = malloc(size);
@@ -287,15 +290,15 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
             // number of references used in the result set
             __block int num_refs = 0;
             
-            // setup a temporary list for all therm,
-            // which are used in this graph
+            // setup a temporary list for all terms
+            // which are used in the result graph
             __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * num_ref_min);
             assert(refs);
             
             // function to find a term in the temporary list and return its position
             // if the term is not in the list, append it
             int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
-                // return the position in the reference lis if the term exists
+                // return the position in the reference list if the term exists
                 for (int i=0; i<num_refs; i++) {
                     if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
                 }
@@ -340,6 +343,8 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
                         graph[num_statements].object = term_in_refs(object1);
                     }
                     
+                    // statement is in both graphs, we can incremet the
+                    // counter of statements in the result
                     num_statements++;
                 }
             }
@@ -373,7 +378,7 @@ atlas_rdf_graph_create_difference(atlas_rdf_graph_t graph1,
     lz_obj_sync(graph1, ^(void * data1, uint32_t length1){
         lz_obj_sync(graph2, ^(void * data2, uint32_t length2){
             
-            // calculate the amount of space needed
+            // calculate the amount of space needed for the result graph
             // and allocate memory (worst case: size of both graphs)
             int size = length1 + length2;
             __graph * graph = malloc(size);
@@ -395,15 +400,15 @@ atlas_rdf_graph_create_difference(atlas_rdf_graph_t graph1,
             // number of references used in the result set
             __block int num_refs = 0;
             
-            // setup a temporary list for all therm,
-            // which are used in this graph
+            // setup a temporary list for all terms
+            // which are used in the result graph
             __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * num_ref_max);
             assert(refs);
             
             // function to find a term in the temporary list and return its position
             // if the term is not in the list, append it
             int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
-                // return the position in the reference lis if the term exists
+                // return the position in the reference list if the term exists
                 for (int i=0; i<num_refs; i++) {
                     if (atlas_rdf_term_eq(refs[i], term) != 0) { return i; }
                 }
