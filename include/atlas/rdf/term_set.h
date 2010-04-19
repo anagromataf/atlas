@@ -29,26 +29,63 @@
 
 #include <lazy.h>
 
+/*! Handle for a RDF Term Set
+ */
 typedef lz_obj atlas_rdf_term_set_t;
 
 #pragma mark -
 #pragma mark Create a RDF Term Set
 
+/*! Create a RDF Term Set
+ *
+ *  This function creates a set of the given terms.
+ *
+ *  \param number_of_terms number of term in the set
+ *
+ *  \param terms An array of terms.
+ *
+ *  \param err An error handler which is called in case
+ *             of an error with the error message.
+ *
+ *  \return NULL on failure or a RDF Term Set handle
+ *          with a reference count of 1.
+ */
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create(int number_of_terms,
                           atlas_rdf_term_t * terms,
                           atlas_error_handler err);
 
+/*! Create the union of two RDF Term Sets
+ *
+ *  This function creates the union of two sets.
+ *
+ *  \return NULL on failure or a RDF Term Set handle
+ *          with a reference count of 1.
+ */
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create_union(atlas_rdf_term_set_t set1,
                                 atlas_rdf_term_set_t set2,
                                 atlas_error_handler err);
 
+/*! Create the intersection of two RDF Term Sets
+ *
+ *  This function creates the intersection of two sets.
+ *
+ *  \return NULL on failure or a RDF Term Set handle
+ *          with a reference count of 1.
+ */
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create_intersection(atlas_rdf_term_set_t set1,
                                        atlas_rdf_term_set_t set2,
                                        atlas_error_handler err);
 
+/*! Create the difference of two RDF Term Sets
+ *
+ *  This function creates the difference of two sets.
+ *
+ *  \return NULL on failure or a RDF Term Set handle
+ *          with a reference count of 1.
+ */
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
                                      atlas_rdf_term_set_t set2,
@@ -57,9 +94,18 @@ atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
 #pragma mark -
 #pragma mark Access Details of a RDF Term Set
 
+/*! Number of RDF Terms in the set.
+ */
 int
 atlas_rdf_term_set_length(atlas_rdf_term_set_t set);
 
+/*! Apply a block to each term in the set.
+ *
+ *  This function calls the given block for each
+ *  term in the set.
+ *  
+ *  The given block is called concurrent.
+ */
 void
 atlas_rdf_term_set_apply(atlas_rdf_term_set_t set,
                          void(^iterator)(atlas_rdf_term_t term));
