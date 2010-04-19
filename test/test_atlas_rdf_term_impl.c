@@ -7,18 +7,18 @@
  *
  *  This file is part of atlas.
  *	
- *	atlas is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *  atlas is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *	
- *	atlas is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
+ *  atlas is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "test_atlas_rdf_term_impl.h"
@@ -34,7 +34,7 @@
 START_TEST (test_create_rdf_term_iri) {
     
     atlas_rdf_term_t term;
-	
+    
     // create iri
     term = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     fail_if(term == 0);
@@ -63,7 +63,7 @@ START_TEST (test_create_rdf_term_iri) {
 START_TEST (test_create_rdf_term_blank_node) {
     
     atlas_rdf_term_t term;
-	
+    
     // create blank node
     term = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
     fail_if(term == 0);
@@ -92,7 +92,7 @@ START_TEST (test_create_rdf_term_blank_node) {
 START_TEST (test_create_rdf_term_string) {
     
     atlas_rdf_term_t term;
-	
+    
     // create string literal without language tag
     term = atlas_rdf_term_create_string("Hallo Atlas!", 0, ^(int err, const char * msg){});
     fail_if(term == 0);
@@ -187,7 +187,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 START_TEST (test_create_rdf_term_boolean) {
     
     atlas_rdf_term_t term;
-	
+    
     // create boolean literal (true)
     term = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
     fail_if(term == 0);
@@ -265,7 +265,7 @@ START_TEST (test_create_rdf_term_datetime) {
 START_TEST (test_create_rdf_term_integer) {
     
     atlas_rdf_term_t term;
-	
+    
     const char * str = "3141592653589793238462643383279502884";
     
     mpz_t i;
@@ -334,7 +334,7 @@ START_TEST (test_create_rdf_term_double) {
 START_TEST (test_create_rdf_term_decimal) {
     
     atlas_rdf_term_t term;
-	
+    
     char * str = "3.14159265358979";
     
     mpf_t f;
@@ -377,7 +377,7 @@ START_TEST (test_create_rdf_term_decimal) {
 START_TEST (test_iri_eq_iri) {
     
     atlas_rdf_term_t term1, term2;
-	
+    
     // create iri
     term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     term2 = atlas_rdf_term_create_iri("http://example.de", ^(int err, const char * msg){});
@@ -406,7 +406,7 @@ START_TEST (test_iri_eq_iri) {
 START_TEST (test_iri_eq_blank_node) {
     
     atlas_rdf_term_t term1, term2;
-	
+    
     // create iri
     term1 = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     term2 = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
@@ -417,7 +417,7 @@ START_TEST (test_iri_eq_blank_node) {
         lz_release(term1);
         lz_release(term2);
     }
-
+    
     lz_wait_for_completion();
     
 } END_TEST
@@ -425,7 +425,7 @@ START_TEST (test_iri_eq_blank_node) {
 START_TEST (test_iri_eq_decimal) {
     
     atlas_rdf_term_t term1, term2;
-	char * str = "3.14159265358979";
+    char * str = "3.14159265358979";
     mpf_t f;
     mpf_init_set_str(f, str, 10);
     
@@ -448,7 +448,7 @@ START_TEST (test_iri_eq_decimal) {
 START_TEST (test_str_eq_str) {
     
     atlas_rdf_term_t term1, term2;
-	
+    
     term1 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
     term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
     fail_if(term1 == 0);

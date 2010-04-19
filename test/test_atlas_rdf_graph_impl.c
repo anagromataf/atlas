@@ -7,18 +7,18 @@
  *
  *  This file is part of atlas.
  *	
- *	atlas is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *  atlas is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *	
- *	atlas is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
+ *  atlas is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "test_atlas_rdf_graph_impl.h"
@@ -213,7 +213,7 @@ START_TEST (test_create_rdf_graph_union) {
         atlas_rdf_graph_t graph_union = atlas_rdf_graph_create_union(graph1, graph2, ^(int err, const char * msg){});
         fail_if(graph_union == 0);
         
-        // release the olf graphs
+        // release the old graphs
         lz_release(graph1);
         lz_release(graph2);
         
@@ -348,7 +348,7 @@ START_TEST (test_create_rdf_graph_intersection) {
         atlas_rdf_graph_t intersection = atlas_rdf_graph_create_intersection(graph1, graph2, ^(int err, const char * msg){});
         fail_if(intersection == 0);
         
-        // release the olf graphs
+        // release the old graphs
         lz_release(graph1);
         lz_release(graph2);
         
@@ -485,7 +485,7 @@ START_TEST (test_create_rdf_graph_difference) {
         atlas_rdf_graph_t difference = atlas_rdf_graph_create_difference(graph1, graph2, ^(int err, const char * msg){});
         fail_if(difference == 0);
         
-        // release the olf graphs
+        // release the old graphs
         lz_release(graph1);
         lz_release(graph2);
         

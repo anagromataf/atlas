@@ -7,18 +7,18 @@
  *
  *  This file is part of atlas.
  *	
- *	atlas is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *  atlas is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *	
- *	atlas is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
+ *  atlas is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "atlas_rdf_term_impl.h"
@@ -40,14 +40,14 @@ struct atlas_rdf_term_s {
 
 struct atlas_rdf_term_value_s {
     ATLAS_RDF_TERM_HEADER;
-    char value[]; 
+    char value[];
 };
 
 #pragma mark Boolean
 
 struct atlas_rdf_term_boolean_s {
     ATLAS_RDF_TERM_HEADER;
-    uint8_t value; 
+    uint8_t value;
 };
 
 #pragma mark Datetime
@@ -66,35 +66,12 @@ struct atlas_rdf_term_double_s {
 
 #pragma mark Integer
 
-//typedef struct
-//{
-//    int _mp_alloc;		/* Number of *limbs* allocated and pointed
-//                             to by the _mp_d field.  */
-//    int _mp_size;			/* abs(_mp_size) is the number of limbs the
-//                             last field points to.  If _mp_size is
-//                             negative this is a negative number.  */
-//    mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
-//} __mpz_struct;
-
 struct atlas_rdf_term_integer_s {
     ATLAS_RDF_TERM_HEADER;
     __mpz_struct value;
 };
 
 #pragma mark Decimal
-
-//typedef struct
-//{
-//    int _mp_prec;			/* Max precision, in number of `mp_limb_t's.
-//                             Set by mpf_init and modified by
-//                             mpf_set_prec.  The area pointed to by the
-//                             _mp_d field contains `prec' + 1 limbs.  */
-//    int _mp_size;			/* abs(_mp_size) is the number of limbs the
-//                             last field points to.  If _mp_size is
-//                             negative this is a negative number.  */
-//    mp_exp_t _mp_exp;		/* Exponent, in the base of `mp_limb_t'.  */
-//    mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
-//} __mpf_struct;
 
 struct atlas_rdf_term_decimal_s {
     ATLAS_RDF_TERM_HEADER;
@@ -321,7 +298,7 @@ atlas_rdf_term_create_integer(mpz_t value,
 atlas_rdf_term_t
 atlas_rdf_term_create_decimal(mpf_t value,
                               atlas_error_handler err) {
-
+    
     // calculate the amount of space needed to store this type
     // and allocate memory
     int size = sizeof(struct atlas_rdf_term_decimal_s) + sizeof(mp_limb_t) * (value->_mp_prec + 1);
@@ -375,7 +352,7 @@ atlas_rdf_term_is_type(atlas_rdf_term_t term,
 char *
 atlas_rdf_term_repr(atlas_rdf_term_t term) {
     assert(term != 0);
-
+    
     __block char * result;
     lz_obj_sync(term, ^(void * data, uint32_t length){
         
@@ -901,7 +878,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = t1->value == t2->value;
                                 break;
                             }
-
+                            
                             case DECIMAL_LITERAL:
                             {
                                 struct atlas_rdf_term_decimal_s * t2 = data;
@@ -909,7 +886,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpf_cmp_d(f, t1->value) == 0 ? 1 : 0;
                                 break;
                             }
-                                
+                            
                             case INTEGER_LITERAL:
                             {
                                 struct atlas_rdf_term_integer_s * t2 = data;
@@ -917,7 +894,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpz_cmp_d(f, t1->value) == 0 ? 1 : 0;
                                 break;
                             }
-                                
+                            
                             default:
                                 result = 0;
                         }
@@ -938,7 +915,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpf_cmp_d(f1, t2->value) == 0 ? 1 : 0;
                                 break;                            
                             }
-                                
+                            
                             case DECIMAL_LITERAL:
                             {
                                 struct atlas_rdf_term_decimal_s * t2 = data;
@@ -946,7 +923,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpf_cmp(f1, f2) == 0 ? 1 : 0;
                                 break;
                             }
-                                
+                            
                             case INTEGER_LITERAL:
                             {
                                 struct atlas_rdf_term_integer_s * t2 = data;
@@ -958,14 +935,14 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 mpf_clear(f2);
                                 break;
                             }
-                                
+                            
                             default:
                                 result = 0;
                         }
                     });
                     break;
                 }
-                    
+                
                 case INTEGER_LITERAL:
                 {
                     struct atlas_rdf_term_integer_s *t1 = data;
@@ -979,7 +956,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpz_cmp_d(z1, t2->value) == 0 ? 1 : 0;
                                 break;                            
                             }
-                                
+                            
                             case DECIMAL_LITERAL:
                             {
                                 struct atlas_rdf_term_decimal_s * t2 = data;
@@ -991,7 +968,7 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 mpf_clear(f1);
                                 break;
                             }
-                                
+                            
                             case INTEGER_LITERAL:
                             {
                                 struct atlas_rdf_term_integer_s * t2 = data;
@@ -999,14 +976,14 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                                 result = mpz_cmp(z1, z2) == 0 ? 1 : 0;
                                 break;
                             }
-                                
+                            
                             default:
                                 result = 0;
                         }
                     });
                     break;
                 }
-                    
+                
                 case DATETIME_LITERAL:
                 {
                     struct atlas_rdf_term_datetime_s * t1 = data;

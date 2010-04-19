@@ -7,18 +7,18 @@
  *
  *  This file is part of atlas.
  *	
- *	atlas is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *  atlas is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *	
- *	atlas is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
+ *  atlas is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "atlas_rdf_graph_impl.h"
@@ -59,7 +59,7 @@ atlas_rdf_graph_create(int number_of_statements,
     __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * number_of_statements * 3);
     assert(refs);
     
-    // funtion to find a term in the temporary list and return its position
+    // function to find a term in the temporary list and return its position
     // if the term is not in the list, append it
     int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
         // return the position in the reference lis if the term exists
@@ -161,7 +161,7 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
     assert(graph1 != 0);
     assert(graph2 != 0);
     
-    // if both graphs are the same, return the first garph
+    // if both graphs are the same, return the first graph
     if (lz_obj_same(graph1, graph2) != 0) {
         return lz_retain(graph1);
     }
@@ -190,7 +190,7 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
                                                      (lz_obj_num_ref(graph1) + lz_obj_num_ref(graph2)));
             assert(refs);
             
-            // funtion to find a term in the temporary list and return its position
+            // function to find a term in the temporary list and return its position
             // if the term is not in the list, append it
             int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
                 // return the position in the reference lis if the term exists
@@ -205,7 +205,7 @@ atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
                 return num_refs - 1;
             };
             
-            // function to iterate over both graps and inserting all 'new'
+            // function to iterate over both graphs and inserting all 'new'
             // statements in to the result set
             void(^statement_inter)(int num, __graph * data, atlas_rdf_graph_t g) = ^(int num, __graph * data, atlas_rdf_graph_t g){
                 for (int loop = 0; loop < num; loop++) {
@@ -266,7 +266,7 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
         lz_obj_sync(graph2, ^(void * data2, uint32_t length2){
             
             // calculate the amount of space needed to
-            // and allocate memory (worst case: size of se smales graph)
+            // and allocate memory (worst case: size of the smallest graph)
             int size = length1 < length2 ? length1 : length2;
             __graph * graph = malloc(size);
             assert(graph != 0);
@@ -292,7 +292,7 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
             __block atlas_rdf_term_t * refs = malloc(sizeof(atlas_rdf_term_t) * num_ref_min);
             assert(refs);
             
-            // funtion to find a term in the temporary list and return its position
+            // function to find a term in the temporary list and return its position
             // if the term is not in the list, append it
             int(^term_in_refs)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
                 // return the position in the reference lis if the term exists
@@ -308,7 +308,7 @@ atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
             };
             
             
-            // iterate over the first garph and check for each
+            // iterate over the first graph and check for each
             // statement if it is in the second graph
             for (int o_loop = 0; o_loop < num_statements_g1; o_loop++) {
                 for (int i_loop = 0; i_loop < num_statements_g2; i_loop++) {
