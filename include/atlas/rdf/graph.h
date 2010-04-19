@@ -29,8 +29,12 @@
 
 #include <lazy.h>
 
+/*! Handle for an RDF Graph
+ */
 typedef lz_obj atlas_rdf_graph_t;
 
+/*! a STatement in a RDF Graph.
+ */
 typedef struct atlas_rdf_statement_s {
     atlas_rdf_term_t subject;
     atlas_rdf_term_t predicate;
@@ -40,21 +44,46 @@ typedef struct atlas_rdf_statement_s {
 #pragma mark -
 #pragma mark Create a RDF Graph
 
+/*! Create a RDF Graph
+ *
+ *  This function creates a RDF Graph with the given statements.
+ *  Duplicates statements are removed.
+ *  
+ *  \param number_of_statements Number of statements
+ *  \param statements An array containing the statements for the graph.
+ *  \param err An error handler which is called in case
+ *             of an error with the error message.
+ *
+ *  \return NULL on failure or a RDF Graph handle with a
+ *          reference count of 1.
+ */
 atlas_rdf_graph_t
 atlas_rdf_graph_create(int number_of_statements,
                        atlas_rdf_statement_t * statements,
                        atlas_error_handler err);
 
+/*! Create the union of two graphs
+ *
+ *  This function creates the union of the two graphs.
+ */
 atlas_rdf_graph_t
 atlas_rdf_graph_create_union(atlas_rdf_graph_t graph1,
                              atlas_rdf_graph_t graph2,
                              atlas_error_handler err);
 
+/*! Create the intersection of two graphs
+ *
+ *  This function creates the intersection of two graphs.
+ */
 atlas_rdf_graph_t
 atlas_rdf_graph_create_intersection(atlas_rdf_graph_t graph1,
                                     atlas_rdf_graph_t graph2,
                                     atlas_error_handler err);
 
+/*! Create the difference of two graphs.
+ *
+ *  This function creates the difference of two graphs.
+ */
 atlas_rdf_graph_t
 atlas_rdf_graph_create_difference(atlas_rdf_graph_t graph1,
                                   atlas_rdf_graph_t graph2,
@@ -63,9 +92,18 @@ atlas_rdf_graph_create_difference(atlas_rdf_graph_t graph1,
 #pragma mark -
 #pragma mark Access Details of a RDF Graph
 
+/*! Number of statements in the graph.
+ */
 int
 atlas_rdf_graph_length(atlas_rdf_graph_t graph);
 
+/*! Apply a block to all statements in the graph.
+ * 
+ *  This function calls the given block for each
+ *  statement in the graph.
+ *
+ *  The given block is called concurrent.
+ */
 void
 atlas_rdf_graph_apply(atlas_rdf_graph_t graph,
                       void(^iterator)(atlas_rdf_term_t subject,
@@ -75,6 +113,8 @@ atlas_rdf_graph_apply(atlas_rdf_graph_t graph,
 #pragma mark -
 #pragma mark Graph Predicates
 
+/*! Check if the graph contains a statment.
+ */
 int
 atlas_rdf_graph_contains(atlas_rdf_graph_t graph,
                          atlas_rdf_term_t subject,
