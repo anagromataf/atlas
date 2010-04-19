@@ -25,6 +25,7 @@
 		F658AA2F11785A34004A4525 /* atlas_rdf_term_set_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = F658AA2D11785A34004A4525 /* atlas_rdf_term_set_impl.h */; };
 		F658AA3011785A34004A4525 /* atlas_rdf_term_set_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F658AA2E11785A34004A4525 /* atlas_rdf_term_set_impl.c */; };
 		F658AA5B11785D3B004A4525 /* test_atlas_rdf_term_set_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F658AA5A11785D3B004A4525 /* test_atlas_rdf_term_set_impl.c */; };
+		F658ADD3117C6EF3004A4525 /* atlas_logging_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = F658ADD2117C6EF3004A4525 /* atlas_logging_impl.h */; };
 		F6FE52031174750B0023A1E1 /* term.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FE52021174750B0023A1E1 /* term.h */; };
 		F6FE521A117487A00023A1E1 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FE5219117487A00023A1E1 /* base.h */; };
 		F6FE52471174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = F6FE52461174A0DF0023A1E1 /* test_atlas_rdf_term_impl.c */; };
@@ -88,6 +89,7 @@
 		F658AA2E11785A34004A4525 /* atlas_rdf_term_set_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = atlas_rdf_term_set_impl.c; path = atlas/atlas_rdf_term_set_impl.c; sourceTree = "<group>"; };
 		F658AA5911785D3B004A4525 /* test_atlas_rdf_term_set_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_atlas_rdf_term_set_impl.h; path = test/test_atlas_rdf_term_set_impl.h; sourceTree = "<group>"; };
 		F658AA5A11785D3B004A4525 /* test_atlas_rdf_term_set_impl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_atlas_rdf_term_set_impl.c; path = test/test_atlas_rdf_term_set_impl.c; sourceTree = "<group>"; };
+		F658ADD2117C6EF3004A4525 /* atlas_logging_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = atlas_logging_impl.h; path = atlas/atlas_logging_impl.h; sourceTree = "<group>"; };
 		F6FE52021174750B0023A1E1 /* term.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = term.h; path = include/atlas/rdf/term.h; sourceTree = "<group>"; };
 		F6FE5219117487A00023A1E1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base.h; path = include/atlas/base.h; sourceTree = "<group>"; };
 		F6FE52451174A0DF0023A1E1 /* test_atlas_rdf_term_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_atlas_rdf_term_impl.h; path = test/test_atlas_rdf_term_impl.h; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		F643B74F115B5D0D00832707 /* Lib Atlas */ = {
 			isa = PBXGroup;
 			children = (
+				F658ADD2117C6EF3004A4525 /* atlas_logging_impl.h */,
 				F643B928115B8A7500832707 /* atlas_base_impl.h */,
 				F643B929115B8A7500832707 /* atlas_base_impl.c */,
 				F63BA6A01175F08E00A409AF /* atlas_rdf_term_impl.h */,
@@ -236,6 +239,7 @@
 				F63BA7C11176179E00A409AF /* gmp.h in Headers */,
 				F658AA2811785851004A4525 /* term_set.h in Headers */,
 				F658AA2F11785A34004A4525 /* atlas_rdf_term_set_impl.h in Headers */,
+				F658ADD3117C6EF3004A4525 /* atlas_logging_impl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
