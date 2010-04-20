@@ -7,25 +7,26 @@
  *
  *  This file is part of atlas.
  *	
- *	atlas is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
+ *  atlas is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *	
- *	atlas is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
+ *  atlas is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
  *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with atlas.  If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <check.h>
-
-#include <lazy.h>
 #include <stdlib.h>
 
+#include "test_atlas_rdf_term_impl.h"
+#include "test_atlas_rdf_term_set_impl.h"
+#include "test_atlas_rdf_graph_impl.h"
 #include "test_shape_impl.h"
 #include "test_shape_impl_equal.h"
 #include "test_shape_impl_line_intersect.h"
@@ -72,10 +73,12 @@ int main(int argc, char ** argv) {
     int number_failed;
     
     SRunner *sr = srunner_create(main_suite());
-	srunner_set_fork_status(sr, CK_NOFORK);
+    srunner_set_fork_status(sr, CK_NOFORK);
     
     // add the suites to the main suite
-    srunner_add_suite(sr, atlas_suite());
+    srunner_add_suite(sr, rdf_term_suite());
+    srunner_add_suite(sr, rdf_term_set_suite());
+    srunner_add_suite(sr, rdf_graph_suite());
     
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed (sr);
