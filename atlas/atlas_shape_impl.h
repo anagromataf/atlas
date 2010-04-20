@@ -27,43 +27,8 @@
 #ifndef _ATLAS_SHAPE_IMPL_H_
 #define _ATLAS_SHAPE_IMPL_H_
 
-#include <lazy.h>
-#include <stdint.h>
+#include <atlas/geo/shape.h>
 
-struct atlas_shape_coordinate_s {
-    double longitude;
-    double latitude;
-};
-
-enum atlas_shape_type_e {
-    POINT = 1,
-    ARC = 2,
-    POLYGON = 3
-};
-
-
-/*! \brief Create a shape with the coordinates and the type
- *
- *  \ingroup atlas_type_shp_shape
- *
- *  \param type Type of the shape.
- *  \param number_of_parts Number pof parts in this shape, has minimum of one
- *  \param number_of_coordinates Number of coordinates in this shape, has minimum of one (for a point)
- *  \param pan_part_start The list of zero based start vertices for the rings (parts) in this object.  
- *  The first should (not must) always be zero. 
- *  \param pan_part_type The type of each of the parts.
- *  \param coordinates The number of coordinates beeing passed.
- *  \param error_handler A block which is called if an error occured.
- */
-lz_obj atlas_shape_create(uint16_t number_of_parts,
-						  uint16_t number_of_coordinates,
-						  uint16_t * pan_part_start,
-						  enum atlas_shape_type_e * pan_part_type,
-						  struct atlas_shape_coordinate_s * coordinates,
-						  void (^error_handler)(int errno, const char *msg));
-
-
-lz_obj atlas_shape_create_union(lz_obj obj1, lz_obj obj2);
 
 
 #endif // _ATLAS_SHAPE_IMPL_H_

@@ -2,7 +2,7 @@
  *  atlas_shape_impl_geometry.c
  *  atlas
  *
- *  Created by Peter Fenske on 4/13/10.
+ *  Created by Peter Fenske on 13.04.10.
  *  Copyright 2010 Fraunhofer Institut für Software- und Systemtechnik ISST.
  *
  *  This file is part of atlas.
@@ -32,9 +32,7 @@
 
 const double PRECISION = 1.0E-15;
 
-/*
- * Checks, if two lines intersect. Returns the point (single coordinate) if they intersect, 1 if they lie on top of each other, 0 if they don't
- */
+
 int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 								struct atlas_shape_coordinate_s * l1_s,
 								struct atlas_shape_coordinate_s	* l1_e,
@@ -56,9 +54,13 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 	// function parameters for y = m*x + n
 	double l1_m, l1_n, l2_m, l2_n;
 	
-	if (((l1_e->longitude - l1_s->longitude) == 0) && ((l2_e->longitude - l2_s->longitude) == 0)){
+	if (
+		((l1_e->longitude - l1_s->longitude) == 0) 
+		&& ((l2_e->longitude - l2_s->longitude) == 0)
+		){
 		/*
-		 * Both lines are vertical. In this case they are either on top of each other or they never meet
+		 * Both lines are vertical. In this case they are either on top of each 
+		 * other or they never meet
 		 */
 		if (l1_e->longitude == l2_e->longitude){
 			// they are on top of each other
@@ -73,7 +75,7 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		intersect_x = l1_e->longitude;
 		
 		// slope for line 2
-		l2_m = (l2_e->latitude - l2_s->latitude)/(l2_e->longitude - l2_s->longitude);
+		l2_m = (l2_e->latitude - l2_s->latitude) / (l2_e->longitude - l2_s->longitude);
 		// y-intercept for line 2		
 		l2_n = l2_s->latitude - l2_s->longitude*l2_m;
 		
@@ -85,7 +87,7 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		intersect_x = l2_e->longitude;
 		
 		// slope for line 1
-		l1_m = (l1_e->latitude - l1_s->latitude)/(l1_e->longitude - l1_s->longitude);
+		l1_m = (l1_e->latitude - l1_s->latitude) / (l1_e->longitude - l1_s->longitude);
 		// y-intercept for line 1
 		l1_n = l1_s->latitude - l1_s->longitude*l1_m;
 		
@@ -97,12 +99,12 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		 */
 		
 		// slope for line 1
-		l1_m = (l1_e->latitude - l1_s->latitude)/(l1_e->longitude - l1_s->longitude);
+		l1_m = (l1_e->latitude - l1_s->latitude) / (l1_e->longitude - l1_s->longitude);
 		// y-intercept for line 1
 		l1_n = l1_s->latitude - l1_s->longitude*l1_m;
 		
 		// slope for line 2
-		l2_m = (l2_e->latitude - l2_s->latitude)/(l2_e->longitude - l2_s->longitude);
+		l2_m = (l2_e->latitude - l2_s->latitude) / (l2_e->longitude - l2_s->longitude);
 		// y-intercept for line 2
 		l2_n = l2_s->latitude - l2_s->longitude*l2_m;
 		
@@ -118,7 +120,10 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 			
 		}
 		
-		// solving equation for x: l1_m*x + l1_n = l2_m*x + l2_n <==> x = (l2_n - l1_n) / (l1_m - l2_m)
+		/*
+		 * solving equation for x: 
+		 * l1_m*x + l1_n = l2_m*x + l2_n <==> x = (l2_n - l1_n) / (l1_m - l2_m)
+		 */
 		intersect_x = (l2_n - l1_n) / (l1_m - l2_m);
 		
 		// use intersect_x to calculate intersect_y
@@ -132,12 +137,11 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		}
 	}
 	
-	printf("TEST: intersect_x is %f\n", intersect_x);
-	printf("TEST: intersect_y is %f\n", intersect_y);
-	
 	/*
 	 * Point has to be in "box".
-	 * intersect_x has to be in between the start and end points of both lines. Same for intercept_y. Otherwise both lines intercept, but that would be at the extension of both lines.
+	 * intersect_x has to be in between the start and end points of both lines. 
+	 * Same for intercept_y. Otherwise both lines intercept, but that would be 
+	 * at the extension of both lines.
 	 */
 	if (
 		fmin(l1_s->longitude,l1_e->longitude) <= intersect_x
@@ -158,12 +162,12 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 	return 0;
 }
 
-int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, struct atlas_shape_coordinate_s * coord2){
-	printf("TEST: fabs_lat is %e\n", (fabs(coord1->latitude - coord2->latitude)));
-	printf("TEST: fabs_lon is %e\n", (fabs(coord1->longitude - coord2->longitude)));
-	
-	if ((fabs(coord1->latitude - coord2->latitude) > PRECISION)
-		|| (fabs(coord1->longitude - coord2->longitude) > PRECISION)){
+int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, 
+							struct atlas_shape_coordinate_s * coord2){
+	if (
+		(fabs(coord1->latitude - coord2->latitude) > PRECISION)
+		|| (fabs(coord1->longitude - coord2->longitude) > PRECISION)
+		){
 		return 0;
 	} else {
 		return 1;
@@ -174,8 +178,14 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 						  uint16_t num_coords1,
 						  struct atlas_shape_coordinate_s * coords2,
 						  uint16_t num_coords2){
-	// First case: The starting and ending point have to be equal, if not, no further checks are necessary
-	if (!atlas_shape_point_equal(coords1, coords2) || !atlas_shape_point_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)) {
+	/*
+	 * First case: The starting and ending point have to be equal, if not, 
+	 no further checks are necessary
+	 */
+	if (
+		!atlas_shape_point_equal(coords1, coords2) 
+		|| !atlas_shape_point_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)
+		){
 		return 0;
 	}
 	
@@ -195,7 +205,9 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 			tmp_c2_ptr++;
 		}
 		/*
-		 * Once all line segments are checked with the first point, continue with next point. The pointer for the coordinate pair to create a line segment has to be set back to the start of the coordinate array.
+		 * Once all line segments are checked with the first point, continue 
+		 * with next point. The pointer for the coordinate pair to create a line 
+		 * segment has to be set back to the start of the coordinate array.
 		 */
 		tmp_c2_ptr = coords2;
 		// Once all inside loops are finished, advance pointer to next point
@@ -206,7 +218,9 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 	
 	
 	/*
-	 * The following lop is completely analog to the previous one. The difference is, that the points are not taken from the first arc, but from the second one. These points are checked to be on a line segment of arc 1.
+	 * The following lop is completely analog to the previous one. The 
+	 * difference is, that the points are not taken from the first arc, but from 
+	 * the second one. These points are checked to be on a line segment of arc 1.
 	 */
 	for (int i = 0; i < num_coords2; i++) {
 		for (int j = 0; j < num_coords1 - 1; j++) {
@@ -229,7 +243,8 @@ int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
 					struct atlas_shape_coordinate_s * l2){
 	if ((l1->longitude - l2->longitude) == 0 && point->longitude == l1->longitude){
 		/*
-		 * prevent division by zero, line is vertical, latitude of point does not matter anymore, only the longtitude has to be equal
+		 * prevent division by zero, line is vertical, latitude of point does 
+		 * not matter anymore, only the longtitude has to be equal
 		 */
 		return 1;
 	}

@@ -27,11 +27,9 @@
 #include "test_atlas_rdf_term_impl.h"
 #include "test_atlas_rdf_term_set_impl.h"
 #include "test_atlas_rdf_graph_impl.h"
-#include "test_shape_impl.h"
-#include "test_shape_impl_equal.h"
-#include "test_shape_impl_line_intersect.h"
-#include "test_shape_impl_union.h"
-#include "test_shape_impl_geom_equal.h"
+
+#include "test_atlas_shape_impl.h"
+#include "test_atlas_shape_impl_geometry.h"
 
 #pragma mark -
 #pragma mark Atlas Suites
@@ -44,14 +42,7 @@ Suite * atlas_suite(void) {
     
     //tcase_add_test(tc_core, ...);
 	
-	tcase_add_test(tc_core, test_shape_impl);
-	tcase_add_test(tc_core, test_shape_impl_equal);
-	tcase_add_test(tc_core, test_shape_impl_line_intersect);
-	tcase_add_test(tc_core, test_shape_impl_union);
-	tcase_add_test(tc_core, test_shape_impl_geom_equal);
-
-    
-    suite_add_tcase(s, tc_core);
+	suite_add_tcase(s, tc_core);
     
     return s;
 }
@@ -78,7 +69,10 @@ int main(int argc, char ** argv) {
     // add the suites to the main suite
     srunner_add_suite(sr, rdf_term_suite());
     srunner_add_suite(sr, rdf_term_set_suite());
-    srunner_add_suite(sr, rdf_graph_suite());
+	srunner_add_suite(sr, rdf_graph_suite());
+	
+	srunner_add_suite(sr, shape_impl_suite());
+    srunner_add_suite(sr, shape_impl_geometry_suite());
     
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed (sr);
