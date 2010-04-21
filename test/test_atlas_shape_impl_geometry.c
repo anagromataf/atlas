@@ -29,6 +29,8 @@
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
 
+// TODO: Adapt all tests for use with spheres
+
 START_TEST (test_shape_impl_geometry_line_intersect) {
 	
     // case with two vertical lines that don't meet

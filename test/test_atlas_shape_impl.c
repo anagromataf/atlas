@@ -29,10 +29,12 @@
 
 #include "atlas_shape_impl.h"
 
+// TODO: Adapt all tests for use with spheres
+
 START_TEST (test_shape_impl_create) {
     
 	// FIRST SHAPE
-	lz_obj lzo1 = atlas_shape_create(0,0,0,0,0,^(int errno, const char *msg){});
+	lz_obj lzo1 = atlas_shape_create(0,0,0,0,0,^(int err, const char * msg){});
 	fail_if (lzo1 == 0);
 	lz_release(lzo1);
 	lz_wait_for_completion();
@@ -52,7 +54,7 @@ START_TEST (test_shape_impl_create) {
 									 pan_part_start, 
 									 type_array, 
 									 coord_array, 
-									 ^(int errno, const char *msg){});
+									 ^(int err, const char * msg){});
 	fail_if (lzo2 == 0);
 	
 	fail_unless(atlas_shape_get_number_of_parts(lzo2) == 2);
@@ -83,7 +85,7 @@ START_TEST (test_shape_impl_create) {
 									   pan_part_start_7, 
 									   type_array_7, 
 									   coord_array_7, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape7 == 0);
 	fail_unless(atlas_shape_get_number_of_parts(shape7) == 3);
 	fail_unless(atlas_shape_get_number_of_coords(shape7) == 5);
@@ -107,12 +109,12 @@ START_TEST (test_shape_impl_create) {
 START_TEST (test_shape_impl_equal) {
     
 	// create "empty" shape
-	lz_obj shape1 = atlas_shape_create(0,0,0,0,0,^(int errno, const char *msg){});
+	lz_obj shape1 = atlas_shape_create(0,0,0,0,0,^(int err, const char * msg){});
 	fail_if (shape1 == 0);
 	lz_wait_for_completion();
 	
 	// create another empty shape
-	lz_obj shape2 = atlas_shape_create(0,0,0,0,0,^(int errno, const char *msg){});
+	lz_obj shape2 = atlas_shape_create(0,0,0,0,0,^(int err, const char * msg){});
 	fail_if (shape2 == 0);
 	lz_wait_for_completion();
 	
@@ -126,7 +128,7 @@ START_TEST (test_shape_impl_equal) {
 									   pan_part_start_3, 
 									   type_array_3, 
 									   coord_array_3, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape3 == 0);
 	lz_wait_for_completion();
 	
@@ -136,7 +138,7 @@ START_TEST (test_shape_impl_equal) {
 									   pan_part_start_3, 
 									   type_array_3, 
 									   coord_array_3, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape4 == 0);
 	lz_wait_for_completion();
 	
@@ -154,7 +156,7 @@ START_TEST (test_shape_impl_equal) {
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_5, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape5 == 0);
 	lz_wait_for_completion();
 	
@@ -164,7 +166,7 @@ START_TEST (test_shape_impl_equal) {
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_5, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape6 == 0);
 	lz_wait_for_completion();
 	
@@ -181,7 +183,7 @@ START_TEST (test_shape_impl_equal) {
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_7, 
-									   ^(int errno, const char *msg){});
+									   ^(int err, const char * msg){});
 	fail_if (shape7 == 0);
 	lz_wait_for_completion();
 	
@@ -246,7 +248,7 @@ START_TEST (test_shape_impl_union) {
 									 pan_part_start_1, 
 									 type_array_1, 
 									 coord_array_1, 
-									 ^(int errno, const char *msg){});
+									 ^(int err, const char * msg){});
 	fail_if (lzo1 == 0);
 	lz_wait_for_completion();
 	
@@ -260,11 +262,13 @@ START_TEST (test_shape_impl_union) {
 									 pan_part_start_2, 
 									 type_array_2,
 									 coord_array_2,
-									 ^(int errno, const char *msg){});
+									 ^(int err, const char * msg){});
 	fail_if (lzo2 == 0);
 	lz_wait_for_completion();
 	
-	lz_obj lzo_union_12 = atlas_shape_create_union(lzo1, lzo2);
+	lz_obj lzo_union_12 = atlas_shape_create_union(lzo1, 
+												   lzo2, 
+												   ^(int err, const char * msg){});
 	fail_if (lzo_union_12 == 0);
 	
 	fail_unless(atlas_shape_get_number_of_parts(lzo_union_12) == 2);

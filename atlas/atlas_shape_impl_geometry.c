@@ -38,6 +38,9 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 								struct atlas_shape_coordinate_s	* l1_e,
 								struct atlas_shape_coordinate_s * l2_s,
 								struct atlas_shape_coordinate_s	* l2_e){
+
+	// TODO: Adapt function for use with spheres.
+	
 	/* 
 	 * latitude = y
 	 * longtitude = x
@@ -178,6 +181,9 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 						  uint16_t num_coords1,
 						  struct atlas_shape_coordinate_s * coords2,
 						  uint16_t num_coords2){
+	
+	// TODO: Adapt for use with spheres (see lines_intersect)
+	
 	/*
 	 * First case: The starting and ending point have to be equal, if not, 
 	 no further checks are necessary
@@ -241,6 +247,9 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
 					struct atlas_shape_coordinate_s * l1,
 					struct atlas_shape_coordinate_s * l2){
+	
+	// TODO: adapt for use with spheres.
+	
 	if ((l1->longitude - l2->longitude) == 0 && point->longitude == l1->longitude){
 		/*
 		 * prevent division by zero, line is vertical, latitude of point does 

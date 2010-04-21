@@ -61,6 +61,8 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 						  struct atlas_shape_coordinate_s * coordinates,
 						  atlas_error_handler err) {
 	
+	// TODO: Validate input data for consistency (coordinates, simple polygons)
+	
 	/*
 	 * Calculate total necessary length of data to allocate.
 	 * The length is two uint_16 for the number of parts and the number of 

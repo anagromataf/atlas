@@ -49,7 +49,7 @@ enum atlas_shape_type_e {
  *						The first should (not must) always be zero. 
  *  \param pan_part_type The type of each of the parts.
  *  \param coordinates The number of coordinates beeing passed.
- *  \param error_handler A block which is called if an error occured.
+ *  \param err A block which is called if an error occured.
  *
  *	\return
  */
@@ -107,10 +107,13 @@ int atlas_shape_get_start_of_part(lz_obj obj, int part);
  * 
  * \param LazyObject containing the first shape.
  * \param LazyObject containing the second shape.
+ * \param err A block which is called if an error occured.
  * 
  * \return A new lazyObject containing the intersection of the two shapes.
  */
-lz_obj atlas_shape_create_intersection(lz_obj obj1, lz_obj obj2);
+lz_obj atlas_shape_create_intersection(lz_obj obj1, 
+									   lz_obj obj2,
+									   atlas_error_handler err);
 
 
 /*
@@ -118,10 +121,13 @@ lz_obj atlas_shape_create_intersection(lz_obj obj1, lz_obj obj2);
  * 
  * \param LazyObject containing the first shape.
  * \param LazyObject containing the second shape. 
+ * \param err A block which is called if an error occured.
  * 
  * \return A new lazyObject containing the union of the two shapes.
  */
-lz_obj atlas_shape_create_union(lz_obj obj1, lz_obj obj2);
+lz_obj atlas_shape_create_union(lz_obj obj1, 
+								lz_obj obj2, 
+								atlas_error_handler err);
 
 
 /*
@@ -129,10 +135,13 @@ lz_obj atlas_shape_create_union(lz_obj obj1, lz_obj obj2);
  * 
  * \param LazyObject containing the first shape.
  * \param LazyObject containing the second shape.
+ * \param err A block which is called if an error occured.
  * 
  * \return A new lazyObject containing the difference of the two shapes.
  */
-lz_obj atlas_shape_create_difference(lz_obj obj1, lz_obj obj2);
+lz_obj atlas_shape_create_difference(lz_obj obj1, 
+									 lz_obj obj2,
+									 atlas_error_handler err);
 
 
 /*
