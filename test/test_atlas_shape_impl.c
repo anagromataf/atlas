@@ -270,13 +270,14 @@ START_TEST (test_shape_impl_union) {
 												   lzo2, 
 												   ^(int err, const char * msg){});
 	fail_if (lzo_union_12 == 0);
-	
-	fail_unless(atlas_shape_get_number_of_parts(lzo_union_12) == 2);
-	fail_unless(atlas_shape_get_number_of_coords(lzo_union_12) == 4);
-	fail_unless(atlas_shape_get_type_of_part(lzo_union_12, 0) == ARC);
-	fail_unless(atlas_shape_get_start_of_part(lzo_union_12, 0) == 0);
-	fail_unless(atlas_shape_get_type_of_part(lzo_union_12, 1) == ARC);
-	fail_unless(atlas_shape_get_start_of_part(lzo_union_12, 1) == 2);	
+	if (lzo_union_12) {
+        fail_unless(atlas_shape_get_number_of_parts(lzo_union_12) == 2);
+        fail_unless(atlas_shape_get_number_of_coords(lzo_union_12) == 4);
+        fail_unless(atlas_shape_get_type_of_part(lzo_union_12, 0) == ARC);
+        fail_unless(atlas_shape_get_start_of_part(lzo_union_12, 0) == 0);
+        fail_unless(atlas_shape_get_type_of_part(lzo_union_12, 1) == ARC);
+        fail_unless(atlas_shape_get_start_of_part(lzo_union_12, 1) == 2);	
+    }
 	
 	lz_wait_for_completion();
 	lz_release(lzo1);
@@ -310,8 +311,8 @@ Suite * shape_impl_suite(void) {
     
 	
     tcase_add_test(tc_create, test_shape_impl_create);
-	//tcase_add_test(tc_create, test_shape_impl_equal);
-	//tcase_add_test(tc_create, test_shape_impl_union);
+	tcase_add_test(tc_create, test_shape_impl_equal);
+	tcase_add_test(tc_create, test_shape_impl_union);
     
     suite_add_tcase(s, tc_create);
     
