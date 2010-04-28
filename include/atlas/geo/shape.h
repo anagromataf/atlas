@@ -21,28 +21,38 @@
  *  along with atlas.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ATLAS_SHAPE_H_
-#define _ATLAS_SHAPE_H_
+#ifndef _ATLAS_GEO_SHAPE_H_
+#define _ATLAS_GEO_SHAPE_H_
+
+#include <atlas/base.h>
 
 #include <lazy.h>
 #include <stdint.h>
-#include <atlas/base.h>
 
-struct atlas_shape_coordinate_s {
+/*! Handle for an Atlas Shape
+ */
+typedef lz_obj atlas_shp_t;
+
+/*! Type for a coordinate
+ */
+typedef struct atlas_shp_coordinate_s {
     double longitude;
     double latitude;
-};
+} atlas_shp_coordinate_t;
 
-enum atlas_shape_type_e {
+/*! Type of a part in a shape
+ */
+typedef enum atlas_shp_type_e {
     POINT = 1,
     ARC = 2,
     POLYGON = 3
-};
+} atlas_shp_type_t;
 
+#pragma mark -
+#pragma mark Create a Shape
 
 /*! Create a shape with the coordinates and the type
  *
- *  \param type Type of the shape.
  *  \param number_of_parts Number pof parts in this shape, has minimum of one
  *  \param number_of_coordinates Number of coordinates in this shape, has minimum of one (for a point)
  *  \param pan_part_start The list of zero based start vertices for the rings (parts) in this object.  
@@ -53,150 +63,170 @@ enum atlas_shape_type_e {
  *
  *	\return
  */
-lz_obj atlas_shape_create(uint16_t number_of_parts,
-						  uint16_t number_of_coordinates,
-						  uint16_t * pan_part_start,
-						  enum atlas_shape_type_e * pan_part_type,
-						  struct atlas_shape_coordinate_s * coordinates,
-						  atlas_error_handler err);
+atlas_shp_t
+atlas_shape_create(uint16_t number_of_parts,
+                   uint16_t number_of_coordinates,
+                   uint16_t * pan_part_start,
+                   atlas_shp_type_t * pan_part_type,
+                   atlas_shp_coordinate_t * coordinates,
+                   atlas_error_handler err);
 
-/*
- *! Returns the number of parts in a shape
+
+/*! Create the intersection of two shapes.
  * 
- * \param obj LazyObject containing the shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
+ * \param err A block which is called if an error occured.
  * 
- * \return Number of parts in shape.
+ * \return A new shape containing the intersection of the two shapes.
  */
-int atlas_shape_get_number_of_parts(lz_obj obj);
+atlas_shp_t
+atlas_shape_create_intersection(atlas_shp_t shape1, 
+                                atlas_shp_t shape2,
+                                atlas_error_handler err);
 
 
-/*
- *! Returns the number of coordinate tuples in a shape
+/*! Create the union of two shapes.
  * 
- * \param LazyObject containing the shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
+ * \param err A block which is called if an error occured
  * 
- * \return Number coordinates in shape.
+ * \return A new shape containing the union of the two shapes.
  */
-int atlas_shape_get_number_of_coords(lz_obj obj);
+atlas_shp_t
+atlas_shape_create_union(atlas_shp_t shape1, 
+                         atlas_shp_t shape2, 
+                         atlas_error_handler err);
 
 
-/*
- *! Returns the type of the n-th part in a shape
+/*! Create the difference of two shapes.
  * 
- * \param LazyObject containing the shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
+ * \param err A block which is called if an error occured
+ * 
+ * \return A new shape containing the difference of the two shapes.
+ */
+atlas_shp_t
+atlas_shape_create_difference(atlas_shp_t shape1, 
+                              atlas_shp_t shape2,
+                              atlas_error_handler err);
+
+
+#pragma mark -
+#pragma mark Access Details of a Shape
+
+/*! Returns the number of parts in a shape
+ * 
+ * \param shape a shape
+ * \return Number of parts the shape
+ */
+int
+atlas_shape_get_number_of_parts(atlas_shp_t shape);
+
+
+/*! Returns the type of the n-th part in a shape
+ * 
+ * \param shape a shape
+ * \param Number of part (count starts at 0)
+ * 
+ * \return Type of part
+ */
+atlas_shp_type_t
+atlas_shape_get_type_of_part(atlas_shp_t shape,
+                             int part);
+
+
+/*! Returns the number of coordinate tuples in a shape
+ * 
+ * FIXME: This function should not be public
+ *
+ * \param shape a shape
+ * 
+ * \return Number coordinates in shape
+ */
+int
+atlas_shape_get_number_of_coords(atlas_shp_t shape);
+
+
+/*! Returns the coordinate's start index of the n-th part in a shape.
+ * 
+ * FIXME: This function should not be public
+ *
+ * \param shape a shape
  * \param Number of part (count starts at 0)
  * 
  * \return Type of part.
  */
-enum atlas_shape_type_e atlas_shape_get_type_of_part(lz_obj obj, int part);
+int
+atlas_shape_get_start_of_part(atlas_shp_t shape,
+                              int part);
 
 
-/*
- *! Returns the coordinate's start index of the n-th part in a shape.
+#pragma mark -
+#pragma mark Predicates with two Shapes
+
+/*! Checks if the two shapes are equal.
  * 
- * \param LazyObject containing the shape.
- * \param Number of part (count starts at 0)
- * 
- * \return Type of part.
- */
-int atlas_shape_get_start_of_part(lz_obj obj, int part);
-
-
-/*
- *! Create the intersection of two shapes.
- * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
- * \param err A block which is called if an error occured.
- * 
- * \return A new lazyObject containing the intersection of the two shapes.
- */
-lz_obj atlas_shape_create_intersection(lz_obj obj1, 
-									   lz_obj obj2,
-									   atlas_error_handler err);
-
-
-/*
- *! Create the union of two shapes.
- * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape. 
- * \param err A block which is called if an error occured.
- * 
- * \return A new lazyObject containing the union of the two shapes.
- */
-lz_obj atlas_shape_create_union(lz_obj obj1, 
-								lz_obj obj2, 
-								atlas_error_handler err);
-
-
-/*
- *! Create the difference of two shapes.
- * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
- * \param err A block which is called if an error occured.
- * 
- * \return A new lazyObject containing the difference of the two shapes.
- */
-lz_obj atlas_shape_create_difference(lz_obj obj1, 
-									 lz_obj obj2,
-									 atlas_error_handler err);
-
-
-/*
- *! Checks if the two shapes are equal.
- * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
  * 
  * \return 1 if both shapes represent the same information, 0 otherwise.
  */
-int atlas_shape_is_equal(lz_obj obj1, lz_obj obj2);
+int
+atlas_shape_is_equal(atlas_shp_t shape1,
+                     atlas_shp_t shape2);
 
 
-/*
- *! Check if the two shapes are intersecting.
+/*! Check if the two shapes are intersecting.
  * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
  * 
  * \return 1 if both shapes intersect, 0 otherwise.
  */
-int atlas_shape_intersects (lz_obj obj1, lz_obj obj2);
+int
+atlas_shape_intersects(atlas_shp_t shape1,
+                       atlas_shp_t shape2);
 
 
-/*
- *! Check if shape 1 is inside shape 2.
+/*! Check if shape 1 is inside shape 2.
  * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
  * 
  * \return 1 if shape 1 is inside of shape 2, 0 otherwise.
  */
-int atlas_shape_is_inside (lz_obj obj1, lz_obj obj2);
+int
+atlas_shape_is_inside(atlas_shp_t shape1,
+                      atlas_shp_t shape2);
 
 
-/*
- *! Check if shape 1 is outside of shape 2.
+/*! Check if shape 1 is outside of shape 2.
  * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
  * 
  * \return 1 if shape 1 is outside of shape 2, 0 otherwise.
  */
-int atlas_shape_is_outside (lz_obj obj1, lz_obj obj2);
+int
+atlas_shape_is_outside(atlas_shp_t shape1,
+                       atlas_shp_t shape2);
 
 
-/*
- *! Check if the two shapes are adjacent.
+/*! Check if the two shapes are adjacent.
  * 
- * \param LazyObject containing the first shape.
- * \param LazyObject containing the second shape.
+ * \param shape1 first shape
+ * \param shape2 second shape
  * 
  * \return 1 if shapes are adjacent, 0 otherwise.
  */
-int atlas_shape_is_adjacent (lz_obj obj1, lz_obj obj2);
+int
+atlas_shape_is_adjacent(atlas_shp_t shape1,
+                        atlas_shp_t shape2);
 
 
-#endif // _ATLAS_SHAPE_H_
+#endif // _ATLAS_GEO_SHAPE_H_
+
+

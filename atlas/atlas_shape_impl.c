@@ -30,10 +30,10 @@
 #include <assert.h>
 
 /*
- * This struct represents the data written to memory for a shape. 
- * It holds the number of parts and coordinates and the dynamic length data.
+ *  This struct represents the data written to memory for a shape. 
+ *  It holds the number of parts and coordinates and the dynamic length data.
  */
-struct atlas_shape_data_s{
+struct atlas_shape_data_s {
 	uint16_t number_of_parts;
 	uint16_t number_of_coordinates;
 	/*
@@ -47,19 +47,20 @@ struct atlas_shape_data_s{
 /*
  * This struct holds the information for a single pan_part as part of a shape.
  */
-struct atlas_shape_part_info_s{
+struct atlas_shape_part_info_s {
 	// start index for coordinates of shape
 	uint16_t pan_part_start;
-	enum atlas_shape_type_e pan_part_type;
+	atlas_shp_type_t pan_part_type;
 };
 
 
-lz_obj atlas_shape_create(uint16_t number_of_parts,
-						  uint16_t number_of_coordinates,
-						  uint16_t * pan_part_start,
-						  enum atlas_shape_type_e * pan_part_type,
-						  struct atlas_shape_coordinate_s * coordinates,
-						  atlas_error_handler err) {
+atlas_shp_t
+atlas_shape_create(uint16_t number_of_parts,
+                   uint16_t number_of_coordinates,
+                   uint16_t * pan_part_start,
+                   atlas_shp_type_t * pan_part_type,
+                   atlas_shp_coordinate_t * coordinates,
+                   atlas_error_handler err) {
 	
 	// TODO: Validate input data for consistency (coordinates, simple polygons)
 	
@@ -72,8 +73,8 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 	 */
 	
 	int length_of_data = sizeof(uint16_t) * 2
-	+ number_of_parts * sizeof(struct atlas_shape_part_info_s)
-	+ number_of_coordinates * sizeof(struct atlas_shape_coordinate_s);
+                       + number_of_parts * sizeof(struct atlas_shape_part_info_s)
+                       + number_of_coordinates * sizeof(atlas_shp_coordinate_t);
 	
 	
 	// Declare pointer to begin of memory location
@@ -92,9 +93,8 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 			 * if the number of parts would be 0, then there exists no data to copy. 
 			 * Otherwise copy pan part start indices.
 			 */
-			
-			struct atlas_shape_part_info_s * part_infos 
-				= (struct atlas_shape_part_info_s *) shape_data->data;
+            
+			struct atlas_shape_part_info_s * part_infos = (struct atlas_shape_part_info_s *)shape_data->data;
 			
 			// for the number of parts
 			for (int i = 0; i < number_of_parts; i++){
@@ -110,7 +110,7 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 			// copy coordinates
 			memcpy(shape_data->data + number_of_parts * sizeof(struct atlas_shape_part_info_s),
 				   coordinates,
-				   number_of_coordinates * sizeof(struct atlas_shape_coordinate_s));
+				   number_of_coordinates * sizeof(atlas_shp_coordinate_t));
 		}
 		
 		// create lazy object
@@ -127,44 +127,73 @@ lz_obj atlas_shape_create(uint16_t number_of_parts,
 	}
 }
 
-int atlas_shape_get_number_of_parts(lz_obj obj){
+
+atlas_shp_t
+atlas_shape_create_intersection(atlas_shp_t shape1, 
+                                atlas_shp_t shape2,
+                                atlas_error_handler err) {
+	return 0;
+}
+
+
+atlas_shp_t
+atlas_shape_create_union(atlas_shp_t shape1, 
+                         atlas_shp_t shape2,
+                         atlas_error_handler err) {
+	return 0;
+}
+
+
+atlas_shp_t
+atlas_shape_create_difference(atlas_shp_t shape1, 
+                              atlas_shp_t shape2,
+                              atlas_error_handler err) {
+	return 0;
+}
+
+
+int
+atlas_shape_get_number_of_parts(atlas_shp_t shape) {
+    
 	__block uint16_t number_of_parts = 0;
-	
-	lz_obj_sync(obj, ^(void * data, uint32_t size){
+	lz_obj_sync(shape, ^(void * data, uint32_t size){
 		// read data content from lazy object
 		struct atlas_shape_data_s * data_s = data;
+        
 		// read number of coordinates
 		number_of_parts = data_s->number_of_parts;	
 	});
-	
 	return number_of_parts;
 }
 
 
-int atlas_shape_get_number_of_coords(lz_obj obj){
+int
+atlas_shape_get_number_of_coords(atlas_shp_t shape) {
+    
 	__block uint16_t number_of_coords = 0;
-	
-	lz_obj_sync(obj, ^(void * data, uint32_t size){
+	lz_obj_sync(shape, ^(void * data, uint32_t size){
 		// read data content from lazy object
 		struct atlas_shape_data_s * data_s = data;
 		// read number of coordinates
 		number_of_coords = data_s->number_of_coordinates;	
 	});
-	
 	return number_of_coords;
 }
 
 
-enum atlas_shape_type_e atlas_shape_get_type_of_part(lz_obj obj, int part){
-	__block enum atlas_shape_type_e type_of_shape;
-	
-	lz_obj_sync(obj, ^(void * data, uint32_t size){
-		struct atlas_shape_data_s * shape = data;
+atlas_shp_type_t
+atlas_shape_get_type_of_part(atlas_shp_t shape,
+                             int part) {
+    
+	__block atlas_shp_type_t type_of_shape;
+	lz_obj_sync(shape, ^(void * data, uint32_t size){
+        
+		struct atlas_shape_data_s * shape_data = data;
 		
 		// Check if part number (as in index) is smaller than the number of parts specified in the object
-		assert(part < shape->number_of_parts);
+		assert(part < shape_data->number_of_parts);
 		
-		struct atlas_shape_part_info_s * part_info = (struct atlas_shape_part_info_s *)(shape->data);
+		struct atlas_shape_part_info_s * part_info = (struct atlas_shape_part_info_s *)(shape_data->data);
 		type_of_shape = part_info[part].pan_part_type;		
 		
 	});
@@ -172,63 +201,57 @@ enum atlas_shape_type_e atlas_shape_get_type_of_part(lz_obj obj, int part){
 }
 
 
-int atlas_shape_get_start_of_part(lz_obj obj, int part){
+int
+atlas_shape_get_start_of_part(atlas_shp_t shape,
+                              int part) {
+    
 	__block uint16_t start_of_part;
-	
-	lz_obj_sync(obj, ^(void * data, uint32_t size){
-		struct atlas_shape_data_s * shape = data;
+	lz_obj_sync(shape, ^(void * data, uint32_t size){
+        
+		struct atlas_shape_data_s * shape_data = data;
 		
 		// Check if part number (as in index) is smaller than the number of parts specified in the object
-		assert(part < shape->number_of_parts);
+		assert(part < shape_data->number_of_parts);
 		
-		struct atlas_shape_part_info_s * part_info = (struct atlas_shape_part_info_s *)(shape->data);
+		struct atlas_shape_part_info_s * part_info = (struct atlas_shape_part_info_s *)(shape_data->data);
 		start_of_part = part_info[part].pan_part_start;
-		
 	});
 	return start_of_part;
 }
 
-lz_obj atlas_shape_create_intersection(lz_obj obj1, 
-									   lz_obj obj2,
-									   atlas_error_handler err){
+
+int
+atlas_shape_is_equal(atlas_shp_t shape1,
+                     atlas_shp_t shape2) {
 	return 0;
 }
 
 
-lz_obj atlas_shape_create_union(lz_obj obj1, 
-								lz_obj obj2,
-								atlas_error_handler err){
+int
+atlas_shape_intersects(atlas_shp_t shape1,
+                       atlas_shp_t shape2) {
 	return 0;
 }
 
 
-lz_obj atlas_shape_create_difference(lz_obj obj1, 
-									 lz_obj obj2,
-									 atlas_error_handler err){
+int
+atlas_shape_is_inside(atlas_shp_t shape1,
+                      atlas_shp_t shape2) {
 	return 0;
 }
 
 
-int atlas_shape_is_equal(lz_obj obj1, lz_obj obj2){
+int
+atlas_shape_is_outside(atlas_shp_t shape1,
+                       atlas_shp_t shape2) {
 	return 0;
 }
 
 
-int atlas_shape_intersects (lz_obj obj1, lz_obj obj2){
+int
+atlas_shape_is_adjacent(atlas_shp_t shape1,
+                        atlas_shp_t shape2) {
 	return 0;
 }
 
 
-int atlas_shape_is_inside (lz_obj obj1, lz_obj obj2){
-	return 0;
-}
-
-
-int atlas_shape_is_outside (lz_obj obj1, lz_obj obj2){
-	return 0;
-}
-
-
-int atlas_shape_is_adjacent (lz_obj obj1, lz_obj obj2){
-	return 0;
-}
