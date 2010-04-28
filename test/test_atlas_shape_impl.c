@@ -41,16 +41,16 @@ START_TEST (test_shape_impl_create) {
 	
 	
 	// SECOND SHAPE
-	struct atlas_shape_coordinate_s c1 = {1.9,2.9};
-	struct atlas_shape_coordinate_s c2 = {3.9,4.9};
-	struct atlas_shape_coordinate_s coord_array[] = {c1, c2, c1, c2, c1, c2};
+	atlas_shp_coordinate_t c1 = {1.9,2.9};
+	atlas_shp_coordinate_t c2 = {3.9,4.9};
+	atlas_shp_coordinate_t coord_array[] = {c1, c2, c1, c2, c1, c2};
 	
 	uint16_t pan_part_start[] = {0, 4};
 	
-	enum atlas_shape_type_e type_array[] = {ARC, POINT};
+	atlas_shp_type_t type_array[] = {ARC, POINT};
 	
 	lz_obj lzo2 = atlas_shape_create(2, 
-									 sizeof(coord_array) / sizeof(struct atlas_shape_coordinate_s), 
+									 sizeof(coord_array) / sizeof(atlas_shp_coordinate_t), 
 									 pan_part_start, 
 									 type_array, 
 									 coord_array, 
@@ -72,16 +72,16 @@ START_TEST (test_shape_impl_create) {
 	
 	
 	// ANOTHER SHAPE
-	struct atlas_shape_coordinate_s c71 = {7.1, 7.2};
-	struct atlas_shape_coordinate_s c72 = {7.3, 7.4};
-	struct atlas_shape_coordinate_s c73 = {7.5, 7.6};
-	struct atlas_shape_coordinate_s c74 = {7.7, 7.8};
-	struct atlas_shape_coordinate_s c75 = {7.9, 7.0};
-	struct atlas_shape_coordinate_s coord_array_7[] = {c71, c72, c73, c74, c75};
+	atlas_shp_coordinate_t c71 = {7.1, 7.2};
+	atlas_shp_coordinate_t c72 = {7.3, 7.4};
+	atlas_shp_coordinate_t c73 = {7.5, 7.6};
+	atlas_shp_coordinate_t c74 = {7.7, 7.8};
+	atlas_shp_coordinate_t c75 = {7.9, 7.0};
+	atlas_shp_coordinate_t coord_array_7[] = {c71, c72, c73, c74, c75};
 	uint16_t pan_part_start_7[] = {0,1,3};
-	enum atlas_shape_type_e type_array_7[] = {POINT, ARC, ARC};
+	atlas_shp_type_t type_array_7[] = {POINT, ARC, ARC};
 	lz_obj shape7 = atlas_shape_create(3, 
-									   sizeof(coord_array_7) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_7) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_7, 
 									   type_array_7, 
 									   coord_array_7, 
@@ -119,12 +119,12 @@ START_TEST (test_shape_impl_equal) {
 	lz_wait_for_completion();
 	
 	// create a simple filled shape with only one coordinate
-	struct atlas_shape_coordinate_s c31 = {1.1, 1.2};
-	struct atlas_shape_coordinate_s coord_array_3[] = {c31};
+	atlas_shp_coordinate_t c31 = {1.1, 1.2};
+	atlas_shp_coordinate_t coord_array_3[] = {c31};
 	uint16_t pan_part_start_3[] = {0};
-	enum atlas_shape_type_e type_array_3[] = {POINT};
+	atlas_shp_type_t type_array_3[] = {POINT};
 	lz_obj shape3 = atlas_shape_create(1, 
-									   sizeof(coord_array_3) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_3) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_3, 
 									   type_array_3, 
 									   coord_array_3, 
@@ -134,7 +134,7 @@ START_TEST (test_shape_impl_equal) {
 	
 	// create the another simple shape with the same content
 	lz_obj shape4 = atlas_shape_create(1, 
-									   sizeof(coord_array_3) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_3) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_3, 
 									   type_array_3, 
 									   coord_array_3, 
@@ -143,16 +143,16 @@ START_TEST (test_shape_impl_equal) {
 	lz_wait_for_completion();
 	
 	// create a more complex shape
-	struct atlas_shape_coordinate_s c51 = {5.1, 5.2};
-	struct atlas_shape_coordinate_s c52 = {5.3, 5.4};
-	struct atlas_shape_coordinate_s c53 = {5.5, 5.6};
-	struct atlas_shape_coordinate_s c54 = {5.7, 5.8};
-	struct atlas_shape_coordinate_s c55 = {5.9, 5.0};
-	struct atlas_shape_coordinate_s coord_array_5[] = {c51, c52, c53, c54, c55};
+	atlas_shp_coordinate_t c51 = {5.1, 5.2};
+	atlas_shp_coordinate_t c52 = {5.3, 5.4};
+	atlas_shp_coordinate_t c53 = {5.5, 5.6};
+	atlas_shp_coordinate_t c54 = {5.7, 5.8};
+	atlas_shp_coordinate_t c55 = {5.9, 5.0};
+	atlas_shp_coordinate_t coord_array_5[] = {c51, c52, c53, c54, c55};
 	uint16_t pan_part_start_5[] = {0,1,3};
-	enum atlas_shape_type_e type_array_5[] = {POINT, ARC, ARC};
+	atlas_shp_type_t type_array_5[] = {POINT, ARC, ARC};
 	lz_obj shape5 = atlas_shape_create(3, 
-									   sizeof(coord_array_5) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_5) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_5, 
@@ -162,7 +162,7 @@ START_TEST (test_shape_impl_equal) {
 	
 	// create another shape using the same data
 	lz_obj shape6 = atlas_shape_create(3, 
-									   sizeof(coord_array_5) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_5) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_5, 
@@ -172,14 +172,14 @@ START_TEST (test_shape_impl_equal) {
 	
 	
 	// create another shape, using the same data but different coordinates
-	struct atlas_shape_coordinate_s c71 = {7.1, 7.2};
-	struct atlas_shape_coordinate_s c72 = {7.3, 7.4};
-	struct atlas_shape_coordinate_s c73 = {7.5, 7.6};
-	struct atlas_shape_coordinate_s c74 = {7.7, 7.8};
-	struct atlas_shape_coordinate_s c75 = {7.9, 7.0};
-	struct atlas_shape_coordinate_s coord_array_7[] = {c71, c72, c73, c74, c75};
+	atlas_shp_coordinate_t c71 = {7.1, 7.2};
+	atlas_shp_coordinate_t c72 = {7.3, 7.4};
+	atlas_shp_coordinate_t c73 = {7.5, 7.6};
+	atlas_shp_coordinate_t c74 = {7.7, 7.8};
+	atlas_shp_coordinate_t c75 = {7.9, 7.0};
+	atlas_shp_coordinate_t coord_array_7[] = {c71, c72, c73, c74, c75};
 	lz_obj shape7 = atlas_shape_create(3, 
-									   sizeof(coord_array_7) / sizeof(struct atlas_shape_coordinate_s), 
+									   sizeof(coord_array_7) / sizeof(atlas_shp_coordinate_t), 
 									   pan_part_start_5, 
 									   type_array_5, 
 									   coord_array_7, 
@@ -238,13 +238,13 @@ START_TEST (test_shape_impl_equal) {
 
 START_TEST (test_shape_impl_union) {
 	
-	struct atlas_shape_coordinate_s c11 = {1.1,1.9};
-	struct atlas_shape_coordinate_s c12 = {1.9,1.9};
-	struct atlas_shape_coordinate_s coord_array_1[] = {c11, c12};
+	atlas_shp_coordinate_t c11 = {1.1,1.9};
+	atlas_shp_coordinate_t c12 = {1.9,1.9};
+	atlas_shp_coordinate_t coord_array_1[] = {c11, c12};
 	uint16_t pan_part_start_1[] = {0};
-	enum atlas_shape_type_e type_array_1[] = {ARC};
+	atlas_shp_type_t type_array_1[] = {ARC};
 	lz_obj lzo1 = atlas_shape_create(1, 
-									 sizeof(coord_array_1) / sizeof(struct atlas_shape_coordinate_s), 
+									 sizeof(coord_array_1) / sizeof(atlas_shp_coordinate_t), 
 									 pan_part_start_1, 
 									 type_array_1, 
 									 coord_array_1, 
@@ -252,13 +252,13 @@ START_TEST (test_shape_impl_union) {
 	fail_if (lzo1 == 0);
 	lz_wait_for_completion();
 	
-	struct atlas_shape_coordinate_s c21 = {2.1,2.9};
-	struct atlas_shape_coordinate_s c22 = {2.9,2.9};
-	struct atlas_shape_coordinate_s coord_array_2[] = {c21, c22};
+	atlas_shp_coordinate_t c21 = {2.1,2.9};
+	atlas_shp_coordinate_t c22 = {2.9,2.9};
+	atlas_shp_coordinate_t coord_array_2[] = {c21, c22};
 	uint16_t pan_part_start_2[] = {0};
-	enum atlas_shape_type_e type_array_2[] = {ARC};
+	atlas_shp_type_t type_array_2[] = {ARC};
 	lz_obj lzo2 = atlas_shape_create(1, 
-									 sizeof(coord_array_2) / sizeof(struct atlas_shape_coordinate_s), 
+									 sizeof(coord_array_2) / sizeof(atlas_shp_coordinate_t), 
 									 pan_part_start_2, 
 									 type_array_2,
 									 coord_array_2,

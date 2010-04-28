@@ -33,12 +33,13 @@
 const double PRECISION = 1.0E-15;
 
 
-int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
-								struct atlas_shape_coordinate_s * l1_s,
-								struct atlas_shape_coordinate_s	* l1_e,
-								struct atlas_shape_coordinate_s * l2_s,
-								struct atlas_shape_coordinate_s	* l2_e){
-
+int
+atlas_shape_lines_intersect(atlas_shp_coordinate_t * result,
+                            atlas_shp_coordinate_t * l1_s,
+                            atlas_shp_coordinate_t * l1_e,
+                            atlas_shp_coordinate_t * l2_s,
+                            atlas_shp_coordinate_t * l2_e) {
+    
 	// TODO: Adapt function for use with spheres.
 	
 	/* 
@@ -57,10 +58,9 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 	// function parameters for y = m*x + n
 	double l1_m, l1_n, l2_m, l2_n;
 	
-	if (
-		((l1_e->longitude - l1_s->longitude) == 0) 
-		&& ((l2_e->longitude - l2_s->longitude) == 0)
-		){
+	if ( ((l1_e->longitude - l1_s->longitude) == 0)  &&
+         ((l2_e->longitude - l2_s->longitude) == 0)) {
+        
 		/*
 		 * Both lines are vertical. In this case they are either on top of each 
 		 * other or they never meet
@@ -83,7 +83,6 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 		l2_n = l2_s->latitude - l2_s->longitude*l2_m;
 		
 		intersect_y = l2_m * intersect_x + l2_n;
-		
 		
 	} else if ((l2_e->longitude - l2_s->longitude) == 0) {
 		// prevent division by zero, line 2 is vertical
@@ -146,41 +145,41 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
 	 * Same for intercept_y. Otherwise both lines intercept, but that would be 
 	 * at the extension of both lines.
 	 */
-	if (
-		fmin(l1_s->longitude,l1_e->longitude) <= intersect_x
-		&& intersect_x <= fmax(l1_s->longitude,l1_e->longitude)
-		&& fmin(l2_s->longitude,l2_e->longitude) <= intersect_x
-		&& intersect_x <= fmax(l2_s->longitude,l2_e->longitude)
-		&& fmin(l1_s->latitude,l1_e->latitude) <= intersect_y
-		&& intersect_y <= fmax(l1_s->latitude,l1_e->latitude)
-		&& fmin(l2_s->latitude,l2_e->latitude) <= intersect_y
-		&& intersect_y <= fmax(l2_s->latitude,l2_e->latitude)
-		) {
+	if (fmin(l1_s->longitude,l1_e->longitude) <= intersect_x &&
+        intersect_x <= fmax(l1_s->longitude,l1_e->longitude) &&
+        fmin(l2_s->longitude,l2_e->longitude) <= intersect_x &&
+        intersect_x <= fmax(l2_s->longitude,l2_e->longitude) &&
+        fmin(l1_s->latitude,l1_e->latitude) <= intersect_y &&
+        intersect_y <= fmax(l1_s->latitude,l1_e->latitude) &&
+        fmin(l2_s->latitude,l2_e->latitude) <= intersect_y &&
+        intersect_y <= fmax(l2_s->latitude,l2_e->latitude)) {
 		
-		result->latitude = intersect_y;
+        result->latitude = intersect_y;
 		result->longitude = intersect_x;
+        
 		return 1;
-	} 
-	
-	return 0;
+	} else {	
+        return 0;
+    }
 }
 
-int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, 
-							struct atlas_shape_coordinate_s * coord2){
-	if (
-		(fabs(coord1->latitude - coord2->latitude) > PRECISION)
-		|| (fabs(coord1->longitude - coord2->longitude) > PRECISION)
-		){
+int
+atlas_shape_point_equal(atlas_shp_coordinate_t * coord1, 
+                        atlas_shp_coordinate_t * coord2){
+	if ((fabs(coord1->latitude - coord2->latitude) > PRECISION) ||
+        (fabs(coord1->longitude - coord2->longitude) > PRECISION)) {
 		return 0;
 	} else {
 		return 1;
 	}
 }
 
-int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1, 
-						  uint16_t num_coords1,
-						  struct atlas_shape_coordinate_s * coords2,
-						  uint16_t num_coords2){
+
+int
+atlas_shape_arc_equal(atlas_shp_coordinate_t * coords1, 
+                      uint16_t num_coords1,
+                      atlas_shp_coordinate_t * coords2,
+                      uint16_t num_coords2){
 	
 	// TODO: Adapt for use with spheres (see lines_intersect)
 	
@@ -188,16 +187,14 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 	 * First case: The starting and ending point have to be equal, if not, 
 	 no further checks are necessary
 	 */
-	if (
-		!atlas_shape_point_equal(coords1, coords2) 
-		|| !atlas_shape_point_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)
-		){
+	if (!atlas_shape_point_equal(coords1, coords2) ||
+        !atlas_shape_point_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)) {
 		return 0;
 	}
 	
 	// create a temporary pointers back to where the coordinates begin
-	struct atlas_shape_coordinate_s * tmp_c1_ptr = coords1;
-	struct atlas_shape_coordinate_s * tmp_c2_ptr = coords2;
+	atlas_shp_coordinate_t * tmp_c1_ptr = coords1;
+	atlas_shp_coordinate_t * tmp_c2_ptr = coords2;
 	
 	// each point of the first arc must be on a line segment of the second arc, if not return 0
 	for (int i = 0; i < num_coords1; i++) {
@@ -244,9 +241,11 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
 	return 1;
 }	
 
-int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
-					struct atlas_shape_coordinate_s * l1,
-					struct atlas_shape_coordinate_s * l2){
+
+int
+atlas_shape_pol(atlas_shp_coordinate_t * point,
+                atlas_shp_coordinate_t * l1,
+                atlas_shp_coordinate_t * l2) {
 	
 	// TODO: adapt for use with spheres.
 	
@@ -259,7 +258,7 @@ int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
 	}
 	
 	// slope for line
-	double m = (l2->latitude - l1->latitude)/(l2->longitude - l1->longitude);
+	double m = (l2->latitude - l1->latitude) / (l2->longitude - l1->longitude);
 	// y-intercept for line
 	double n = l1->latitude - l1->longitude*m;
 	// subsitute x in line equation
@@ -272,10 +271,12 @@ int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
 	return 0;
 }
 
-int atlas_shape_polygon_equal(struct atlas_shape_coordinate_s * coords1, 
-							  uint16_t num_coords1,
-							  struct atlas_shape_coordinate_s * coords2,
-							  uint16_t num_coords2){
+
+int
+atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1, 
+                          uint16_t num_coords1,
+                          atlas_shp_coordinate_t * coords2,
+                          uint16_t num_coords2) {
 	return 0;
 }
 

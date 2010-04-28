@@ -26,8 +26,8 @@
 
 /*! Checks for intersection of lines
  *
- * Checks, if two lines intersect. Returns the point (single coordinate) if they 
- * intersect, 1 if they lie on top of each other, 0 if they don't
+ *  Checks, if two lines intersect. Returns the point (single coordinate) if they 
+ *  intersect, 1 if they lie on top of each other, 0 if they don't
  *
  *  \param result A pointer to where the coordinate of intersection is saved.
  *
@@ -40,11 +40,13 @@
  *  \return 0 if parallel and not on top of each other, 1 if intersecting or
  *			on top of each other
  */
-int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
-								struct atlas_shape_coordinate_s * l1_s,
-								struct atlas_shape_coordinate_s	* l1_e,
-								struct atlas_shape_coordinate_s * l2_s,
-								struct atlas_shape_coordinate_s	* l2_e);
+int
+atlas_shape_lines_intersect(atlas_shp_coordinate_t * result,
+                            atlas_shp_coordinate_t * l1_s,
+                            atlas_shp_coordinate_t	* l1_e,
+                            atlas_shp_coordinate_t * l2_s,
+                            atlas_shp_coordinate_t	* l2_e);
+
 
 /*! Checks two points for equality
  * 
@@ -53,8 +55,10 @@ int atlas_shape_lines_intersect(struct atlas_shape_coordinate_s * result,
  *
  *  \return 1 if equal, 0 otherwise
  */
-int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1, 
-							struct atlas_shape_coordinate_s * coord2);
+int
+atlas_shape_point_equal(atlas_shp_coordinate_t * coord1, 
+                        atlas_shp_coordinate_t * coord2);
+
 
 /*! Checks for equality of two arcs.
  *
@@ -66,10 +70,12 @@ int atlas_shape_point_equal(struct atlas_shape_coordinate_s * coord1,
  *
  *  \return 1 if equal, 0 otherwise.
  */
-int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1, 
-						  uint16_t num_coords1,
-						  struct atlas_shape_coordinate_s * coords2,
-						  uint16_t num_coords2);
+int
+atlas_shape_arc_equal(atlas_shp_coordinate_t * coords1, 
+                      uint16_t num_coords1,
+                      atlas_shp_coordinate_t * coords2,
+                      uint16_t num_coords2);
+
 
 /*! Checks, if a point is located on a line.
  *
@@ -79,9 +85,11 @@ int atlas_shape_arc_equal(struct atlas_shape_coordinate_s * coords1,
  *
  *  \return 1 if point is on line, 0 otherwise.
  */
-int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
-					struct atlas_shape_coordinate_s * l1,
-					struct atlas_shape_coordinate_s * l2);
+int
+atlas_shape_pol(atlas_shp_coordinate_t * point,
+                atlas_shp_coordinate_t * l1,
+                atlas_shp_coordinate_t * l2);
+
 
 /*! Checks for equality of two polygons.
  *
@@ -93,10 +101,13 @@ int atlas_shape_pol(struct atlas_shape_coordinate_s * point,
  *
  *  \return 1 if equal, 0 otherwise.
  */
-int atlas_shape_polygon_equal(struct atlas_shape_coordinate_s * coords1, 
-							  uint16_t num_coords1,
-							  struct atlas_shape_coordinate_s * coords2,
-							  uint16_t num_coords2);
+int
+atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1, 
+                          uint16_t num_coords1,
+                          atlas_shp_coordinate_t * coords2,
+                          uint16_t num_coords2);
 
 
 #endif // _ATLAS_SHAPE_IMPL_GEOMETRY_H_
+
+
