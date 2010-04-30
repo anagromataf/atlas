@@ -35,7 +35,7 @@ START_TEST (test_create_rdf_term_iri) {
     
     atlas_rdf_term_t term;
     
-    // create iri
+    // create a valid iri
     term = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     fail_if(term == 0);
     if (term) {
@@ -54,7 +54,29 @@ START_TEST (test_create_rdf_term_iri) {
         
         lz_release(term);
     }
-    
+
+	// create invalid iris
+    term = atlas_rdf_term_create_iri("+http://example.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri("1http://example.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri("://example.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri(":example.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri("example.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri("http://e<xample.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_iri("http://e xample.com", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
     lz_wait_for_completion();
     
 } END_TEST
@@ -64,7 +86,7 @@ START_TEST (test_create_rdf_term_blank_node) {
     
     atlas_rdf_term_t term;
     
-    // create blank node
+    // create valid blank node
     term = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
     fail_if(term == 0);
     if (term) {
@@ -83,7 +105,20 @@ START_TEST (test_create_rdf_term_blank_node) {
         
         lz_release(term);
     }
-    
+
+	// create invalid blank nodes
+    term = atlas_rdf_term_create_blank_node(";foo", ^(int err, const char * msg){});
+	fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_blank_node(".foo", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_blank_node("-foo", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_blank_node("f;oo", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
     lz_wait_for_completion();
     
 } END_TEST
@@ -143,6 +178,23 @@ START_TEST (test_create_rdf_term_string) {
         lz_release(term);
     }
     
+	// create invalid string literals
+	// (use of invalid language tags)
+    term = atlas_rdf_term_create_string("Hallo Atlas!", "", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_string("Hallo Atlas!", "_de", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_string("Hallo Atlas!", "__", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_string("Hallo Atlas!", "dedededede_de", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
+	term = atlas_rdf_term_create_string("Hallo Atlas!", "de_dedededede", ^(int err, const char * msg){});
+    fail_unless(term == 0);
+
     lz_wait_for_completion();
     
 } END_TEST
@@ -438,8 +490,8 @@ START_TEST (test_str_eq_str) {
     atlas_rdf_term_t term1, term2;
     
 	// create string literal
-    term1 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
-    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    term1 = atlas_rdf_term_create_string("a", "de_de", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "de_de", ^(int err, const char * msg){});
     fail_if(term1 == 0);
     fail_if(term2 == 0);
     if (term1 && term2) {
@@ -449,8 +501,8 @@ START_TEST (test_str_eq_str) {
     }
 
 	// create string literal
-    term1 = atlas_rdf_term_create_string("b", "b", ^(int err, const char * msg){});
-    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    term1 = atlas_rdf_term_create_string("b", "de_de", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "de_de", ^(int err, const char * msg){});
     fail_if(term1 == 0);
     fail_if(term2 == 0);
     if (term1 && term2) {
@@ -460,8 +512,8 @@ START_TEST (test_str_eq_str) {
     }
 
 	// create string literal
-    term1 = atlas_rdf_term_create_string("a", "a", ^(int err, const char * msg){});
-    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    term1 = atlas_rdf_term_create_string("a", "da_da", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "de_de", ^(int err, const char * msg){});
     fail_if(term1 == 0);
     fail_if(term2 == 0);
     if (term1 && term2) {
@@ -471,8 +523,8 @@ START_TEST (test_str_eq_str) {
     }
     
 	// create string literal
-    term1 = atlas_rdf_term_create_string("b", "a", ^(int err, const char * msg){});
-    term2 = atlas_rdf_term_create_string("a", "b", ^(int err, const char * msg){});
+    term1 = atlas_rdf_term_create_string("b", "da_da", ^(int err, const char * msg){});
+    term2 = atlas_rdf_term_create_string("a", "de_de", ^(int err, const char * msg){});
     fail_if(term1 == 0);
     fail_if(term2 == 0);
     if (term1 && term2) {
