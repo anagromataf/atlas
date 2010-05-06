@@ -39,7 +39,7 @@ START_TEST (test_create_rdf_term_set) {
     terms[1] = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
     terms[2] = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
     terms[3] = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
-    terms[4] = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    terms[4] = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     terms[5] = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
     
     // create set

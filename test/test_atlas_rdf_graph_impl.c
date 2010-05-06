@@ -54,7 +54,7 @@ START_TEST (test_create_rdf_graph) {
     pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
     pred2 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
     obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
-    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     
     // setup the statements
     atlas_rdf_statement_t statements[3];
@@ -136,7 +136,7 @@ START_TEST (test_create_rdf_graph_union) {
     pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
     pred2 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
     obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
-    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     obj3 = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
     
     // setup the statements
@@ -277,7 +277,7 @@ START_TEST (test_create_rdf_graph_intersection) {
     pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
     pred2 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
     obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
-    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     obj3 = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
     
     // setup the statements
@@ -410,7 +410,7 @@ START_TEST (test_create_rdf_graph_difference) {
     pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
     pred2 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
     obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
-    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de_de", ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     obj3 = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});
     
     // setup the statements

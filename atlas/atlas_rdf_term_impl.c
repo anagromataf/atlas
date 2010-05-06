@@ -166,10 +166,11 @@ atlas_rdf_term_create_string(const char * value,
 
 	if (lang != 0) {
 		// Validate lang via a regular expression as a
-		// respresentation of the ABNF for language tags as defined in RFC3066.
+		// respresentation of the ABNF for language tags as defined in
+		// http://www.w3.org/TR/rdf-sparql-query/#rLANGTAG.
 		regex_t regex;
 		regcomp(&regex,
-				"^[a-zA-Z]{1,8}(_[a-zA-Z0-9]{1,8})*$",
+				"^[a-zA-Z]+(-[a-zA-Z0-9]+)*$",
 				REG_EXTENDED|REG_NOSUB);
 		if (regexec(&regex, lang, 0, 0, 0) != 0) {
 			// TODO: define error constants
