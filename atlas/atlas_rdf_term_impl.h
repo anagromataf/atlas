@@ -26,4 +26,16 @@
 
 #include <atlas/rdf/term.h>
 
+#pragma mark -
+#pragma mark Operation
+
+/*! Compare the value of an IRI typed term and a given value.
+ *
+ *  This function returns 0 if the term and the value are not equal
+ *  or the term is not of type IRI, else != 0.
+ */
+int
+atlas_rdf_term_cmp_iri_value(atlas_rdf_term_t term,
+							 const char * value);
+
 #endif // _ATLAS_RDF_TERM_IMPL_H_

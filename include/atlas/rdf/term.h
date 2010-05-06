@@ -53,6 +53,15 @@ typedef uint16_t atlas_rdf_term_type_t;
 #define DOUBLE_LITERAL      0b0000101001010001
 #define DECIMAL_LITERAL     0b0001001001010001
 
+/*	Predefined Datatype IRIs
+ *	s. http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#built-in-datatypes
+ */
+#define INTEGER_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#integer"
+#define DECIMAL_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#decimal"
+#define DOUBLE_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#double"
+#define BOOLEAN_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#boolean"
+#define DATETIME_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#dateTime"
+#define STRING_DATATYPE_IRI "http://www.w3.org/2001/XMLSchema#string"
 
 #pragma mark -
 #pragma mark Create a RDF Term

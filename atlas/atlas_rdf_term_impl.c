@@ -221,7 +221,7 @@ atlas_rdf_term_create_typed(const char * value,
 		atlas_rdf_term_t term;
 		
 	    // Check if the type can be represented directly
-		if (strstr(atlas_rdf_term_iri_value(type), "integer") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, INTEGER_DATATYPE_IRI) != 0) {
 			mpz_t i;
 			mpz_init_set_str(i, value, 10);
 			term = atlas_rdf_term_create_integer(i, err);
@@ -230,7 +230,7 @@ atlas_rdf_term_create_typed(const char * value,
 				return term;
 			}
 		}
-		if (strstr(atlas_rdf_term_iri_value(type), "decimal") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, DECIMAL_DATATYPE_IRI) != 0) {
 			mpf_t f;
 			mpf_init_set_str(f, value, 10);
 			term = atlas_rdf_term_create_decimal(f, err);
@@ -239,25 +239,25 @@ atlas_rdf_term_create_typed(const char * value,
 				return term;
 			}
 		}
-		if (strstr(atlas_rdf_term_iri_value(type), "double") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, DOUBLE_DATATYPE_IRI) != 0) {
 			term = atlas_rdf_term_create_double(strtod(value, 0), err);
 			if (term) {
 				return term;
 			}
 		}
-		if (strstr(atlas_rdf_term_iri_value(type), "boolean") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, BOOLEAN_DATATYPE_IRI) != 0) {
 			term = atlas_rdf_term_create_boolean(atoi(value), err);
 			if (term) {
 				return term;
 			}
 		}
-		if (strstr(atlas_rdf_term_iri_value(type), "datetime") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, DATETIME_DATATYPE_IRI) != 0) {
 			term = atlas_rdf_term_create_datetime(atoi(value), err);
 			if (term) {
 				return term;
 			}
 		}
-		if (strstr(atlas_rdf_term_iri_value(type), "string") != 0) {
+		if (atlas_rdf_term_cmp_iri_value(type, STRING_DATATYPE_IRI) != 0) {
 			term = atlas_rdf_term_create_string(value, 0, err);
 			if (term) {
 				return term;
@@ -1091,6 +1091,20 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
         });
         return result;        
     }
+}
+
+int atlas_rdf_term_cmp_iri_value(atlas_rdf_term_t term,
+								 const char * value) {
+	// check if the term is an iri 
+    if (term && atlas_rdf_term_type(term) == IRI) {
+		__block int result;
+		lz_obj_sync(term, ^(void * data, uint32_t length){			
+			struct atlas_rdf_term_value_s * iri = data;
+			result = strcmp(iri->value, value) == 0 ? 1 : 0;
+		});
+		return result;		
+	}
+	return 0;
 }
 
 #pragma mark -

@@ -205,6 +205,10 @@ START_TEST (test_create_rdf_term_typed_literal) {
     atlas_rdf_term_t term;
     atlas_rdf_term_t type;
     
+	// create a typed literal, whereas the type does not correspond
+	// to a predefined type, so the literal could not be represented directly as
+	// a literal of a predefined type
+	//
     // create the type for the term
     type = atlas_rdf_term_create_iri("http://example.com", ^(int err, const char * msg){});
     fail_if(type == 0);
@@ -231,6 +235,170 @@ START_TEST (test_create_rdf_term_typed_literal) {
         lz_release(type);
     }
 
+	// create a typed literal, that can be represented directly as a
+	// literal of this type
+	//
+	// create the type integer for the term
+    type = atlas_rdf_term_create_iri(INTEGER_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("11", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == INTEGER_LITERAL);
+            
+            // check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "11") == 0);
+			free(value);
+						
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
+	// create the type decimal for the term
+    type = atlas_rdf_term_create_iri(DECIMAL_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("11", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == DECIMAL_LITERAL);
+            
+            // check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "11") == 0);
+			free(value);
+			
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
+	// create the type decimal for the term
+    type = atlas_rdf_term_create_iri(DOUBLE_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("4.7", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == DOUBLE_LITERAL);
+            
+            // check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "4.700000e+00") == 0);
+			free(value);
+			
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
+	// create the type boolean for the term
+    type = atlas_rdf_term_create_iri(BOOLEAN_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("1", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == BOOLEAN_LITERAL);
+            
+            // check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "true") == 0);
+			free(value);
+			
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
+	// create the type datetime for the term
+    type = atlas_rdf_term_create_iri(DATETIME_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("0", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == DATETIME_LITERAL);
+            
+            // check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "1970-01-01T00:00:00+00:00") == 0);
+			free(value);
+			
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
+	// create the type string for the term
+    type = atlas_rdf_term_create_iri(STRING_DATATYPE_IRI, ^(int err, const char * msg){});
+    fail_if(type == 0);
+    if (type) {
+        // create typed literal
+        term = atlas_rdf_term_create_typed("Hallo Atlas!", type, ^(int err, const char * msg){});
+        fail_if(term == 0);
+        if (term) {
+            // check type
+            fail_unless(atlas_rdf_term_type(term) == STRING_LITERAL);
+            
+			// check literal value
+			char * value = atlas_rdf_term_literal_value(term);
+			fail_unless(strcmp(value, "Hallo Atlas!") == 0);
+			free(value);
+			
+			// check language tag
+			char * lang = atlas_rdf_term_string_lang(term);
+			fail_unless(strcmp(lang, "") == 0);
+			free(lang);
+			
+			// print repr
+			char * repr = atlas_rdf_term_repr(term);
+			printf("%s\n", repr);
+			free(repr);
+			
+			lz_release(term);
+        }
+        lz_release(type);
+    }
+	
     lz_wait_for_completion();
     
 } END_TEST
