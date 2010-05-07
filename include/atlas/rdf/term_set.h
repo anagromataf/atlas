@@ -110,5 +110,16 @@ void
 atlas_rdf_term_set_apply(atlas_rdf_term_set_t set,
                          void(^iterator)(atlas_rdf_term_t term));
 
+/*! Apply a block to each term in the set.
+ *
+ *  This function calls the given block for each
+ *  term in the set.
+ *  
+ *  The given block is called sequentially and not concurrent.
+ */
+void
+atlas_rdf_term_set_apply_seq(atlas_rdf_term_set_t set,
+                         void(^iterator)(atlas_rdf_term_t term));
+
 #endif // _ATLAS_RDF_TERM_SET_H_
 
