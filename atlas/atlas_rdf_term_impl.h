@@ -27,11 +27,11 @@
 #include <atlas/rdf/term.h>
 
 #pragma mark -
-#pragma mark Operation
+#pragma mark Compare Functions
 
-/*! Compare the value of an IRI typed term and a given value.
+/*! Compare the value of an IRI term and a given value.
  *
- *  This function returns 0 if the term and the value are not equal
+ *  This function returns 0 if both values are not equal
  *  or the term is not of type IRI, else != 0.
  */
 int

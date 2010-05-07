@@ -1093,6 +1093,9 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
     }
 }
 
+#pragma mark -
+#pragma mark Compare Functions
+
 int atlas_rdf_term_cmp_iri_value(atlas_rdf_term_t term,
 								 const char * value) {
 	// check if the term is an iri 
@@ -1106,10 +1109,5 @@ int atlas_rdf_term_cmp_iri_value(atlas_rdf_term_t term,
 	}
 	return 0;
 }
-
-#pragma mark -
-#pragma mark Compare Functions
-
-
 
 
