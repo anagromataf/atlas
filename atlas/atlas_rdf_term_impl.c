@@ -283,8 +283,8 @@ atlas_rdf_term_create_typed(const char * value,
         }, 1, type);
         
     } else {
-        // the term is either NULL or not an IRI
-        // TODO: Call error handler
+        // TODO: define error constants
+		err(0, "The term is either NULL or not an IRI");
         return 0;
     }
 }
