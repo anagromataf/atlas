@@ -120,7 +120,53 @@ atlas_rdf_term_set_t
 atlas_rdf_term_set_create_intersection(atlas_rdf_term_set_t set1,
                                        atlas_rdf_term_set_t set2,
                                        atlas_error_handler err) {
+	assert(set1 != 0);
+    assert(set2 != 0);
     
+    // if both term sets are the same, return the first set
+    if (lz_obj_same(set1, set2) != 0) {
+        return lz_retain(set1);
+    }
+    
+	// the resulting term set as a intersection of set1 and set2
+    atlas_rdf_term_set_t result;
+	
+	// number of terms in both sets
+	int num_terms_set1 = atlas_rdf_term_set_length(set1);
+	int num_terms_set2 = atlas_rdf_term_set_length(set2);
+	
+	// create a new set of terms representing
+	// the intersection of the two given sets set1 and set2
+	// and consider the worst case in which the intersection
+	// of sets can be max. as mighty as the smallest set involved
+	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * 
+											(num_terms_set1 < num_terms_set2 ? num_terms_set1 : num_terms_set2));
+	assert(set != 0);
+	
+	// the new set has initially no elements
+	__block int num_set = 0;
+
+	// intersect set1 and set2, whereas set1 and set2 are
+	// sets and so there are no duplicate elements regarding
+	// to each of this sets
+	for (int i=0; i<lz_obj_num_ref(set1); i++) {
+		atlas_rdf_term_t term_set1 = lz_obj_weak_ref(set1, i);
+		for (int j=0; j<lz_obj_num_ref(set2); j++) {
+			atlas_rdf_term_t term_set2 = lz_obj_weak_ref(set2, j);
+			if (atlas_rdf_term_eq(term_set1, term_set2)) {
+				set[num_set++] = term_set1;
+				break;
+			}
+		}
+	}
+		
+	// create a lazy object
+	result = lz_obj_new_v(0, 0, ^{}, num_set, set);
+	
+	// free set
+	free(set);
+	
+	return result;
 }
 
 atlas_rdf_term_set_t

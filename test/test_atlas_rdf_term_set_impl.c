@@ -294,6 +294,222 @@ START_TEST (test_create_rdf_term_set_union) {
     
 } END_TEST
 
+START_TEST (test_create_rdf_term_set_intersection) {
+    
+	// terms contained in set1 resp. set2
+    atlas_rdf_term_t terms_set1[2];
+    atlas_rdf_term_t terms_set2[2];	
+	// set1 and set2
+	atlas_rdf_term_set_t set1;
+	atlas_rdf_term_set_t set2;
+	// intersection set of set1 and set2
+	atlas_rdf_term_set_t set;
+	
+	// create disjoint sets: set1 and set2
+    terms_set1[0] = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    terms_set1[1] = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+	
+	terms_set2[0] = atlas_rdf_term_create_blank_node("foo1", ^(int err, const char * msg){});
+    terms_set2[1] = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
+	
+    set1 = atlas_rdf_term_set_create(2, terms_set1, ^(int err, const char * msg){});
+    set2 = atlas_rdf_term_set_create(2, terms_set2, ^(int err, const char * msg){});
+    fail_if(set1 == 0);
+    fail_if(set2 == 0);
+	
+    if (set1 && set2) {
+		
+		// intersection of set1 and set2
+		set = atlas_rdf_term_set_create_intersection(set1, set2, ^(int err, const char * msg){});
+		fail_if(set == 0);
+		
+		if (set) {
+			
+			fail_unless(atlas_rdf_term_set_length(set) == 0);
+			
+			// create a semaphore, because the block which is applied to
+			// the statements is called concurrent
+			dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
+			__block int check[4] = {0, 0, 0, 0};
+			
+			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
+				
+				char *t = atlas_rdf_term_repr(term);
+				printf("%s\n", t);
+				free(t);
+				
+				// apply the block to all terms and count there appearance in the set
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set1[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set2[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i + 2]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+			});
+			
+	        dispatch_release(check_lock);
+			
+			// check, if every term out of set1 and set2
+			// is contained in the intersection of set1 and set2
+			// in a form as expected
+			fail_unless(check[0] == 0);
+			fail_unless(check[1] == 0);
+			fail_unless(check[2] == 0);
+			fail_unless(check[3] == 0);
+			
+			lz_release(set);
+		}
+		
+		lz_release(set1);
+		lz_release(set2);		
+    }
+	
+    // create overlapping sets: set1 and set2
+    terms_set1[0] = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    terms_set1[1] = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+	
+	terms_set2[0] = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    terms_set2[1] = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
+	
+    set1 = atlas_rdf_term_set_create(2, terms_set1, ^(int err, const char * msg){});
+    set2 = atlas_rdf_term_set_create(2, terms_set2, ^(int err, const char * msg){});
+    fail_if(set1 == 0);
+    fail_if(set2 == 0);
+	
+    if (set1 && set2) {
+		
+		// intersection of set1 and set2
+		set = atlas_rdf_term_set_create_intersection(set1, set2, ^(int err, const char * msg){});
+		fail_if(set == 0);
+		
+		if (set) {
+			
+			fail_unless(atlas_rdf_term_set_length(set) == 1);
+			
+			// create a semaphore, because the block which is applied to
+			// the statements is called concurrent
+			dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
+			__block int check[4] = {0, 0, 0, 0};
+			
+			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
+				
+				char *t = atlas_rdf_term_repr(term);
+				printf("%s\n", t);
+				free(t);
+				
+				// apply the block to all terms and count there appearance in the set
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set1[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set2[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i + 2]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+			});
+			
+	        dispatch_release(check_lock);
+			
+			// check, if every term out of set1 and set2
+			// is contained in the intersection of set1 and set2
+			// in a form as expected
+			fail_unless(check[0] == 1);
+			fail_unless(check[1] == 0);
+			fail_unless(check[2] == 1);
+			fail_unless(check[3] == 0);
+			
+			lz_release(set);
+		}
+		
+		lz_release(set1);
+		lz_release(set2);		
+    }
+	
+	// create identical sets: set1 and set2
+    terms_set1[0] = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    terms_set1[1] = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+	
+	terms_set2[0] = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    terms_set2[1] = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+	
+    set1 = atlas_rdf_term_set_create(2, terms_set1, ^(int err, const char * msg){});
+    set2 = atlas_rdf_term_set_create(2, terms_set2, ^(int err, const char * msg){});
+    fail_if(set1 == 0);
+    fail_if(set2 == 0);
+	
+    if (set1 && set2) {
+		
+		// intersection of set1 and set2
+		set = atlas_rdf_term_set_create_union(set1, set2, ^(int err, const char * msg){});
+		fail_if(set == 0);
+		
+		if (set) {
+			
+			fail_unless(atlas_rdf_term_set_length(set) == 2);
+			
+			// create a semaphore, because the block which is applied to
+			// the statements is called concurrent
+			dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
+			__block int check[4] = {0, 0, 0, 0};
+			
+			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
+				
+				char *t = atlas_rdf_term_repr(term);
+				printf("%s\n", t);
+				free(t);
+				
+				// apply the block to all terms and count there appearance in the set
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set1[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+				for (int i=0; i<2; i++) {
+					if (atlas_rdf_term_eq(terms_set2[i], term)) {
+						dispatch_semaphore_wait(check_lock, DISPATCH_TIME_FOREVER);
+						check[i + 2]++;
+						dispatch_semaphore_signal(check_lock);
+					}
+				}
+			});
+			
+	        dispatch_release(check_lock);
+			
+			// check, if every term out of set1 and set2
+			// is contained in the intersection of set1 and set2
+			// in a form as expected
+			fail_unless(check[0] == 1);
+			fail_unless(check[1] == 1);
+			fail_unless(check[2] == 1);
+			fail_unless(check[3] == 1);
+			
+			lz_release(set);
+		}
+		
+		lz_release(set1);
+		lz_release(set2);		
+    }
+	
+    lz_wait_for_completion();
+    
+} END_TEST
+
 #pragma mark -
 #pragma mark Fixtures
 
