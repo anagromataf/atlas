@@ -32,6 +32,331 @@
 
 const double PRECISION = 1.0E-15;
 
+// ========================================
+// http://math.rice.edu/~pcmi/sphere/
+// http://www.gfy.ku.dk/~iag/HB2000/part4/groten.htm
+// http://de.wikipedia.org/wiki/Geozentrische_Breite
+// http://en.wikipedia.org/wiki/Latitude#Geocentric_latitude
+
+const double FLATTENING = 1.0 / 298.257223563; 
+
+struct atlas_shp_coord_vector_s {
+	double x;
+	double y;
+	double z;
+};
+
+/*! Converts a degree value to radian.
+ * 
+ *  \param degree degree value
+ *  \return radian value
+ */
+double 
+degree_to_radian(double degree){
+	return (degree * M_PI) / 180.0;
+}
+
+/*! Converts a radian value to degree.
+ * 
+ *  \param radian degree value
+ *  \return degree value
+ */
+double 
+radian_to_degree(double radian){
+	return (radian * 180.0) / M_PI;
+}
+
+/*! Factor for flattening of earth.
+ * 
+ *  \return flattening factor
+ */
+double 
+flattening_c(){
+	return ( (1.0 - FLATTENING) * (1.0 - FLATTENING) );
+}
+
+/*! Converts a given geocentric latitude value to a geographic value.
+ * 
+ *  \param geocentric_lat geocentric latitude
+ *  \return geographic latitude
+ */
+double 
+geographic_latitude(double geocentric_lat){
+	/*
+	 * Division by zero is not possible. Flattening is a constant positive value.
+	 * tan(x) returns useful values for x=90°, 
+	 * same for atan(0);
+	 */
+	return atan( tan(geocentric_lat) / flattening_c() );
+}
+
+/*! Converts a given geographic latitude value to a geocentric value.
+ * 
+ *  \param geocentric_lat geographic latitude
+ *  \return geocentric latitude
+ */
+double
+geocentric_latitude(double geographic_lat){
+	/*
+	 * tan(x) returns useful values for x=90°, 
+	 * same for atan(0);
+	 */
+	return atan( tan(geographic_lat) * flattening_c() );
+}
+
+/*! Calculates the antipodal point of the point given in cartesian coordinates.
+ * 
+ *  \param result pointer to target
+ *  \param coord pointer to source
+ */
+void 
+antipode(struct atlas_shp_coord_vector_s * result,
+		 struct atlas_shp_coord_vector_s * coord) {
+	result->x = -1.0 * coord->x;
+	result->y = -1.0 * coord->y;
+	result->z = -1.0 * coord->z;
+}
+
+/*! Converts a coordinate in degree to radian.
+ * 
+ *  \param source coordinate in degree
+ *  \return coordinate in radian
+ */
+atlas_shp_coordinate_t
+init_coord_rad(atlas_shp_coordinate_t * source) {
+	atlas_shp_coordinate_t result;
+	
+	result.latitude = degree_to_radian(source->latitude);
+	result.longitude = degree_to_radian(source->longitude);
+	
+	printf("GCI (rad): lat=%f lon=%f\n", result.latitude, result.longitude);
+	
+	return result;
+}
+
+/*! Converts a spherical coordinate to a Cartesian coordinate.
+ *
+ * Trigonometric functions do not cause problems here, because sin and cos
+ * are defined for [-inf,+inf]
+ *
+ * \param result pointer to vector to hold Cartesian coordinate
+ * \param coord pointer to spherical coordinate
+ */
+void
+sph_to_cart_gc(struct atlas_shp_coord_vector_s * result, 
+			   atlas_shp_coordinate_t * coord) {
+	
+	double rlat = geocentric_latitude(coord->latitude);
+	double c = cos(rlat);
+	
+	result->x = c * cos(coord->longitude);
+	result->y = c * sin(coord->longitude);
+	result->z = sin(rlat);
+	
+	printf("GCI (sph-car): lat=%f lon=%f x=%f y=%f z=%f\n",
+		   coord->latitude, coord->longitude, result->x, result->y, result->z);
+}
+
+/*! Converts a Cartesian coordinate to a spherical coordinate.
+ *
+ * atan2 is defined for all possible values.
+ * asin would fail if the argument has an absolute value larger than 1.
+ *
+ * \param result pointer to vector to hold spherical coordinate
+ * \param coord pointer to Cartesian coordinate
+ *
+ * \return 1 if argument for asin is larger than abs(1), 0 otherwise.
+ */
+int 
+cart_to_sph_gc(atlas_shp_coordinate_t * result,
+			   struct atlas_shp_coord_vector_s * coord) {
+	
+	if (fabs(coord->z) > 1.0) {
+		return SHAPE_INVALID_PARAM;
+	}
+	result->latitude = geographic_latitude( asin(coord->z) );
+	result->longitude = atan2(coord->y, coord->x);
+	
+	printf("GCI (car-sph): lat=%f lon=%f x=%f y=%f z=%f\n",
+		   result->latitude, result->longitude, coord->x, coord->y, coord->z);
+	
+	return 0;
+}
+
+/*! Calculates the cross product of two vectors and normalizes the result.
+ *
+ * Both vectors are given in Cartesian coordinates. The intermediate result, 
+ * cross product of both, is then normalized by the length of the vector
+ * representing the cross product.
+ *
+ * \param result pointer to vector holding the normalized cross product
+ * \param coord1 vector 1
+ * \param coord2 vector 2
+ *
+ * \return non-zero value if an error occured, zero otherwise
+ */
+int
+cross_normalize(struct atlas_shp_coord_vector_s * result,
+				struct atlas_shp_coord_vector_s * coord1,
+				struct atlas_shp_coord_vector_s * coord2) {
+	
+	double x = (coord1->y * coord2->z) - (coord1->z * coord2->y);
+	double y = (coord1->z * coord2->x) - (coord1->x * coord2->z);
+	double z = (coord1->x * coord2->y) - (coord1->y * coord2->x);
+	
+	double L = sqrt( x*x + y*y + z*z );
+	
+	if (L == 0.0) {
+		return SHAPE_DIV_BY_ZERO;
+	}
+	
+	result->x = x / L;
+	result->y = y / L;
+	result->z = z / L;
+	
+	printf("GCI (cross): x=%f y=%f z=%f\n",
+		   result->x, result->y, result->z);
+	
+	return 0;
+}
+
+/*! Checks if a line/great circle defined by two coordinates is a meridian.
+ *
+ * If both latitudes are equal, the line/great circle is a meridian.
+ * A circle passing the north pole, i.e. 80E 20N - 100W 20N is also a meridian.
+ *
+ * \param coord1 vector 1
+ * \param coord2 vector 2
+ *
+ * \return 1 if meridian, 0 otherwise
+ */
+int is_meridian(atlas_shp_coordinate_t * c1,
+				atlas_shp_coordinate_t * c2) {
+	if (c1->longitude == c2->longitude ||
+		c1->longitude + 180.0 == c2->longitude ||
+		c1->longitude == c2->longitude + 180.0) {
+		return 1;
+	} else {
+		return 0;
+	}
+
+}
+
+/*! Checks if the absolute values of the components of a vector are equal.
+ *
+ * \param v1 first vector
+ * \param v2 second vector
+ *
+ * \return 1 if equal, 0 otherwise
+ */
+int
+is_equal_vector_abs(struct atlas_shp_coord_vector_s * v1,
+					struct atlas_shp_coord_vector_s * v2) {
+	if ( fabs(v1->x - v2->x) < PRECISION && 
+		fabs(v1->y - v2->y) < PRECISION &&
+		fabs(v1->z - v2->z) < PRECISION ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int
+atlas_shape_lines_intersect_gc(atlas_shp_coordinate_t * result1,
+							   atlas_shp_coordinate_t * result2,
+							   atlas_shp_coordinate_t * l1_s,
+							   atlas_shp_coordinate_t * l1_e,
+							   atlas_shp_coordinate_t * l2_s,
+							   atlas_shp_coordinate_t * l2_e) {
+	
+	
+	// check, if both great circles are meridians
+	if ( is_meridian(l1_s, l1_e) && is_meridian(l2_s, l2_e) ) {
+		result1->latitude = 90.0;
+		result1->longitude = 0.0;
+		result2->latitude = -90.0;
+		result2->longitude = 0.0;
+		
+		return 0;
+	}
+	
+	// convert coordinates to radians
+	atlas_shp_coordinate_t l1_s_rad = init_coord_rad(l1_s);
+	atlas_shp_coordinate_t l1_e_rad = init_coord_rad(l1_e);
+	atlas_shp_coordinate_t l2_s_rad = init_coord_rad(l2_s);
+	atlas_shp_coordinate_t l2_e_rad = init_coord_rad(l2_e);
+	
+	// convert from spherical to cartesian coordinates
+	struct atlas_shp_coord_vector_s l1_s_v;
+	sph_to_cart_gc(&l1_s_v, &l1_s_rad);
+	
+	struct atlas_shp_coord_vector_s l1_e_v;
+	sph_to_cart_gc(&l1_e_v, &l1_e_rad);
+	
+	struct atlas_shp_coord_vector_s l2_s_v;
+	sph_to_cart_gc(&l2_s_v, &l2_s_rad);
+	
+	struct atlas_shp_coord_vector_s l2_e_v;
+	sph_to_cart_gc(&l2_e_v, &l2_e_rad);
+		
+	
+	// normalized cross product for first great circle		
+	struct atlas_shp_coord_vector_s cross1;
+	int cn1 = cross_normalize(&cross1, &l1_s_v, &l1_e_v);
+	if (cn1 != 0) {
+		return cn1;
+	}
+	
+	// normalized cross product for second great circle
+	struct atlas_shp_coord_vector_s cross2;
+	int cn2 = cross_normalize(&cross2, &l2_s_v, &l2_e_v);
+	if (cn2 != 0) {
+		return cn2;
+	}
+	
+	// Check, if both great circles are the same
+	if ( is_equal_vector_abs(&cross1, &cross2) ) {
+		return SHAPE_GC_INTERSECT_EQUAL_LINES;
+	}
+	
+	// normalized cross product of both great circles, gives intersection
+	struct atlas_shp_coord_vector_s intersection1;
+	int cn3 = cross_normalize(&intersection1, &cross1, &cross2);
+	if (cn3 != 0) {
+		return cn3;
+	}
+	
+	// antipodal point
+	struct atlas_shp_coord_vector_s intersection2;
+	antipode(&intersection2, &intersection1);
+	
+	// convert cartesian coordinates of intersections to spherical coordinates
+	atlas_shp_coordinate_t intersect1_rad;
+	int cs1 = cart_to_sph_gc(&intersect1_rad, &intersection1);
+	if (cs1 != 0) {
+		return cs1;
+	}
+		
+	atlas_shp_coordinate_t intersect2_rad;
+	int cs2 = cart_to_sph_gc(&intersect2_rad, &intersection2);
+	if (cs2 != 0) {
+		return cs2;
+	}
+	
+	// copy coordinates of intersections to result1/2
+	result1->latitude = radian_to_degree(intersect1_rad.latitude);
+	result1->longitude = radian_to_degree(intersect1_rad.longitude);
+	result2->latitude = radian_to_degree(intersect2_rad.latitude);
+	result2->longitude = radian_to_degree(intersect2_rad.longitude);
+	
+	return 0;
+}
+
+
+
+
+// ========================================
 
 int
 atlas_shape_lines_intersect(atlas_shp_coordinate_t * result,

@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
@@ -175,6 +176,108 @@ START_TEST (test_shape_impl_geometry_arc_equal) {
     
 } END_TEST
 
+
+START_TEST (test_shape_impl_geometry_intersect_gc) {
+	// first great circle is the equator
+	atlas_shp_coordinate_t c_gc_111 = {20.0,  0.0};
+	atlas_shp_coordinate_t c_gc_112 = {60.0,  0.0};
+	// second great circle is the 10°/-170° longitude
+	atlas_shp_coordinate_t c_gc_121 = {10.0, 10.0};
+	atlas_shp_coordinate_t c_gc_122 = {10.0, 50.0};
+	
+	atlas_shp_coordinate_t result11;
+	atlas_shp_coordinate_t result12;
+	
+	int result1 = atlas_shape_lines_intersect_gc(&result11, &result12, &c_gc_111, &c_gc_112, &c_gc_121, &c_gc_122);
+	
+	fail_unless(result1 == 0);
+	
+	printf("GCI (intersect1): lat=%f lon=%f\n", result11.latitude, result11.longitude);
+	printf("GCI (intersect2): lat=%f lon=%f\n", result12.latitude, result12.longitude);
+	
+	fail_if( abs_value_check(result11.latitude, 0.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result11.longitude, 10.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result12.latitude, 0.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result12.longitude, -170.0, 1.0E-10) == 0 );
+	
+	
+	
+	// KSEA
+	atlas_shp_coordinate_t c_gc_211 = {-122.309306, 47.449};
+	// LOWW
+	atlas_shp_coordinate_t c_gc_212 = {16.569722, 48.110278};
+	// KJFK
+	atlas_shp_coordinate_t c_gc_221 = {-73.778925, 40.63975};
+	// EFHK
+	atlas_shp_coordinate_t c_gc_222 = {24.963333, 60.317222};
+	
+	atlas_shp_coordinate_t result21;
+	atlas_shp_coordinate_t result22;
+	
+	int result2 = atlas_shape_lines_intersect_gc(&result21, &result22, &c_gc_211, &c_gc_212, &c_gc_221, &c_gc_222);
+	
+	fail_unless(result2 == 0);
+	
+	printf("GCI (intersect1): lat=%f lon=%f\n", result21.latitude, result21.longitude);
+	printf("GCI (intersect2): lat=%f lon=%f\n", result22.latitude, result22.longitude);
+	
+	fail_if( abs_value_check(result21.latitude, 64.0, 1.0) == 0 );
+	fail_if( abs_value_check(result21.longitude, -4.0, 1.0) == 0 );
+	fail_if( abs_value_check(result22.latitude, -64.0, 1.0) == 0 );
+	fail_if( abs_value_check(result22.longitude, 176.0, 1.0) == 0 );
+	
+	
+	// meridian 1
+	atlas_shp_coordinate_t c_gc_311 = {20.0, 90.0};
+	atlas_shp_coordinate_t c_gc_312 = {20.0, 20.0};
+	// meridian 2
+	atlas_shp_coordinate_t c_gc_321 = {-60.0, 70.0};
+	atlas_shp_coordinate_t c_gc_322 = {-60.0, 50.0};
+	
+	atlas_shp_coordinate_t result31;
+	atlas_shp_coordinate_t result32;
+	
+	int result3 = atlas_shape_lines_intersect_gc(&result31, &result32, &c_gc_311, &c_gc_312, &c_gc_321, &c_gc_322);
+	
+	fail_unless(result3 == 0);
+	
+	printf("GCI (intersect1): lat=%f lon=%f\n", result31.latitude, result31.longitude);
+	printf("GCI (intersect2): lat=%f lon=%f\n", result32.latitude, result32.longitude);
+	
+	fail_if( abs_value_check(result31.latitude, 90.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result31.longitude, 0.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result32.latitude, -90.0, 1.0E-10) == 0 );
+	fail_if( abs_value_check(result32.longitude, 0.0, 1.0E-10) == 0 );
+	
+	atlas_shp_coordinate_t c_gc_411 = {5.0, 89.0};
+	atlas_shp_coordinate_t c_gc_412 = {10.0, -89.0};
+	atlas_shp_coordinate_t c_gc_421 = {-175.0, -89.0};
+	atlas_shp_coordinate_t c_gc_422 = {-170.0, 89.0};
+		
+	atlas_shp_coordinate_t result41;
+	atlas_shp_coordinate_t result42;
+	
+	int result4 = atlas_shape_lines_intersect_gc(&result41, &result42, &c_gc_411, &c_gc_412, &c_gc_421, &c_gc_422);
+	
+	fail_unless( result4 == 3 );
+	
+	printf("GCI (intersect1): lat=%f lon=%f\n", result41.latitude, result41.longitude);
+	printf("GCI (intersect2): lat=%f lon=%f\n", result42.latitude, result42.longitude);
+	
+	
+} END_TEST
+
+int 
+abs_value_check(double actual, 
+				double expected, 
+				double precision){
+	if (fabs( actual - expected ) > precision){
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
 #pragma mark -
 #pragma mark Fixtures
 
@@ -202,6 +305,7 @@ Suite * shape_impl_geometry_suite(void) {
 	tcase_add_test(tc_create, test_shape_impl_geometry_point_equal);
 	tcase_add_test(tc_create, test_shape_impl_geometry_pol);
 	tcase_add_test(tc_create, test_shape_impl_geometry_arc_equal);
+	tcase_add_test(tc_create, test_shape_impl_geometry_intersect_gc);
     
     suite_add_tcase(s, tc_create);
     

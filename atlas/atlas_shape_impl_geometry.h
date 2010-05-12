@@ -24,6 +24,10 @@
 #ifndef _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 #define _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 
+#define SHAPE_DIV_BY_ZERO 1
+#define SHAPE_INVALID_PARAM 2
+#define SHAPE_GC_INTERSECT_EQUAL_LINES 3
+
 /*! Checks for intersection of lines
  *
  *  Checks, if two lines intersect. Returns the point (single coordinate) if they 
@@ -106,6 +110,31 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
                           uint16_t num_coords1,
                           atlas_shp_coordinate_t * coords2,
                           uint16_t num_coords2);
+
+/*! Intersects two great circles defined by two coordinates (degree, spherical) each.
+ *
+ * When intersecting great circles two points are returned.
+ *
+ * \param result1 pointer for first result
+ * \param result2 pointer for second result
+ *
+ * \param l1_s starting coordinate for first great circle
+ * \param l1_e ending coordinate for first great circle
+ *
+ * \param l2_s starting coordinate for second great circle
+ * \param l2_e ending coordinate for second great circle
+ *
+ * \return	non-zero value if an error occured or
+ *			if both circles are on top of each other, 
+ *			zero otherwise
+ */
+int
+atlas_shape_lines_intersect_gc(atlas_shp_coordinate_t * result1,
+							   atlas_shp_coordinate_t * result2,
+							   atlas_shp_coordinate_t * l1_s,
+							   atlas_shp_coordinate_t * l1_e,
+							   atlas_shp_coordinate_t * l2_s,
+							   atlas_shp_coordinate_t * l2_e);
 
 
 #endif // _ATLAS_SHAPE_IMPL_GEOMETRY_H_
