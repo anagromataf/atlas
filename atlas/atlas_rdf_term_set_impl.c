@@ -23,6 +23,8 @@
 
 #include "atlas_rdf_term_set_impl.h"
 
+#include <stdlib.h>
+#include <assert.h>
 #include <stdio.h>
 #include <dispatch/dispatch.h>
 
@@ -58,21 +60,168 @@ atlas_rdf_term_set_t
 atlas_rdf_term_set_create_union(atlas_rdf_term_set_t set1,
                                 atlas_rdf_term_set_t set2,
                                 atlas_error_handler err) {
+    assert(set1 != 0);
+    assert(set2 != 0);
     
+    // if both term sets are the same, return the first set
+    if (lz_obj_same(set1, set2) != 0) {
+        return lz_retain(set1);
+    }
+    
+	// the resulting term set as a union of set1 and set2
+    atlas_rdf_term_set_t result;
+
+	// number of terms in both sets
+	int num_terms_set1 = atlas_rdf_term_set_length(set1);
+	int num_terms_set2 = atlas_rdf_term_set_length(set2);
+
+	// create a new set of terms representing
+	// the union of the two given sets set1 and set2
+	// and consider the worst case in which set1 and
+	// set2 are disjoint
+	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * 
+											(num_terms_set1 + num_terms_set2));
+	assert(set != 0);
+	
+	// the new set has initially no elements
+	__block int num_set = 0;
+			
+	// function to find a term in the union set and add the term
+    // to the set if it is currently not in the set
+    void(^iterator)(atlas_rdf_term_t term) = ^(atlas_rdf_term_t term){
+		int term_in_set = 0;
+				
+        for (int i=0; i<num_set; i++) {
+			if (atlas_rdf_term_eq(set[i], term) != 0) {
+				term_in_set = 1;
+				break;
+			}
+		}
+                
+		if (!term_in_set) {
+			set[num_set++] = term;
+		}
+	};
+            
+	// calling the iterator for both sets
+	atlas_rdf_term_set_apply_seq(set1, iterator);
+	atlas_rdf_term_set_apply_seq(set2, iterator);
+			
+	// create a lazy object
+	result = lz_obj_new_v(0, 0, ^{}, num_set, set);
+	
+	// free set
+	free(set);
+	
+	return result;
 }
 
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create_intersection(atlas_rdf_term_set_t set1,
                                        atlas_rdf_term_set_t set2,
                                        atlas_error_handler err) {
+	assert(set1 != 0);
+    assert(set2 != 0);
     
+    // if both term sets are the same, return the first set
+    if (lz_obj_same(set1, set2) != 0) {
+        return lz_retain(set1);
+    }
+    
+	// the resulting term set as a intersection of set1 and set2
+    atlas_rdf_term_set_t result;
+	
+	// number of terms in both sets
+	int num_terms_set1 = atlas_rdf_term_set_length(set1);
+	int num_terms_set2 = atlas_rdf_term_set_length(set2);
+	
+	// create a new set of terms representing
+	// the intersection of the two given sets set1 and set2
+	// and consider the worst case in which the intersection
+	// of sets can be max. as mighty as the smallest set involved
+	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * 
+											(num_terms_set1 < num_terms_set2 ? num_terms_set1 : num_terms_set2));
+	assert(set != 0);
+	
+	// the new set has initially no elements
+	__block int num_set = 0;
+
+	// intersect set1 and set2, whereas set1 and set2 are
+	// sets and so there are no duplicate elements regarding
+	// to each of this sets
+	for (int i=0; i<num_terms_set1; i++) {
+		atlas_rdf_term_t term_set1 = lz_obj_weak_ref(set1, i);
+		for (int j=0; j<num_terms_set2; j++) {
+			atlas_rdf_term_t term_set2 = lz_obj_weak_ref(set2, j);
+			if (atlas_rdf_term_eq(term_set1, term_set2)) {
+				set[num_set++] = term_set1;
+				break;
+			}
+		}
+	}
+		
+	// create a lazy object
+	result = lz_obj_new_v(0, 0, ^{}, num_set, set);
+	
+	// free set
+	free(set);
+	
+	return result;
 }
 
 atlas_rdf_term_set_t
 atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
                                      atlas_rdf_term_set_t set2,
                                      atlas_error_handler err) {
+    assert(set1 != 0);
+    assert(set2 != 0);
     
+	// number of terms in both sets
+	int num_terms_set1 = atlas_rdf_term_set_length(set1);
+	int num_terms_set2 = atlas_rdf_term_set_length(set2);
+	
+    // if set2 is empty return set1
+    if (num_terms_set2 == 0) {
+        return lz_retain(set1);
+    }
+    
+	// the resulting term set as a difference of set1 and set2
+	// (set1 - set2)
+    atlas_rdf_term_set_t result;
+	
+	// create a new set of terms representing
+	// the difference of the two given sets set1 and set2
+	// and consider the worst case in which the difference
+	// can be max. as mighty as set1
+	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * num_terms_set1);
+	assert(set != 0);
+	
+	// the new set has initially no elements
+	__block int num_set = 0;
+	
+	// difference of set1 and set2
+	for (int i=0; i<num_terms_set1; i++) {
+		atlas_rdf_term_t term_set1 = lz_obj_weak_ref(set1, i);
+		int term_is_in_set2 = 0;
+		for (int j=0; j<num_terms_set2; j++) {
+			atlas_rdf_term_t term_set2 = lz_obj_weak_ref(set2, j);
+			if (atlas_rdf_term_eq(term_set1, term_set2)) {
+				term_is_in_set2 = 1;
+				break;
+			}
+		}
+		if (!term_is_in_set2) {
+			set[num_set++] = term_set1;
+		}
+	}
+	
+	// create a lazy object
+	result = lz_obj_new_v(0, 0, ^{}, num_set, set);
+	
+	// free set
+	free(set);
+	
+	return result;	
 }
 
 #pragma mark -
@@ -86,11 +235,18 @@ atlas_rdf_term_set_length(atlas_rdf_term_set_t set) {
 void
 atlas_rdf_term_set_apply(atlas_rdf_term_set_t set,
                          void(^iterator)(atlas_rdf_term_t term)) {
-    dispatch_apply(lz_obj_num_ref(set),
+    dispatch_apply(atlas_rdf_term_set_length(set),
                    dispatch_get_global_queue(0, 0),
                    ^(size_t i){
         iterator(lz_obj_weak_ref(set, i));
     });
 }
 
+void
+atlas_rdf_term_set_apply_seq(atlas_rdf_term_set_t set,
+							 void(^iterator)(atlas_rdf_term_t term)) {
+    for (int i=0; i<atlas_rdf_term_set_length(set); i++) {
+		iterator(lz_obj_weak_ref(set, i));
+	}
+}
 

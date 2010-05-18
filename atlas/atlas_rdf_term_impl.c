@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <regex.h>
 
 #pragma mark -
 #pragma mark Data Structure
@@ -85,8 +86,18 @@ atlas_rdf_term_t
 atlas_rdf_term_create_iri(const char * value,
                           atlas_error_handler err) {
     
-    // TODO: Validate input
-    
+	// Validate value via a regular expression as a
+	// respresentation of the ABNF for IRIs as defined in RFC3987.
+    regex_t regex;
+	regcomp(&regex,
+	   	    "^[a-zA-Z]([a-zA-Z0-9]|\\+|-|\\.)*:((//([^[:cntrl:]\x20<>\"{}|^`\\]*@)?[^[:cntrl:]\x20<>\"{}|^`\\]*(:\\d*)?(/[^[:cntrl:]\x20<>\"{}|^`\\]*)*)|(/([^[:cntrl:]\x20<>\"{}|^`\\]+(/[^[:cntrl:]\x20<>\"{}|^`\\]*)*)?)|([^[:cntrl:]\x20<>\"{}|^`\\]+(/[^[:cntrl:]\x20<>\"{}|^`\\]*)*)|(.{0}))(\\?[^[:cntrl:]\x20<>\"{}|^`\\]*)?(#[^[:cntrl:]\x20<>\"{}|^`\\]*)?$",
+			REG_EXTENDED|REG_NOSUB);
+	if (regexec(&regex, value, 0, 0, 0) != 0) {
+		// TODO: define error constants
+		err(0, "Pattern matching not succeeded. Value is not a valid IRI.");
+		return 0;
+	}
+	
     // get the length of the value
     int length = strlen(value);
     
@@ -111,8 +122,19 @@ atlas_rdf_term_t
 atlas_rdf_term_create_blank_node(const char * value,
                                  atlas_error_handler err) {
     
-    // TODO: Validate input
-    
+    // Validate value via a regular expression as a
+	// representation of the ABNF for blank node labels as defined in 
+	// http://www.w3.org/TR/rdf-sparql-query/#rPN_LOCAL
+    regex_t regex;
+	int a = regcomp(&regex,
+	   	    "^([a-zA-Z0-9_\xC0-\xD6\xD8-\xF6\xF8-\xFF])([a-zA-Z0-9_\xC0-\xD6\xD8-\xF6\xF8-\xFF\\-\xB7\\.]*[a-zA-Z0-9_\xC0-\xD6\xD8-\xF6\xF8-\xFF\\-\xB7])?$",
+			REG_EXTENDED|REG_NOSUB);
+	if (regexec(&regex, value, 0, 0, 0) != 0) {
+		// TODO: define error constants
+		err(0, "Pattern matching not succeeded. Value is not a valid Blank Node Label.");
+		return 0;
+	}
+	
     // get the length of the value
     int length = strlen(value);
     
@@ -137,9 +159,26 @@ atlas_rdf_term_t
 atlas_rdf_term_create_string(const char * value,
                              const char * lang,
                              atlas_error_handler err) {
-    
-    // TODO: Validate lang tag
-    
+
+	// TODO: Validate value via a regular expression as a
+	// respresentation of the ABNF for string literals as defined in
+	// http://www.w3.org/TR/rdf-sparql-query/#rString.
+
+	if (lang != 0) {
+		// Validate lang via a regular expression as a
+		// respresentation of the ABNF for language tags as defined in
+		// http://www.w3.org/TR/rdf-sparql-query/#rLANGTAG.
+		regex_t regex;
+		regcomp(&regex,
+				"^[a-zA-Z]+(-[a-zA-Z0-9]+)*$",
+				REG_EXTENDED|REG_NOSUB);
+		if (regexec(&regex, lang, 0, 0, 0) != 0) {
+			// TODO: define error constants
+			err(0, "Pattern matching not succeeded. Lang is not a valid language tag.");
+			return 0;
+		}
+	}
+
     // get the length of the value (string and language tag)
     int value_length = strlen(value);
     int lang_length;
@@ -176,11 +215,55 @@ atlas_rdf_term_create_typed(const char * value,
                             atlas_rdf_term_t type,
                             atlas_error_handler err) {
     
-    // TODO: Check if the type can be represented directly
-    
     // check if the term is a iri 
     if (type && atlas_rdf_term_type(type) == IRI) {
-        
+    
+		atlas_rdf_term_t term;
+		
+	    // Check if the type can be represented directly
+		if (atlas_rdf_term_cmp_iri_value(type, INTEGER_DATATYPE_IRI) != 0) {
+			mpz_t i;
+			mpz_init_set_str(i, value, 10);
+			term = atlas_rdf_term_create_integer(i, err);
+			mpz_clear(i);
+			if (term) {
+				return term;
+			}
+		}
+		if (atlas_rdf_term_cmp_iri_value(type, DECIMAL_DATATYPE_IRI) != 0) {
+			mpf_t f;
+			mpf_init_set_str(f, value, 10);
+			term = atlas_rdf_term_create_decimal(f, err);
+			mpf_clear(f);
+			if (term) {
+				return term;
+			}
+		}
+		if (atlas_rdf_term_cmp_iri_value(type, DOUBLE_DATATYPE_IRI) != 0) {
+			term = atlas_rdf_term_create_double(strtod(value, 0), err);
+			if (term) {
+				return term;
+			}
+		}
+		if (atlas_rdf_term_cmp_iri_value(type, BOOLEAN_DATATYPE_IRI) != 0) {
+			term = atlas_rdf_term_create_boolean(atoi(value), err);
+			if (term) {
+				return term;
+			}
+		}
+		if (atlas_rdf_term_cmp_iri_value(type, DATETIME_DATATYPE_IRI) != 0) {
+			term = atlas_rdf_term_create_datetime(atoi(value), err);
+			if (term) {
+				return term;
+			}
+		}
+		if (atlas_rdf_term_cmp_iri_value(type, STRING_DATATYPE_IRI) != 0) {
+			term = atlas_rdf_term_create_string(value, 0, err);
+			if (term) {
+				return term;
+			}
+		}
+				
         // get the length of the value
         int length = strlen(value);
         
@@ -200,8 +283,8 @@ atlas_rdf_term_create_typed(const char * value,
         }, 1, type);
         
     } else {
-        // the term is either NULL or not an IRI
-        // TODO: Call error handler
+        // TODO: define error constants
+		err(0, "The term is either NULL or not an IRI");
         return 0;
     }
 }
@@ -1013,6 +1096,18 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
 #pragma mark -
 #pragma mark Compare Functions
 
-
+int atlas_rdf_term_cmp_iri_value(atlas_rdf_term_t term,
+								 const char * value) {
+	// check if the term is an iri 
+    if (term && atlas_rdf_term_type(term) == IRI) {
+		__block int result;
+		lz_obj_sync(term, ^(void * data, uint32_t length){			
+			struct atlas_rdf_term_value_s * iri = data;
+			result = strcmp(iri->value, value) == 0 ? 1 : 0;
+		});
+		return result;		
+	}
+	return 0;
+}
 
 
