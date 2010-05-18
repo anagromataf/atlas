@@ -26,7 +26,6 @@
 
 #define SHAPE_DIV_BY_ZERO 1
 #define SHAPE_INVALID_PARAM 2
-#define SHAPE_GC_INTERSECT_EQUAL_LINES 3
 
 /*! Checks for intersection of lines
  *

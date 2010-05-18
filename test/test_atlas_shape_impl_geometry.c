@@ -29,6 +29,7 @@
 
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
+#include "atlas_logging_impl.h"
 
 // TODO: Adapt all tests for use with spheres
 
@@ -192,8 +193,8 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	
 	fail_unless(result1 == 0);
 	
-	printf("GCI (intersect1): lat=%f lon=%f\n", result11.latitude, result11.longitude);
-	printf("GCI (intersect2): lat=%f lon=%f\n", result12.latitude, result12.longitude);
+	DBG("GCI (intersect1): lat=%f lon=%f\n", result11.latitude, result11.longitude);
+	DBG("GCI (intersect2): lat=%f lon=%f\n", result12.latitude, result12.longitude);
 	
 	fail_if( abs_value_check(result11.latitude, 0.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result11.longitude, 10.0, 1.0E-10) == 0 );
@@ -218,8 +219,8 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	
 	fail_unless(result2 == 0);
 	
-	printf("GCI (intersect1): lat=%f lon=%f\n", result21.latitude, result21.longitude);
-	printf("GCI (intersect2): lat=%f lon=%f\n", result22.latitude, result22.longitude);
+	DBG("GCI (intersect1): lat=%f lon=%f\n", result21.latitude, result21.longitude);
+	DBG("GCI (intersect2): lat=%f lon=%f\n", result22.latitude, result22.longitude);
 	
 	fail_if( abs_value_check(result21.latitude, 64.0, 1.0) == 0 );
 	fail_if( abs_value_check(result21.longitude, -4.0, 1.0) == 0 );
@@ -241,14 +242,16 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	
 	fail_unless(result3 == 0);
 	
-	printf("GCI (intersect1): lat=%f lon=%f\n", result31.latitude, result31.longitude);
-	printf("GCI (intersect2): lat=%f lon=%f\n", result32.latitude, result32.longitude);
+	DBG("GCI (intersect1): lat=%f lon=%f\n", result31.latitude, result31.longitude);
+	DBG("GCI (intersect2): lat=%f lon=%f\n", result32.latitude, result32.longitude);
 	
 	fail_if( abs_value_check(result31.latitude, 90.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result31.longitude, 0.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result32.latitude, -90.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result32.longitude, 0.0, 1.0E-10) == 0 );
 	
+	
+	DBG("Equal GC\n");
 	atlas_shp_coordinate_t c_gc_411 = {5.0, 89.0};
 	atlas_shp_coordinate_t c_gc_412 = {10.0, -89.0};
 	atlas_shp_coordinate_t c_gc_421 = {-175.0, -89.0};
@@ -259,10 +262,11 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	
 	int result4 = atlas_shape_lines_intersect_gc(&result41, &result42, &c_gc_411, &c_gc_412, &c_gc_421, &c_gc_422);
 	
-	fail_unless( result4 == 3 );
+	fail_unless( result4 == 1 );
 	
-	printf("GCI (intersect1): lat=%f lon=%f\n", result41.latitude, result41.longitude);
-	printf("GCI (intersect2): lat=%f lon=%f\n", result42.latitude, result42.longitude);
+	
+	DBG("GCI (intersect1): lat=%f lon=%f\n", result41.latitude, result41.longitude);
+	DBG("GCI (intersect2): lat=%f lon=%f\n", result42.latitude, result42.longitude);
 	
 	
 } END_TEST

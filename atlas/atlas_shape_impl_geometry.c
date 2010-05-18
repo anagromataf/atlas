@@ -29,6 +29,7 @@
 
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
+#include "atlas_logging_impl.h"
 
 const double PRECISION = 1.0E-15;
 
@@ -129,7 +130,7 @@ init_coord_rad(atlas_shp_coordinate_t * source) {
 	result.latitude = degree_to_radian(source->latitude);
 	result.longitude = degree_to_radian(source->longitude);
 	
-	printf("GCI (rad): lat=%f lon=%f\n", result.latitude, result.longitude);
+	DBG("GCI (rad): lat=%f lon=%f\n", result.latitude, result.longitude);
 	
 	return result;
 }
@@ -153,7 +154,7 @@ sph_to_cart_gc(struct atlas_shp_coord_vector_s * result,
 	result->y = c * sin(coord->longitude);
 	result->z = sin(rlat);
 	
-	printf("GCI (sph-car): lat=%f lon=%f x=%f y=%f z=%f\n",
+	DBG("GCI (sph-car): lat=%f lon=%f x=%f y=%f z=%f\n",
 		   coord->latitude, coord->longitude, result->x, result->y, result->z);
 }
 
@@ -177,7 +178,7 @@ cart_to_sph_gc(atlas_shp_coordinate_t * result,
 	result->latitude = geographic_latitude( asin(coord->z) );
 	result->longitude = atan2(coord->y, coord->x);
 	
-	printf("GCI (car-sph): lat=%f lon=%f x=%f y=%f z=%f\n",
+	DBG("GCI (car-sph): lat=%f lon=%f x=%f y=%f z=%f\n",
 		   result->latitude, result->longitude, coord->x, coord->y, coord->z);
 	
 	return 0;
@@ -206,7 +207,7 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
 	
 	double L = sqrt( x*x + y*y + z*z );
 	
-	if (L == 0.0) {
+	if (fabs(L) < PRECISION) {
 		return SHAPE_DIV_BY_ZERO;
 	}
 	
@@ -214,7 +215,8 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
 	result->y = y / L;
 	result->z = z / L;
 	
-	printf("GCI (cross): x=%f y=%f z=%f\n",
+	DBG("GCI (cross-l): l=%f \n", L);
+	DBG("GCI (cross): x=%f y=%f z=%f\n",
 		   result->x, result->y, result->z);
 	
 	return 0;
@@ -230,8 +232,9 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
  *
  * \return 1 if meridian, 0 otherwise
  */
-int is_meridian(atlas_shp_coordinate_t * c1,
-				atlas_shp_coordinate_t * c2) {
+int
+is_meridian(atlas_shp_coordinate_t * c1,
+			atlas_shp_coordinate_t * c2) {
 	if (c1->longitude == c2->longitude ||
 		c1->longitude + 180.0 == c2->longitude ||
 		c1->longitude == c2->longitude + 180.0) {
@@ -241,26 +244,6 @@ int is_meridian(atlas_shp_coordinate_t * c1,
 	}
 
 }
-
-/*! Checks if the absolute values of the components of a vector are equal.
- *
- * \param v1 first vector
- * \param v2 second vector
- *
- * \return 1 if equal, 0 otherwise
- */
-int
-is_equal_vector_abs(struct atlas_shp_coord_vector_s * v1,
-					struct atlas_shp_coord_vector_s * v2) {
-	if ( fabs(v1->x - v2->x) < PRECISION && 
-		fabs(v1->y - v2->y) < PRECISION &&
-		fabs(v1->z - v2->z) < PRECISION ) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 
 int
 atlas_shape_lines_intersect_gc(atlas_shp_coordinate_t * result1,
@@ -314,16 +297,15 @@ atlas_shape_lines_intersect_gc(atlas_shp_coordinate_t * result1,
 	if (cn2 != 0) {
 		return cn2;
 	}
-	
-	// Check, if both great circles are the same
-	if ( is_equal_vector_abs(&cross1, &cross2) ) {
-		return SHAPE_GC_INTERSECT_EQUAL_LINES;
-	}
-	
+		
 	// normalized cross product of both great circles, gives intersection
 	struct atlas_shp_coord_vector_s intersection1;
 	int cn3 = cross_normalize(&intersection1, &cross1, &cross2);
 	if (cn3 != 0) {
+		/*
+		 * If SHAPE_DIV_BY_ZERO 1 is returned here, the length of the vector
+		 * was 0. In this case both great circles are equal.
+		 */
 		return cn3;
 	}
 	
