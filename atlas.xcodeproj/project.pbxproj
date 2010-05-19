@@ -176,10 +176,10 @@
 		0D830F6E117DC1E60087AF28 /* atlas_shape */ = {
 			isa = PBXGroup;
 			children = (
-				0DD6562D117DAB9D00C0115A /* atlas_shape_impl_geometry.c */,
 				0DD6562E117DAB9D00C0115A /* atlas_shape_impl_geometry.h */,
-				0DD6562F117DAB9D00C0115A /* atlas_shape_impl.c */,
+				0DD6562D117DAB9D00C0115A /* atlas_shape_impl_geometry.c */,
 				0DD65630117DAB9D00C0115A /* atlas_shape_impl.h */,
+				0DD6562F117DAB9D00C0115A /* atlas_shape_impl.c */,
 			);
 			name = atlas_shape;
 			sourceTree = "<group>";

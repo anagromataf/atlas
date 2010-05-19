@@ -57,7 +57,7 @@ START_TEST (test_create_rdf_term_set) {
         atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
             
             char *t = atlas_rdf_term_repr(term);
-            printf("%s\n", t);
+            //printf("%s\n", t);
             free(t);
             
             // apply the block to all terms and count there appearance in the set
@@ -119,7 +119,7 @@ START_TEST (test_create_rdf_term_set_union) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
             
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 
 				// apply the block to all terms and count there appearance in the set
@@ -186,7 +186,7 @@ START_TEST (test_create_rdf_term_set_union) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -253,7 +253,7 @@ START_TEST (test_create_rdf_term_set_union) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -335,7 +335,7 @@ START_TEST (test_create_rdf_term_set_intersection) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -402,7 +402,7 @@ START_TEST (test_create_rdf_term_set_intersection) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -469,7 +469,7 @@ START_TEST (test_create_rdf_term_set_intersection) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -551,7 +551,7 @@ START_TEST (test_create_rdf_term_set_difference) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -618,7 +618,7 @@ START_TEST (test_create_rdf_term_set_difference) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -685,7 +685,7 @@ START_TEST (test_create_rdf_term_set_difference) {
 			atlas_rdf_term_set_apply(set, ^(atlas_rdf_term_t term){
 				
 				char *t = atlas_rdf_term_repr(term);
-				printf("%s\n", t);
+				//printf("%s\n", t);
 				free(t);
 				
 				// apply the block to all terms and count there appearance in the set
@@ -730,11 +730,11 @@ START_TEST (test_create_rdf_term_set_difference) {
 #pragma mark Fixtures
 
 static void setup() {
-    printf(">>>\n");
+    //printf(">>>\n");
 }
 
 static void teardown() {
-    printf("<<<\n");
+    //printf("<<<\n");
 }
 
 #pragma mark -

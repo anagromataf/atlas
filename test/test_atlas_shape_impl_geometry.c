@@ -29,7 +29,6 @@
 
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
-#include "atlas_logging_impl.h"
 
 // TODO: Adapt all tests for use with spheres
 
@@ -43,7 +42,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	
 	
 	atlas_shp_coordinate_t	result1;
-	fail_unless(atlas_shape_lines_intersect(&result1, &c_l1s_1, &c_l1e_1, &c_l2s_1, &c_l2e_1) == 0);
+	fail_unless(atlas_shape_lines_intersection(&result1, &c_l1s_1, &c_l1e_1, &c_l2s_1, &c_l2e_1) == 0);
 	
 	// first line is vertical and they intersect outside of "box"
 	atlas_shp_coordinate_t c_l1s_2 = {3.0, -1.0};
@@ -52,7 +51,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_2 = {1,1};
 	
 	atlas_shp_coordinate_t	result2;
-	fail_unless(atlas_shape_lines_intersect(&result2, &c_l1s_2, &c_l1e_2, &c_l2s_2, &c_l2e_2) == 0);
+	fail_unless(atlas_shape_lines_intersection(&result2, &c_l1s_2, &c_l1e_2, &c_l2s_2, &c_l2e_2) == 0);
 	
 	// second line is vertical and they intersect
 	atlas_shp_coordinate_t c_l1s_3 = {-5,-5};
@@ -61,7 +60,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_3 = {1,20};
 	
 	atlas_shp_coordinate_t	result3;
-	fail_unless(atlas_shape_lines_intersect(&result3, &c_l1s_3, &c_l1e_3, &c_l2s_3, &c_l2e_3) == 1);
+	fail_unless(atlas_shape_lines_intersection(&result3, &c_l1s_3, &c_l1e_3, &c_l2s_3, &c_l2e_3) == 1);
 	
 	// both lines are horizontally parallel but don't meet
 	atlas_shp_coordinate_t c_l1s_4 = {-5,5};
@@ -70,7 +69,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_4 = {2,2};
 	
 	atlas_shp_coordinate_t	result4;
-	fail_unless(atlas_shape_lines_intersect(&result4, &c_l1s_4, &c_l1e_4, &c_l2s_4, &c_l2e_4) == 0);
+	fail_unless(atlas_shape_lines_intersection(&result4, &c_l1s_4, &c_l1e_4, &c_l2s_4, &c_l2e_4) == 0);
 	
 	// lines are identical, but slope points in different direction
 	atlas_shp_coordinate_t c_l1s_5 = {-5,-5};
@@ -79,7 +78,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_5 = {-5,-5};
 	
 	atlas_shp_coordinate_t	result5;
-	fail_unless(atlas_shape_lines_intersect(&result5, &c_l1s_5, &c_l1e_5, &c_l2s_5, &c_l2e_5) == 1);
+	fail_unless(atlas_shape_lines_intersection(&result5, &c_l1s_5, &c_l1e_5, &c_l2s_5, &c_l2e_5) == 1);
 	
 	// lines intersect
 	atlas_shp_coordinate_t c_l1s_6 = {-9,-9};
@@ -88,7 +87,7 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_6 = {2,0};
 	
 	atlas_shp_coordinate_t	result6;
-	fail_unless(atlas_shape_lines_intersect(&result6, &c_l1s_6, &c_l1e_6, &c_l2s_6, &c_l2e_6) == 1);
+	fail_unless(atlas_shape_lines_intersection(&result6, &c_l1s_6, &c_l1e_6, &c_l2s_6, &c_l2e_6) == 1);
 	
 	// lines intersect outside of "box"
 	atlas_shp_coordinate_t c_l1s_7 = {-1,-3};
@@ -97,28 +96,29 @@ START_TEST (test_shape_impl_geometry_line_intersect) {
 	atlas_shp_coordinate_t c_l2e_7 = {6,-1};
 	
 	atlas_shp_coordinate_t	result7;
-	fail_unless(atlas_shape_lines_intersect(&result7, &c_l1s_7, &c_l1e_7, &c_l2s_7, &c_l2e_7) == 0);
+	fail_unless(atlas_shape_lines_intersection(&result7, &c_l1s_7, &c_l1e_7, &c_l2s_7, &c_l2e_7) == 0);
 	
     
 } END_TEST
+
 
 START_TEST (test_shape_impl_geometry_point_equal) {
 	// Checks for point equality
 	atlas_shp_coordinate_t c_11 = {3.0, 1.0};
 	atlas_shp_coordinate_t c_12 = {3.0, 1.0};
-	fail_unless(atlas_shape_point_equal(&c_11, &c_12) == 1);
+	fail_unless(atlas_shape_points_equal(&c_11, &c_12) == 1);
 	
 	atlas_shp_coordinate_t c_21 = {(1.0/3.0), (4.0/3.0)};
 	atlas_shp_coordinate_t c_22 = {(1.0/3.0), (4.0/3.0)};
-	fail_unless(atlas_shape_point_equal(&c_21, &c_22) == 1);
+	fail_unless(atlas_shape_points_equal(&c_21, &c_22) == 1);
 	
 	atlas_shp_coordinate_t c_31 = {(1.0/3.0), (4.0/3.0)};
 	atlas_shp_coordinate_t c_32 = {(2.0/3.0), (4.0/3.0)};
-	fail_unless(atlas_shape_point_equal(&c_31, &c_32) == 0);
+	fail_unless(atlas_shape_points_equal(&c_31, &c_32) == 0);
 	
 	atlas_shp_coordinate_t c_41 = {(1.0/9999999.0), (4.0/3.0)};
 	atlas_shp_coordinate_t c_42 = {(1.0/9999998.0), (4.0/3.0)};
-	fail_unless(atlas_shape_point_equal(&c_41, &c_42) == 0);
+	fail_unless(atlas_shape_points_equal(&c_41, &c_42) == 0);
 	
 } END_TEST
 
@@ -137,6 +137,7 @@ START_TEST (test_shape_impl_geometry_pol) {
 	fail_unless(atlas_shape_pol(&c_pol_21, &c_pol_22, &c_pol_23) == 0);
 	
 } END_TEST
+
 
 START_TEST (test_shape_impl_geometry_arc_equal) {	
 	
@@ -178,7 +179,7 @@ START_TEST (test_shape_impl_geometry_arc_equal) {
 } END_TEST
 
 
-START_TEST (test_shape_impl_geometry_intersect_gc) {
+START_TEST (test_shape_impl_gc_intersection) {
 	// first great circle is the equator
 	atlas_shp_coordinate_t c_gc_111 = {20.0,  0.0};
 	atlas_shp_coordinate_t c_gc_112 = {60.0,  0.0};
@@ -189,12 +190,12 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	atlas_shp_coordinate_t result11;
 	atlas_shp_coordinate_t result12;
 	
-	int result1 = atlas_shape_lines_intersect_gc(&result11, &result12, &c_gc_111, &c_gc_112, &c_gc_121, &c_gc_122);
+	int result1 = atlas_shape_gc_intersection(&result11, &result12, &c_gc_111, &c_gc_112, &c_gc_121, &c_gc_122);
 	
 	fail_unless(result1 == 0);
 	
-	DBG("GCI (intersect1): lat=%f lon=%f\n", result11.latitude, result11.longitude);
-	DBG("GCI (intersect2): lat=%f lon=%f\n", result12.latitude, result12.longitude);
+	//printf("GCI (intersect1): lat=%f lon=%f\n", result11.latitude, result11.longitude);
+	//printf("GCI (intersect2): lat=%f lon=%f\n", result12.latitude, result12.longitude);
 	
 	fail_if( abs_value_check(result11.latitude, 0.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result11.longitude, 10.0, 1.0E-10) == 0 );
@@ -215,12 +216,12 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	atlas_shp_coordinate_t result21;
 	atlas_shp_coordinate_t result22;
 	
-	int result2 = atlas_shape_lines_intersect_gc(&result21, &result22, &c_gc_211, &c_gc_212, &c_gc_221, &c_gc_222);
+	int result2 = atlas_shape_gc_intersection(&result21, &result22, &c_gc_211, &c_gc_212, &c_gc_221, &c_gc_222);
 	
 	fail_unless(result2 == 0);
 	
-	DBG("GCI (intersect1): lat=%f lon=%f\n", result21.latitude, result21.longitude);
-	DBG("GCI (intersect2): lat=%f lon=%f\n", result22.latitude, result22.longitude);
+	//printf("GCI (intersect1): lat=%f lon=%f\n", result21.latitude, result21.longitude);
+	//printf("GCI (intersect2): lat=%f lon=%f\n", result22.latitude, result22.longitude);
 	
 	fail_if( abs_value_check(result21.latitude, 64.0, 1.0) == 0 );
 	fail_if( abs_value_check(result21.longitude, -4.0, 1.0) == 0 );
@@ -238,12 +239,12 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	atlas_shp_coordinate_t result31;
 	atlas_shp_coordinate_t result32;
 	
-	int result3 = atlas_shape_lines_intersect_gc(&result31, &result32, &c_gc_311, &c_gc_312, &c_gc_321, &c_gc_322);
+	int result3 = atlas_shape_gc_intersection(&result31, &result32, &c_gc_311, &c_gc_312, &c_gc_321, &c_gc_322);
 	
 	fail_unless(result3 == 0);
 	
-	DBG("GCI (intersect1): lat=%f lon=%f\n", result31.latitude, result31.longitude);
-	DBG("GCI (intersect2): lat=%f lon=%f\n", result32.latitude, result32.longitude);
+	//printf("GCI (intersect1): lat=%f lon=%f\n", result31.latitude, result31.longitude);
+	//printf("GCI (intersect2): lat=%f lon=%f\n", result32.latitude, result32.longitude);
 	
 	fail_if( abs_value_check(result31.latitude, 90.0, 1.0E-10) == 0 );
 	fail_if( abs_value_check(result31.longitude, 0.0, 1.0E-10) == 0 );
@@ -251,7 +252,7 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	fail_if( abs_value_check(result32.longitude, 0.0, 1.0E-10) == 0 );
 	
 	
-	DBG("Equal GC\n");
+	//printf("Equal GC\n");
 	atlas_shp_coordinate_t c_gc_411 = {5.0, 89.0};
 	atlas_shp_coordinate_t c_gc_412 = {10.0, -89.0};
 	atlas_shp_coordinate_t c_gc_421 = {-175.0, -89.0};
@@ -260,13 +261,13 @@ START_TEST (test_shape_impl_geometry_intersect_gc) {
 	atlas_shp_coordinate_t result41;
 	atlas_shp_coordinate_t result42;
 	
-	int result4 = atlas_shape_lines_intersect_gc(&result41, &result42, &c_gc_411, &c_gc_412, &c_gc_421, &c_gc_422);
+	int result4 = atlas_shape_gc_intersection(&result41, &result42, &c_gc_411, &c_gc_412, &c_gc_421, &c_gc_422);
 	
 	fail_unless( result4 == 1 );
 	
 	
-	DBG("GCI (intersect1): lat=%f lon=%f\n", result41.latitude, result41.longitude);
-	DBG("GCI (intersect2): lat=%f lon=%f\n", result42.latitude, result42.longitude);
+	//printf("GCI (intersect1): lat=%f lon=%f\n", result41.latitude, result41.longitude);
+	//printf("GCI (intersect2): lat=%f lon=%f\n", result42.latitude, result42.longitude);
 	
 	
 } END_TEST
@@ -286,11 +287,11 @@ abs_value_check(double actual,
 #pragma mark Fixtures
 
 static void setup() {
-    printf(">>>\n");
+    //printf(">>>\n");
 }
 
 static void teardown() {
-    printf("<<<\n");
+    //printf("<<<\n");
 }
 
 
@@ -299,7 +300,7 @@ static void teardown() {
 
 Suite * shape_impl_geometry_suite(void) {
     
-    Suite *s = suite_create("Shape Impl Geometry");
+    Suite *s = suite_create("Geometry Operations");
     
     TCase *tc_create = tcase_create("Create");
     tcase_add_checked_fixture (tc_create, setup, teardown);
@@ -309,7 +310,7 @@ Suite * shape_impl_geometry_suite(void) {
 	tcase_add_test(tc_create, test_shape_impl_geometry_point_equal);
 	tcase_add_test(tc_create, test_shape_impl_geometry_pol);
 	tcase_add_test(tc_create, test_shape_impl_geometry_arc_equal);
-	tcase_add_test(tc_create, test_shape_impl_geometry_intersect_gc);
+	tcase_add_test(tc_create, test_shape_impl_gc_intersection);
     
     suite_add_tcase(s, tc_create);
     

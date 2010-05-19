@@ -24,6 +24,13 @@
 #ifndef _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 #define _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 
+#ifndef SHAPE_PRECISION
+#define SHAPE_PRECISION 1.0E-15
+#endif
+
+// Error constants
+// TODO: Define these constant in a separate file
+
 #define SHAPE_DIV_BY_ZERO 1
 #define SHAPE_INVALID_PARAM 2
 
@@ -44,11 +51,11 @@
  *			on top of each other
  */
 int
-atlas_shape_lines_intersect(atlas_shp_coordinate_t * result,
-                            atlas_shp_coordinate_t * l1_s,
-                            atlas_shp_coordinate_t	* l1_e,
-                            atlas_shp_coordinate_t * l2_s,
-                            atlas_shp_coordinate_t	* l2_e);
+atlas_shape_lines_intersection(atlas_shp_coordinate_t * result,
+                               atlas_shp_coordinate_t * l1_s,
+                               atlas_shp_coordinate_t * l1_e,
+                               atlas_shp_coordinate_t * l2_s,
+                               atlas_shp_coordinate_t * l2_e);
 
 
 /*! Checks two points for equality
@@ -59,8 +66,8 @@ atlas_shape_lines_intersect(atlas_shp_coordinate_t * result,
  *  \return 1 if equal, 0 otherwise
  */
 int
-atlas_shape_point_equal(atlas_shp_coordinate_t * coord1, 
-                        atlas_shp_coordinate_t * coord2);
+atlas_shape_points_equal(atlas_shp_coordinate_t * coord1, 
+                         atlas_shp_coordinate_t * coord2);
 
 
 /*! Checks for equality of two arcs.
@@ -110,6 +117,7 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
                           atlas_shp_coordinate_t * coords2,
                           uint16_t num_coords2);
 
+
 /*! Intersects two great circles defined by two coordinates (degree, spherical) each.
  *
  * When intersecting great circles two points are returned.
@@ -128,12 +136,12 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
  *			zero otherwise
  */
 int
-atlas_shape_lines_intersect_gc(atlas_shp_coordinate_t * result1,
-							   atlas_shp_coordinate_t * result2,
-							   atlas_shp_coordinate_t * l1_s,
-							   atlas_shp_coordinate_t * l1_e,
-							   atlas_shp_coordinate_t * l2_s,
-							   atlas_shp_coordinate_t * l2_e);
+atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
+                            atlas_shp_coordinate_t * result2,
+                            atlas_shp_coordinate_t * l1_s,
+                            atlas_shp_coordinate_t * l1_e,
+                            atlas_shp_coordinate_t * l2_s,
+                            atlas_shp_coordinate_t * l2_e);
 
 
 #endif // _ATLAS_SHAPE_IMPL_GEOMETRY_H_

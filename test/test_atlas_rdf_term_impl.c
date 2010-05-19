@@ -49,7 +49,7 @@ START_TEST (test_create_rdf_term_iri) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -100,7 +100,7 @@ START_TEST (test_create_rdf_term_blank_node) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -147,7 +147,7 @@ START_TEST (test_create_rdf_term_string) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -172,7 +172,7 @@ START_TEST (test_create_rdf_term_string) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -227,7 +227,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
             
             // print repr
             char * repr = atlas_rdf_term_repr(term);
-            printf("%s\n", repr);
+            //printf("%s\n", repr);
             free(repr);
             
             lz_release(term);
@@ -256,7 +256,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 						
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -282,7 +282,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 			
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -308,7 +308,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 			
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -334,7 +334,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 			
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -360,7 +360,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 			
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -391,7 +391,7 @@ START_TEST (test_create_rdf_term_typed_literal) {
 			
 			// print repr
 			char * repr = atlas_rdf_term_repr(term);
-			printf("%s\n", repr);
+			//printf("%s\n", repr);
 			free(repr);
 			
 			lz_release(term);
@@ -422,7 +422,7 @@ START_TEST (test_create_rdf_term_boolean) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -442,7 +442,7 @@ START_TEST (test_create_rdf_term_boolean) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -471,7 +471,7 @@ START_TEST (test_create_rdf_term_datetime) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -512,7 +512,7 @@ START_TEST (test_create_rdf_term_integer) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -541,7 +541,7 @@ START_TEST (test_create_rdf_term_double) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -581,7 +581,7 @@ START_TEST (test_create_rdf_term_decimal) {
         
         // print repr
         char * repr = atlas_rdf_term_repr(term);
-        printf("%s\n", repr);
+        //printf("%s\n", repr);
         free(repr);
         
         lz_release(term);
@@ -1854,11 +1854,11 @@ START_TEST (test_double_eq_decimal) {
 #pragma mark Fixtures
 
 static void setup() {
-    printf(">>>\n");
+    //printf(">>>\n");
 }
 
 static void teardown() {
-    printf("<<<\n");
+    //printf("<<<\n");
 }
 
 #pragma mark -

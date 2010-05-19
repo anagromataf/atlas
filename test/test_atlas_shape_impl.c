@@ -291,11 +291,11 @@ START_TEST (test_shape_impl_union) {
 #pragma mark Fixtures
 
 static void setup() {
-    printf(">>>\n");
+    //printf(">>>\n");
 }
 
 static void teardown() {
-    printf("<<<\n");
+    //printf("<<<\n");
 }
 
 
@@ -304,7 +304,7 @@ static void teardown() {
 
 Suite * shape_impl_suite(void) {
     
-    Suite *s = suite_create("Shape Impl");
+    Suite *s = suite_create("Shape");
     
     TCase *tc_create = tcase_create("Create");
     tcase_add_checked_fixture (tc_create, setup, teardown);

@@ -88,7 +88,7 @@ START_TEST (test_create_rdf_graph) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
@@ -176,7 +176,7 @@ START_TEST (test_create_rdf_graph_union) {
     if (graph1 && graph2) {
         
         // print graph1
-        printf("graph1:\n");
+        //printf("graph1:\n");
         atlas_rdf_graph_apply(graph1, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -185,14 +185,14 @@ START_TEST (test_create_rdf_graph_union) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
         // print graph2
-        printf("graph2:\n");
+        //printf("graph2:\n");
         atlas_rdf_graph_apply(graph2, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -201,13 +201,13 @@ START_TEST (test_create_rdf_graph_union) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
-        printf("union (graph1, garph2):\n");
+        //printf("union (graph1, garph2):\n");
         
         // create the union
         atlas_rdf_graph_t graph_union = atlas_rdf_graph_create_union(graph1, graph2, ^(int err, const char * msg){});
@@ -233,7 +233,7 @@ START_TEST (test_create_rdf_graph_union) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
@@ -311,7 +311,7 @@ START_TEST (test_create_rdf_graph_intersection) {
     if (graph1 && graph2) {
         
         // print graph1
-        printf("graph1:\n");
+        //printf("graph1:\n");
         atlas_rdf_graph_apply(graph1, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -320,14 +320,14 @@ START_TEST (test_create_rdf_graph_intersection) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
         // print graph2
-        printf("graph2:\n");
+        //printf("graph2:\n");
         atlas_rdf_graph_apply(graph2, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -336,13 +336,13 @@ START_TEST (test_create_rdf_graph_intersection) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
-        printf("intersection (graph1, garph2):\n");
+        //printf("intersection (graph1, garph2):\n");
         
         // create the intersection
         atlas_rdf_graph_t intersection = atlas_rdf_graph_create_intersection(graph1, graph2, ^(int err, const char * msg){});
@@ -368,7 +368,7 @@ START_TEST (test_create_rdf_graph_intersection) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
@@ -448,7 +448,7 @@ START_TEST (test_create_rdf_graph_difference) {
     if (graph1 && graph2) {
         
         // print graph1
-        printf("graph1:\n");
+        //printf("graph1:\n");
         atlas_rdf_graph_apply(graph1, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -457,14 +457,14 @@ START_TEST (test_create_rdf_graph_difference) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
         // print graph2
-        printf("graph2:\n");
+        //printf("graph2:\n");
         atlas_rdf_graph_apply(graph2, ^(atlas_rdf_term_t subject,
                                         atlas_rdf_term_t predicate,
                                         atlas_rdf_term_t object){
@@ -473,13 +473,13 @@ START_TEST (test_create_rdf_graph_difference) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
         });
         
-        printf("difference (graph1, garph2):\n");
+        //printf("difference (graph1, garph2):\n");
         
         // create the difference
         atlas_rdf_graph_t difference = atlas_rdf_graph_create_difference(graph1, graph2, ^(int err, const char * msg){});
@@ -505,7 +505,7 @@ START_TEST (test_create_rdf_graph_difference) {
             s = atlas_rdf_term_repr(subject);
             p = atlas_rdf_term_repr(predicate);
             o = atlas_rdf_term_repr(object);
-            printf("%s %s %s.\n", s, p, o);
+            //printf("%s %s %s.\n", s, p, o);
             free(s);
             free(p);
             free(o);
@@ -544,11 +544,11 @@ START_TEST (test_create_rdf_graph_difference) {
 #pragma mark Fixtures
 
 static void setup() {
-    printf(">>>\n");
+    //printf(">>>\n");
 }
 
 static void teardown() {
-    printf("<<<\n");
+    //printf("<<<\n");
 }
 
 #pragma mark -
