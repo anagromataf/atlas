@@ -540,6 +540,81 @@ START_TEST (test_create_rdf_graph_difference) {
     
 } END_TEST
 
+
+START_TEST (test_rdf_graph_contains) {
+    
+    // create some terms to store in the graph
+    atlas_rdf_term_t sub1, pred1, obj1, sub2, pred2, obj2, sub3, pred3, obj3, sub4, pred4, obj4;
+    sub1 = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    sub2 = atlas_rdf_term_create_blank_node("foo", ^(int err, const char * msg){});
+    sub3 = atlas_rdf_term_create_blank_node("foo2", ^(int err, const char * msg){});	
+    sub4 = atlas_rdf_term_create_blank_node("foo3", ^(int err, const char * msg){});		
+    pred1 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+    pred2 = atlas_rdf_term_create_iri("http://example.com/bar", ^(int err, const char * msg){});
+    pred3 = atlas_rdf_term_create_iri("http://example.com/baz", ^(int err, const char * msg){});
+    pred4 = atlas_rdf_term_create_iri("http://example.com/baa", ^(int err, const char * msg){});
+    obj1 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});
+    obj2 = atlas_rdf_term_create_boolean(1, ^(int err, const char * msg){});	
+    obj3 = atlas_rdf_term_create_boolean(0, ^(int err, const char * msg){});	
+    obj4 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
+    
+    // setup the statements
+    atlas_rdf_statement_t statements[2];
+    statements[0].subject = sub1;
+    statements[0].predicate = pred1;
+    statements[0].object = obj1;
+    statements[1].subject = sub3;
+    statements[1].predicate = pred3;
+    statements[1].object = obj3;
+    
+    // create the graph
+    atlas_rdf_graph_t graph = atlas_rdf_graph_create(2, statements, ^(int err, const char * msg){});
+    fail_if(graph == 0);
+    if (graph) {
+        // check, whether the graph contains the
+		// expected statements
+		fail_unless(atlas_rdf_graph_contains(graph, sub1,
+													pred1, 
+													obj1));
+		fail_unless(atlas_rdf_graph_contains(graph, sub2,
+													pred2, 
+													obj2));
+		fail_unless(atlas_rdf_graph_contains(graph, sub3,
+													pred3, 
+													obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub1,
+												pred3,
+												obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub1,
+										 pred2,
+										 obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub4,
+										 pred4,
+										 obj4));
+		fail_if(atlas_rdf_graph_contains(graph, sub1,
+										 pred4,
+										 obj3));
+        lz_release(graph);
+    }
+    
+    lz_release(sub1);
+    lz_release(sub2);
+    lz_release(sub3);
+    lz_release(sub4);
+    lz_release(pred1);
+    lz_release(pred2);
+    lz_release(pred3);
+    lz_release(pred4);
+    lz_release(obj1);
+    lz_release(obj2);
+    lz_release(obj3);
+    lz_release(obj4);
+    
+    lz_wait_for_completion();
+    
+} END_TEST
+
+
 #pragma mark -
 #pragma mark Fixtures
 
@@ -559,15 +634,20 @@ Suite * rdf_graph_suite(void) {
     Suite *s = suite_create("RDF Graph");
     
     TCase *tc_create = tcase_create("Create");
+    TCase *tc_predicates= tcase_create("Predicates");	
     tcase_add_checked_fixture (tc_create, setup, teardown);
+    tcase_add_checked_fixture (tc_predicates, setup, teardown);
     
     tcase_add_test(tc_create, test_create_rdf_graph);
     tcase_add_test(tc_create, test_create_rdf_graph_empty);
     tcase_add_test(tc_create, test_create_rdf_graph_union);
     tcase_add_test(tc_create, test_create_rdf_graph_intersection);
     tcase_add_test(tc_create, test_create_rdf_graph_difference);
+
+    tcase_add_test(tc_predicates, test_rdf_graph_contains);
     
     suite_add_tcase(s, tc_create);
+    suite_add_tcase(s, tc_predicates);
     
     return s;
 }
