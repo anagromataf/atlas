@@ -25,12 +25,17 @@
 
 #include <lazy.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <dispatch/dispatch.h>
+
 #include <atlas.h>
 
-#include <dispatch/dispatch.h>
 
 #pragma mark -
 #pragma mark Test Create RDF Graph
+
+#pragma mark test_create_rdf_graph_empty
 
 START_TEST (test_create_rdf_graph_empty) {
     
@@ -46,6 +51,8 @@ START_TEST (test_create_rdf_graph_empty) {
     
 } END_TEST
 
+#pragma mark test_create_rdf_graph
+
 START_TEST (test_create_rdf_graph) {
     
     // create some terms to store in the graph
@@ -57,7 +64,8 @@ START_TEST (test_create_rdf_graph) {
     obj2 = atlas_rdf_term_create_string("Hallo Atlas!", "de-de", ^(int err, const char * msg){});
     
     // setup the statements
-    atlas_rdf_statement_t statements[3];
+    atlas_rdf_statement_t * statements = malloc(sizeof(atlas_rdf_statement_t) * 3);
+    assert(statements);
     statements[0].subject = sub1;
     statements[0].predicate = pred1;
     statements[0].object = obj1;
@@ -77,7 +85,10 @@ START_TEST (test_create_rdf_graph) {
         // create a semaphore, because the block which is applied to
         // the statements is called concurrent
         dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
-        __block int check[2] = {0, 0};
+        int * check = malloc(sizeof(int) * 2);
+        assert(check);
+        check[0] = 0;
+        check[1] = 0;
         
         // check if both terms are in the graph
         atlas_rdf_graph_apply(graph, ^(atlas_rdf_term_t subject,
@@ -115,7 +126,10 @@ START_TEST (test_create_rdf_graph) {
         dispatch_release(check_lock);
         
         lz_release(graph);
+        free(check);
     }
+    
+    free(statements);
     
     lz_release(sub1);
     lz_release(pred1);
@@ -127,6 +141,7 @@ START_TEST (test_create_rdf_graph) {
     
 } END_TEST
 
+#pragma mark test_create_rdf_graph_union
 
 START_TEST (test_create_rdf_graph_union) {
     
@@ -156,7 +171,8 @@ START_TEST (test_create_rdf_graph_union) {
     statements_g2[1].predicate = pred2;
     statements_g2[1].object = obj3;
     
-    atlas_rdf_statement_t statements_union[3];
+    atlas_rdf_statement_t * statements_union = malloc(sizeof(atlas_rdf_statement_t) * 3);
+    assert(statements_union);
     statements_union[0].subject = sub1;
     statements_union[0].predicate = pred2;
     statements_union[0].object = obj2;
@@ -222,7 +238,11 @@ START_TEST (test_create_rdf_graph_union) {
         // create a semaphore, because the block which is applied to
         // the statements is called concurrent
         dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
-        __block int check[3] = {0, 0, 0};
+        int * check = malloc(sizeof(int) * 3);
+        assert(check);
+        check[0] = 0;
+        check[1] = 0;
+        check[2] = 0;
         
         // check if both terms are in the graph
         atlas_rdf_graph_apply(graph_union, ^(atlas_rdf_term_t subject,
@@ -256,7 +276,11 @@ START_TEST (test_create_rdf_graph_union) {
         
         dispatch_release(check_lock);
         lz_release(graph_union);
+        
+        free(check);
     }
+    
+    free(statements_union);
     
     lz_release(sub1);
     lz_release(pred1);
@@ -268,6 +292,7 @@ START_TEST (test_create_rdf_graph_union) {
     
 } END_TEST
 
+#pragma mark test_create_rdf_graph_intersection
 
 START_TEST (test_create_rdf_graph_intersection) {
     
@@ -297,7 +322,8 @@ START_TEST (test_create_rdf_graph_intersection) {
     statements_g2[1].predicate = pred2;
     statements_g2[1].object = obj3;
     
-    atlas_rdf_statement_t statements_intersection[1];
+    atlas_rdf_statement_t * statements_intersection = malloc(sizeof(atlas_rdf_statement_t));
+    assert(statements_intersection);
     statements_intersection[0].subject = sub1;
     statements_intersection[0].predicate = pred2;
     statements_intersection[0].object = obj2;
@@ -357,7 +383,9 @@ START_TEST (test_create_rdf_graph_intersection) {
         // create a semaphore, because the block which is applied to
         // the statements is called concurrent
         dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
-        __block int check[1] = {0};
+        int * check = malloc(sizeof(int));
+        assert(check);
+        check[1] = 0;
         
         // check if both terms are in the graph
         atlas_rdf_graph_apply(intersection, ^(atlas_rdf_term_t subject,
@@ -388,9 +416,13 @@ START_TEST (test_create_rdf_graph_intersection) {
         // each statement should only be once in the graph
         fail_unless(check[0] == 1);
         
+        free(check);
+        
         dispatch_release(check_lock);
         lz_release(intersection);
     }
+    
+    free(statements_intersection);
     
     lz_release(sub1);
     lz_release(pred1);
@@ -401,6 +433,8 @@ START_TEST (test_create_rdf_graph_intersection) {
     lz_wait_for_completion();
     
 } END_TEST
+
+#pragma mark test_create_rdf_graph_difference
 
 START_TEST (test_create_rdf_graph_difference) {
     
@@ -430,7 +464,8 @@ START_TEST (test_create_rdf_graph_difference) {
     statements_g2[1].predicate = pred2;
     statements_g2[1].object = obj3;
     
-    atlas_rdf_statement_t statements_difference[2];
+    atlas_rdf_statement_t * statements_difference = malloc(sizeof(atlas_rdf_statement_t) * 2);
+    assert(statements_difference);
     statements_difference[0].subject = sub1;
     statements_difference[0].predicate = pred1;
     statements_difference[0].object = obj1;
@@ -494,7 +529,10 @@ START_TEST (test_create_rdf_graph_difference) {
         // create a semaphore, because the block which is applied to
         // the statements is called concurrent
         dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
-        __block int check[2] = {0,0};
+        int * check = malloc(sizeof(int) * 2);
+        assert(check);
+        check[0] = 0;
+        check[1] = 0;
         
         // check if both terms are in the graph
         atlas_rdf_graph_apply(difference, ^(atlas_rdf_term_t subject,
@@ -526,9 +564,13 @@ START_TEST (test_create_rdf_graph_difference) {
         fail_unless(check[0] == 1);
         fail_unless(check[1] == 1);
         
+        free(check);
+        
         dispatch_release(check_lock);
         lz_release(difference);
     }
+    
+    free(statements_difference);
     
     lz_release(sub1);
     lz_release(pred1);

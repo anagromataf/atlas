@@ -39,19 +39,19 @@ typedef lz_obj atlas_rdf_term_t;
  */
 typedef uint16_t atlas_rdf_term_type_t;
 
-#define TERM                0b0000000000000001
-#define RESOURCE            0b0000000000000011
-#define BLANK_NODE          0b0000000000000111
-#define IRI                 0b0000000000001011
-#define LITERAL             0b0000000000010001
-#define STRING_LITERAL      0b0000000000110001
-#define TYPED_LITERAL       0b0000000001010001
-#define BOOLEAN_LITERAL     0b0000000011010001
-#define DATETIME_LITERAL    0b0000000101010001
-#define NUMERIC_LITERAL     0b0000001001010001
-#define INTEGER_LITERAL     0b0000011001010001
-#define DOUBLE_LITERAL      0b0000101001010001
-#define DECIMAL_LITERAL     0b0001001001010001
+#define TERM                1       //0b0000000000000001
+#define RESOURCE            3       //0b0000000000000011
+#define BLANK_NODE          7       //0b0000000000000111
+#define IRI                 11      //0b0000000000001011
+#define LITERAL             17      //0b0000000000010001
+#define STRING_LITERAL      49      //0b0000000000110001
+#define TYPED_LITERAL       81      //0b0000000001010001
+#define BOOLEAN_LITERAL     209     //0b0000000011010001
+#define DATETIME_LITERAL    337     //0b0000000101010001
+#define NUMERIC_LITERAL     593     //0b0000001001010001
+#define INTEGER_LITERAL     1617    //0b0000011001010001
+#define DOUBLE_LITERAL      2641    //0b0000101001010001
+#define DECIMAL_LITERAL     4689    //0b0001001001010001
 
 /*	Predefined Datatype IRIs
  *	s. http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#built-in-datatypes

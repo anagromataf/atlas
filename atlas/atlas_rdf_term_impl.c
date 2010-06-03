@@ -988,8 +988,8 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                 case DECIMAL_LITERAL:
                 {
                     struct atlas_rdf_term_decimal_s *t1 = data;
-                    mpf_t f1 = { t1->value };
                     lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        mpf_t f1 = { t1->value };
                         struct atlas_rdf_term_s * t2 = data;
                         switch (t2->type) {
                             case DOUBLE_LITERAL:
@@ -1029,8 +1029,8 @@ int atlas_rdf_term_eq(atlas_rdf_term_t term1,
                 case INTEGER_LITERAL:
                 {
                     struct atlas_rdf_term_integer_s *t1 = data;
-                    mpz_t z1 = { t1->value };
                     lz_obj_sync(term2, ^(void * data, uint32_t length){
+                        mpz_t z1 = { t1->value };
                         struct atlas_rdf_term_s * t2 = data;
                         switch (t2->type) {
                             case DOUBLE_LITERAL:
