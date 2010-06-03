@@ -543,3 +543,42 @@ atlas_rdf_graph_apply(atlas_rdf_graph_t graph,
         });
     });   
 }
+
+#pragma mark -
+#pragma mark Graph Predicates
+
+/*! Check if the graph contains a statement.
+ */
+int
+atlas_rdf_graph_contains(atlas_rdf_graph_t graph,
+                         atlas_rdf_term_t subject,
+                         atlas_rdf_term_t predicate,
+                         atlas_rdf_term_t object) {
+    assert(graph != 0);
+    assert(subject != 0);
+    assert(predicate != 0);	
+    assert(object != 0);
+	
+    __block int result = FALSE;
+    lz_obj_sync(graph, ^(void * data, uint32_t length){
+		__graph * statements = data;
+		
+		// number of statements in the given graph
+		int num_statements = length / sizeof(__graph);
+		
+		// iteratively check element-wise, whether the
+		// given graph contains a statement containing
+		// the given subject, predicate and object
+		for (int loop = 0; loop < num_statements; loop++) {
+			__graph stm = statements[loop];
+			
+			if (0 != atlas_rdf_term_eq(subject, lz_obj_weak_ref(graph, stm.subject)) &&
+				0 != atlas_rdf_term_eq(predicate, lz_obj_weak_ref(graph, stm.predicate)) &&
+				0 != atlas_rdf_term_eq(object, lz_obj_weak_ref(graph, stm.object))) {
+				result = TRUE;
+				break;
+			}
+		}		
+	});
+	return result;
+}

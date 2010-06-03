@@ -113,7 +113,7 @@ atlas_rdf_graph_apply(atlas_rdf_graph_t graph,
 #pragma mark -
 #pragma mark Graph Predicates
 
-/*! Check if the graph contains a statment.
+/*! Check if the graph contains a statement.
  */
 int
 atlas_rdf_graph_contains(atlas_rdf_graph_t graph,
