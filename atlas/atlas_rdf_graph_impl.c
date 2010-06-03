@@ -559,7 +559,7 @@ atlas_rdf_graph_contains(atlas_rdf_graph_t graph,
     assert(predicate != 0);	
     assert(object != 0);
 	
-    __block int result = FALSE;
+    __block int result = 0;
     lz_obj_sync(graph, ^(void * data, uint32_t length){
 		__graph * statements = data;
 		
@@ -575,7 +575,7 @@ atlas_rdf_graph_contains(atlas_rdf_graph_t graph,
 			if (0 != atlas_rdf_term_eq(subject, lz_obj_weak_ref(graph, stm.subject)) &&
 				0 != atlas_rdf_term_eq(predicate, lz_obj_weak_ref(graph, stm.predicate)) &&
 				0 != atlas_rdf_term_eq(object, lz_obj_weak_ref(graph, stm.object))) {
-				result = TRUE;
+				result = 1;
 				break;
 			}
 		}		

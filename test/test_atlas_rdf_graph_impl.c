@@ -583,6 +583,8 @@ START_TEST (test_create_rdf_graph_difference) {
 } END_TEST
 
 
+#pragma mark test_rdf_graph_contains
+
 START_TEST (test_rdf_graph_contains) {
     
     // create some terms to store in the graph
@@ -615,27 +617,13 @@ START_TEST (test_rdf_graph_contains) {
     if (graph) {
         // check, whether the graph contains the
 		// expected statements
-		fail_unless(atlas_rdf_graph_contains(graph, sub1,
-													pred1, 
-													obj1));
-		fail_unless(atlas_rdf_graph_contains(graph, sub2,
-													pred2, 
-													obj2));
-		fail_unless(atlas_rdf_graph_contains(graph, sub3,
-													pred3, 
-													obj3));
-		fail_if(atlas_rdf_graph_contains(graph, sub1,
-												pred3,
-												obj3));
-		fail_if(atlas_rdf_graph_contains(graph, sub1,
-										 pred2,
-										 obj3));
-		fail_if(atlas_rdf_graph_contains(graph, sub4,
-										 pred4,
-										 obj4));
-		fail_if(atlas_rdf_graph_contains(graph, sub1,
-										 pred4,
-										 obj3));
+		fail_unless(atlas_rdf_graph_contains(graph, sub1, pred1, obj1));
+		fail_unless(atlas_rdf_graph_contains(graph, sub2, pred2, obj2));
+		fail_unless(atlas_rdf_graph_contains(graph, sub3, pred3, obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub1, pred3, obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub1, pred2, obj3));
+		fail_if(atlas_rdf_graph_contains(graph, sub4, pred4, obj4));
+		fail_if(atlas_rdf_graph_contains(graph, sub1, pred4, obj3));
         lz_release(graph);
     }
     
