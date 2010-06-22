@@ -75,6 +75,12 @@ static int cross_normalize(atlas_shp_coord_vector_t * result,
 static int is_meridian(atlas_shp_coordinate_t * c1,
                        atlas_shp_coordinate_t * c2);
 
+int lon_range_overlaps(atlas_shp_coordinate_t * coord11,
+							  atlas_shp_coordinate_t * coord12,
+							  atlas_shp_coordinate_t * coord21,
+							  atlas_shp_coordinate_t * coord22);
+
+
 #pragma mark -
 #pragma mark Spherical Operations
 
@@ -407,6 +413,14 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
 	return 0;
 }
 
+
+// ========================================
+
+
+
+
+// ========================================
+
 #pragma mark -
 #pragma mark -
 #pragma mark Private Functions
@@ -600,5 +614,49 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
 	return 0;
 }
 
+// ========================================
 
-
+/*! Checks if two longitude ranges overlap.
+ *
+ * Two coordinates each define a segment.
+ *
+ * \param result pointer to vector holding the normalized cross product
+ * \param coord1 coordinate 1.1
+ * \param coord2 coordinate 1.2
+ * \param coord1 coordinate 2.1
+ * \param coord2 coordinate 2.2
+ *
+ * \return zero (0) if no overlap, one (1) if overlap
+ */
+int
+lon_range_overlaps(atlas_shp_coordinate_t * coord11,
+				   atlas_shp_coordinate_t * coord12,
+				   atlas_shp_coordinate_t * coord21,
+				   atlas_shp_coordinate_t * coord22) {
+	
+	// Get minimum and maximum longitude from first pair of coordinates
+	double min1 = fmin(coord11->longitude, coord12->longitude);
+	double max1 = fmax(coord11->longitude, coord12->longitude);
+	
+	// Get minimum and maximum longitude from second pair of coordinates
+	double min2 = fmin(coord21->longitude, coord22->longitude);
+	double max2 = fmax(coord21->longitude, coord22->longitude);
+	
+	// Check for overlaps
+	if ((min1 <= min2 && min2 <= max1) || 
+		(min1 <= max2 && max2 <= max1) ||
+		(min2 <= min1 && min1 <= max2) ||
+		(min2 <= max1 && max1 <= max2) ) {
+		return 1;
+	}
+	
+	// Check for overlaps near the +/- 180 deg meridian
+	if ((min1 <= min2+360.0 && min2+360.0 <= max1) || 
+		(min1 <= max2+360.0 && max2+360.0 <= max1) ||
+		(min2 <= min1+360.0 && min1+360.0 <= max2) ||
+		(min2 <= max1+360.0 && max1+360.0 <= max2) ) {
+		return 1;
+	}
+	
+	return 0;
+}

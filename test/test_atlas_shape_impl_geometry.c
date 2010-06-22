@@ -272,6 +272,68 @@ START_TEST (test_shape_impl_gc_intersection) {
 	
 } END_TEST
 
+
+START_TEST (test_shape_impl_geometry_lon_range_overlap) {	
+	/*
+	 * Tests for check, if two latitude ranges overlap
+	 *
+	 * Latitude is always 0.0, since the function tested does not care about
+	 * the latitude. However, when testing meridians the latitude is used to
+	 * emphazize the meridian test.
+	 */
+	
+	// no overlap
+	atlas_shp_coordinate_t c111 = {-30.0 , 0.0};
+	atlas_shp_coordinate_t c112 = { 20.0 , 0.0};
+	atlas_shp_coordinate_t c121 = { 40.0 , 0.0};
+	atlas_shp_coordinate_t c122 = { 50.0 , 0.0};
+	fail_unless (0 == lon_range_overlaps(&c111, &c112, &c121, &c122));
+	
+	// overlap
+	atlas_shp_coordinate_t c211 = {-30.0 , 0.0};
+	atlas_shp_coordinate_t c212 = { 20.0 , 0.0};
+	atlas_shp_coordinate_t c221 = { 50.0 , 0.0};
+	atlas_shp_coordinate_t c222 = {  0.0 , 0.0};
+	fail_unless (1 == lon_range_overlaps(&c211, &c212, &c221, &c222));
+	
+	// no overlap, using meridian
+	atlas_shp_coordinate_t c311 = {-10.0 , -80.0};
+	atlas_shp_coordinate_t c312 = {-10.0 ,  80.0};
+	atlas_shp_coordinate_t c321 = {  0.0 ,  0.0};
+	atlas_shp_coordinate_t c322 = { 30.0 ,  0.0};
+	fail_unless (0 == lon_range_overlaps(&c311, &c312, &c321, &c322));
+	
+	// overlap, using meridian
+	atlas_shp_coordinate_t c411 = { 15.0 , -80.0};
+	atlas_shp_coordinate_t c412 = { 15.0 ,  80.0};
+	atlas_shp_coordinate_t c421 = {  0.0 ,  0.0};
+	atlas_shp_coordinate_t c422 = { 30.0 ,  0.0};
+	fail_unless (1 == lon_range_overlaps(&c411, &c412, &c421, &c422));
+	
+	// no overlap, second segment across 180 deg meridian
+	atlas_shp_coordinate_t c511 = {-150.0 , 0.0};
+	atlas_shp_coordinate_t c512 = { -10.0 , 0.0};
+	atlas_shp_coordinate_t c521 = { 170.0 , 0.0};
+	atlas_shp_coordinate_t c522 = {-170.0 , 0.0};
+	fail_unless (0 == lon_range_overlaps(&c511, &c512, &c521, &c522));
+	
+	// overlap, second segment across 180 deg meridian
+	atlas_shp_coordinate_t c611 = {-150.0 , 0.0};
+	atlas_shp_coordinate_t c612 = { -10.0 , 0.0};
+	atlas_shp_coordinate_t c621 = { 170.0 , 0.0};
+	atlas_shp_coordinate_t c622 = {-140.0 , 0.0};
+	fail_unless (1 == lon_range_overlaps(&c611, &c612, &c621, &c622));
+	
+	// overlap of two meridians
+	atlas_shp_coordinate_t c711 = {20.0 , -80.0};
+	atlas_shp_coordinate_t c712 = {20.0 ,  10.0};
+	atlas_shp_coordinate_t c721 = {20.0 ,   5.0};
+	atlas_shp_coordinate_t c722 = {20.0 ,  80.0};
+	fail_unless (1 == lon_range_overlaps(&c711, &c712, &c721, &c722));
+	
+} END_TEST
+
+
 int 
 abs_value_check(double actual, 
 				double expected, 
@@ -311,6 +373,7 @@ Suite * shape_impl_geometry_suite(void) {
 	tcase_add_test(tc_create, test_shape_impl_geometry_pol);
 	tcase_add_test(tc_create, test_shape_impl_geometry_arc_equal);
 	tcase_add_test(tc_create, test_shape_impl_gc_intersection);
+	tcase_add_test(tc_create, test_shape_impl_geometry_lon_range_overlap);
     
     suite_add_tcase(s, tc_create);
     
