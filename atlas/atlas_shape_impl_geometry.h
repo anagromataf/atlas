@@ -25,7 +25,7 @@
 #define _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 
 #ifndef SHAPE_PRECISION
-#define SHAPE_PRECISION 1.0E-15
+#define SHAPE_PRECISION 1.0E-12
 #endif
 
 // Error constants
@@ -142,6 +142,29 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
                             atlas_shp_coordinate_t * l1_e,
                             atlas_shp_coordinate_t * l2_s,
                             atlas_shp_coordinate_t * l2_e);
+
+
+/*! Checks if two great circle segments intersect.
+ *
+ * Both a line and a plane can be given by their normal. This is used here.
+ * Therefore the angle in between lines and planes can be determined.
+ *
+ * \param result pointer to variable holding the point of intersection
+ * of the two segments if this point exists. It is set to (0.0, 0.0) if
+ * the segments do not intersect.
+ * \param c11 point 1 for first segment
+ * \param c12 point 2 for first segment
+ * \param c21 point 1 for second segment
+ * \param c22 point 2 for second segment
+ *
+ * \return 1 if the segments intersect, 0 otherwise
+ */
+int
+atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
+								  atlas_shp_coordinate_t * coord11,
+								  atlas_shp_coordinate_t * coord12,
+								  atlas_shp_coordinate_t * coord21,
+								  atlas_shp_coordinate_t * coord22);
 
 
 #endif // _ATLAS_SHAPE_IMPL_GEOMETRY_H_

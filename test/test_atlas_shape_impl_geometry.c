@@ -334,6 +334,370 @@ START_TEST (test_shape_impl_geometry_lon_range_overlap) {
 } END_TEST
 
 
+START_TEST (test_shape_impl_geometry_initial_course) {
+	// arbitrary course northern hemisphere
+	int i = 1;
+	atlas_shp_coordinate_t c11 = {-73.7789, 40.6397};
+	atlas_shp_coordinate_t c12 = { 13.2833, 52.5667};
+	double hdg11, hdg12;
+	initial_course(&hdg11, &c11, &c12);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg11);
+	initial_course(&hdg12, &c12, &c11);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg12);
+	fail_unless(hdg11 > 46 && hdg11 < 47);
+	fail_unless(hdg12 > 295 && hdg12 < 296);
+	
+	// arbitrary course southern hemisphere
+	i++;
+	atlas_shp_coordinate_t c21 = {-120, -40};
+	atlas_shp_coordinate_t c22 = {  15, -60};
+	
+	double hdg21, hdg22;
+	initial_course(&hdg21, &c21, &c22);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg21);
+	initial_course(&hdg22, &c22, &c21);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg22);
+	fail_unless(hdg21 > 158 && hdg21 < 159);
+	fail_unless(hdg22 > 214 && hdg22 < 215);
+	
+	// course along meridian
+	i++;
+	atlas_shp_coordinate_t c31 = {15, 50};
+	atlas_shp_coordinate_t c32 = {15, -20};
+	
+	double hdg31, hdg32;
+	initial_course(&hdg31, &c31, &c32);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg31);
+	initial_course(&hdg32, &c32, &c31);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg32);
+	fail_unless(abs_value_check(hdg31, 180.0, 0.1) == 1);
+	fail_unless(abs_value_check(hdg32, 0.0, 0.1) == 1);
+	
+	// course over pole
+	i++;
+	atlas_shp_coordinate_t c41 = {-80, -70};
+	atlas_shp_coordinate_t c42 = {100, -75};
+	
+	double hdg41, hdg42;
+	initial_course(&hdg41, &c41, &c42);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg41);
+	initial_course(&hdg42, &c42, &c41);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg42);
+	fail_unless(abs_value_check(hdg41, 180.0, 0.1) == 1);
+	fail_unless(abs_value_check(hdg42, 180.0, 0.1) == 1);
+	
+	// course southern hemisphere across dateline
+	i++;
+	atlas_shp_coordinate_t c51 = { 110, -40};
+	atlas_shp_coordinate_t c52 = {-150, -50};
+	;
+	double hdg51, hdg52;
+	initial_course(&hdg51, &c51, &c52);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg51);
+	initial_course(&hdg52, &c52, &c51);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg52);
+	fail_unless(hdg51 > 136 && hdg51 < 137);
+	fail_unless(hdg52 > 235 && hdg52 < 236);	
+	
+} END_TEST
+
+
+START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
+	// arbitrary course northern hemisphere
+	int i = 1;
+	// New York to Berlin
+	atlas_shp_coordinate_t c11 = {-73.7789, 40.6397};
+	atlas_shp_coordinate_t c12 = { 13.2833, 52.5667};
+	double result_min_1, result_max_1;
+	
+	int latr_1 = lat_range_gc_seg(&result_min_1, &result_max_1,
+								  &c11, &c12);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_1);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_1);
+	
+	fail_unless(40 < result_min_1 < 41);
+	fail_unless(56 < result_max_1 < 57);
+	
+	
+	// arbitrary course southern hemisphere
+	i++;
+	atlas_shp_coordinate_t c21 = { 110, -40};
+	atlas_shp_coordinate_t c22 = {-150, -50};
+	double result_min_2, result_max_2;
+	
+	int latr_2 = lat_range_gc_seg(&result_min_2, &result_max_2,
+								  &c21, &c22);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_2);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_2);
+	
+	fail_unless(-57.9 > result_min_2 > -58.1);
+	fail_unless(abs_value_check(result_max_2, -40.0, 0.1));
+	
+	
+	// northern hemisphere, one points south, the other one north
+	i++;
+	atlas_shp_coordinate_t c31 = {-10, 50};
+	atlas_shp_coordinate_t c32 = { 30, 30};
+	double result_min_3, result_max_3;
+	
+	int latr_3 = lat_range_gc_seg(&result_min_3, &result_max_3,
+								  &c31, &c32);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_3);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_3);
+	
+	fail_unless(abs_value_check(result_max_3, 50.0, 0.1));
+	fail_unless(abs_value_check(result_min_3, 30.0, 0.1));
+	
+	
+	// northern hemisphere, one points south, the other one north
+	i++;
+	atlas_shp_coordinate_t c41 = {-10, -50};
+	atlas_shp_coordinate_t c42 = {-30, -30};
+	double result_min_4, result_max_4;
+	
+	int latr_4 = lat_range_gc_seg(&result_min_4, &result_max_4,
+								  &c41, &c42);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_4);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_4);
+	
+	fail_unless(abs_value_check(result_max_4, -30.0, 0.1));
+	fail_unless(abs_value_check(result_min_4, -50.0, 0.1));
+	
+	// meridian not crossing pole
+	i++;
+	atlas_shp_coordinate_t c51 = {10,  80};
+	atlas_shp_coordinate_t c52 = {10, -70};
+	double result_min_5, result_max_5;
+	
+	int latr_5 = lat_range_gc_seg(&result_min_5, &result_max_5,
+								  &c51, &c52);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_5);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_5);
+	
+	fail_unless(abs_value_check(result_max_5,  80.0, 0.1));
+	fail_unless(abs_value_check(result_min_5, -70.0, 0.1));
+	
+	// meridian crossing north pole
+	i++;
+	atlas_shp_coordinate_t c61 = {-170, 80};
+	atlas_shp_coordinate_t c62 = {  10, 60};
+	double result_min_6, result_max_6;
+	
+	int latr_6 = lat_range_gc_seg(&result_min_6, &result_max_6,
+								  &c61, &c62);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_6);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_6);
+	
+	fail_unless(abs_value_check(result_max_6, 90.0, 0.1));
+	fail_unless(abs_value_check(result_min_6, 60.0, 0.1));
+	
+	// meridian crossing south pole
+	i++;
+	atlas_shp_coordinate_t c71 = {-110, -80};
+	atlas_shp_coordinate_t c72 = {  70, -60};
+	double result_min_7, result_max_7;
+	
+	int latr_7 = lat_range_gc_seg(&result_min_7, &result_max_7,
+								  &c71, &c72);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_7);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_7);
+	
+	fail_unless(abs_value_check(result_max_7, -60.0, 0.1));
+	fail_unless(abs_value_check(result_min_7, -90.0, 0.1));
+	
+	// BES-NOU (Brest, F - Nouméa, NC), both point north, different hemispheres
+	i++;
+	atlas_shp_coordinate_t c81 = { -4,  48};
+	atlas_shp_coordinate_t c82 = {166, -22};
+	double result_min_8, result_max_8;
+	
+	int latr_8 = lat_range_gc_seg(&result_min_8, &result_max_8,
+								  &c81, &c82);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_8);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_8);
+	
+	fail_unless(76.3 < result_max_8 && result_max_8 < 76.4);
+	fail_unless(abs_value_check(result_min_8, -22.0, 0.1));
+	
+	// both antipodal
+	i++;
+	atlas_shp_coordinate_t c91 = {-80, -10};
+	atlas_shp_coordinate_t c92 = {100,  10};
+	double result_min_9, result_max_9;
+	
+	int latr_9 = lat_range_gc_seg(&result_min_9, &result_max_9,
+								  &c91, &c92);
+	
+	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_9);
+	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_9);
+	
+	fail_unless(abs_value_check(result_min_9, -10.0, 0.1));
+	fail_unless(abs_value_check(result_max_9,  10.0, 0.1));
+	
+	
+	
+} END_TEST
+
+
+START_TEST (test_shape_impl_geometry_gc_seg_intersect) {	
+	int i = 1;
+	
+	// two arbitrary courses on northern hemisphere
+	// Seattle to Vienna
+	atlas_shp_coordinate_t c111 = {-122.3094, 47.4488};
+	atlas_shp_coordinate_t c112 = {  16.5697, 48.1102};
+	// New York to Helsinki
+	atlas_shp_coordinate_t c121 = {-73.7789, 40.6397};
+	atlas_shp_coordinate_t c122 = { 24.9633, 60.3172};
+	atlas_shp_coordinate_t result_1;
+	int has_intersect_1 
+	= atlas_shape_gc_segments_intersect(&result_1, 
+										&c111, &c112, 
+										&c121, &c122);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_1.latitude, result_1.longitude);
+	fail_unless(has_intersect_1 == 1);
+	
+	
+	// longitude ranges overlap, latitude ranges do not, segments do not intersect
+	i++;
+	atlas_shp_coordinate_t c211 = { 140, 10};
+	atlas_shp_coordinate_t c212 = {-160, 10};
+	atlas_shp_coordinate_t c221 = { 170, 20};
+	atlas_shp_coordinate_t c222 = {-150, 20};
+	atlas_shp_coordinate_t result_2;
+	int has_intersect_2 = 
+	atlas_shape_gc_segments_intersect(&result_2, 
+									  &c211, &c212, 
+									  &c221, &c222);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_2.latitude, result_2.longitude);
+	fail_unless(has_intersect_2 == 0);
+	
+	// latitude ranges overlap, latitude ranges do not, segments do not intersect
+	i++;
+	atlas_shp_coordinate_t c311 = { 160, -10};
+	atlas_shp_coordinate_t c312 = { 170,  20};
+	atlas_shp_coordinate_t c321 = {-160,  50};
+	atlas_shp_coordinate_t c322 = {-170,   0};
+	atlas_shp_coordinate_t result_3;
+	int has_intersect_3 
+	= atlas_shape_gc_segments_intersect(&result_3, 
+										&c311, &c312, 
+										&c321, &c322);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_3.latitude, result_3.longitude);
+	fail_unless(has_intersect_3 == 0);
+	
+	// one segment is a meridian, the other one is not, they do intersect
+	i++;
+	atlas_shp_coordinate_t c411 = {-10, -10};
+	atlas_shp_coordinate_t c412 = {-10, -60};
+	atlas_shp_coordinate_t c421 = {-60, -30};
+	atlas_shp_coordinate_t c422 = { 30, -40};
+	atlas_shp_coordinate_t result_4;
+	int has_intersect_4 
+	= atlas_shape_gc_segments_intersect(&result_4, 
+										&c411, &c412, 
+										&c421, &c422);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_4.latitude, result_4.longitude);
+	fail_unless(has_intersect_4 == 1);
+	
+	
+	// intersection on north pole
+	i++;
+	atlas_shp_coordinate_t c511 = {-100, 50};
+	atlas_shp_coordinate_t c512 = {  80, 60};
+	atlas_shp_coordinate_t c521 = { -80, 30};
+	atlas_shp_coordinate_t c522 = { 100, 80};
+	atlas_shp_coordinate_t result_5;
+	int has_intersect_5 
+	= atlas_shape_gc_segments_intersect(&result_5, 
+										&c511, &c512, 
+										&c521, &c522);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_5.latitude, result_5.longitude);
+	fail_unless(has_intersect_5 == 1);
+	
+	
+	// BES-NOU (Brest, F - Nouméa, NC), both point north, different hemispheres
+	// intersection around 100 E 74 N
+	i++;
+	atlas_shp_coordinate_t c611 = { -4,  48};
+	atlas_shp_coordinate_t c612 = {166, -22};
+	atlas_shp_coordinate_t c621 = { -80, 30};
+	atlas_shp_coordinate_t c622 = { 100, 60};
+	atlas_shp_coordinate_t result_6;
+	int has_intersect_6 
+	= atlas_shape_gc_segments_intersect(&result_6, 
+										&c611, &c612, 
+										&c621, &c622);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_6.latitude, result_6.longitude);
+	fail_unless(has_intersect_6 == 1);
+	
+	
+			
+	// second segment is a meridian, the other one is not, they do not intersect
+	i++;
+	atlas_shp_coordinate_t c711 = { -5,  50};
+	atlas_shp_coordinate_t c712 = {170, -20};
+	atlas_shp_coordinate_t c721 = { -80, 30};
+	atlas_shp_coordinate_t c722 = { 100, 85};
+	atlas_shp_coordinate_t result_7;
+	int has_intersect_7 
+	= atlas_shape_gc_segments_intersect(&result_7, 
+										&c711, &c712, 
+										&c721, &c722);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_7.latitude, result_7.longitude);
+	fail_unless(has_intersect_7 == 0);
+	
+	
+	// first segment is a meridian, the other one is not, they do not intersect
+	i++;
+	atlas_shp_coordinate_t c811 = { -80, 30};
+	atlas_shp_coordinate_t c812 = { 100, 85};
+	atlas_shp_coordinate_t c821 = { -5,  50};
+	atlas_shp_coordinate_t c822 = {170, -20};
+	atlas_shp_coordinate_t result_8;
+	int has_intersect_8 
+	= atlas_shape_gc_segments_intersect(&result_8, 
+										&c811, &c812, 
+										&c821, &c822);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_8.latitude, result_8.longitude);
+	fail_unless(has_intersect_8 == 0);
+	
+	
+	// overlapping lat and lon ranges, but no intersection
+	i++;
+	atlas_shp_coordinate_t c911 = { -5,  50};
+	atlas_shp_coordinate_t c912 = {170, -20};
+	atlas_shp_coordinate_t c921 = {-110, 30};
+	atlas_shp_coordinate_t c922 = {  80, 85};
+	atlas_shp_coordinate_t result_9;
+	int has_intersect_9 
+	= atlas_shape_gc_segments_intersect(&result_9, 
+										&c911, &c912, 
+										&c921, &c922);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_9.latitude, result_9.longitude);
+	fail_unless(has_intersect_9 == 0);
+	
+	
+} END_TEST
+
+
 int 
 abs_value_check(double actual, 
 				double expected, 
@@ -374,6 +738,9 @@ Suite * shape_impl_geometry_suite(void) {
 	tcase_add_test(tc_create, test_shape_impl_geometry_arc_equal);
 	tcase_add_test(tc_create, test_shape_impl_gc_intersection);
 	tcase_add_test(tc_create, test_shape_impl_geometry_lon_range_overlap);
+	tcase_add_test(tc_create, test_shape_impl_geometry_initial_course);
+	tcase_add_test(tc_create, test_shape_impl_geometry_lat_range_gc_seg);	
+	tcase_add_test(tc_create, test_shape_impl_geometry_gc_seg_intersect);
     
     suite_add_tcase(s, tc_create);
     
