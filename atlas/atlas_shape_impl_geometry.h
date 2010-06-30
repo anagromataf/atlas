@@ -146,8 +146,16 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
 
 /*! Checks if two great circle segments intersect.
  *
- * Both a line and a plane can be given by their normal. This is used here.
- * Therefore the angle in between lines and planes can be determined.
+ * If there is an intersection, 1 is returned, otherwise 0. If there is an 
+ * intersection of two segments (one is not a meridian) the resulting point
+ * of intersection is written to the result variable passed. If both segments
+ * do not intersect, no value is written to the result variable.
+ *
+ * If both segments are segments of meridians on the identical great circle
+ * and they overlap, 1 is returned and either the first or second coordinate
+ * of the first segment which is located on the other segment is written to
+ * the result. This means: if c11 is on (c21-c22) is returned, 
+ * else if c12 is on (c21-c22) c12 is returned.
  *
  * \param result pointer to variable holding the point of intersection
  * of the two segments if this point exists. It is set to (0.0, 0.0) if

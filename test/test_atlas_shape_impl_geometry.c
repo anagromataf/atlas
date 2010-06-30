@@ -695,6 +695,53 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	fail_unless(has_intersect_9 == 0);
 	
 	
+	// both are meridians that overlap
+	i++;
+	atlas_shp_coordinate_t c1011 = {-100, -50};
+	atlas_shp_coordinate_t c1012 = {-100, -20};
+	atlas_shp_coordinate_t c1021 = {-100, -30};
+	atlas_shp_coordinate_t c1022 = {-100,  85};
+	atlas_shp_coordinate_t result_10;
+	int has_intersect_10 
+	= atlas_shape_gc_segments_intersect(&result_10, 
+										&c1011, &c1012, 
+										&c1021, &c1022);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_10.latitude, result_10.longitude);
+	fail_unless(has_intersect_10 == 1);
+	
+	// both are meridians (one over pole) that overlap
+	i++;
+	atlas_shp_coordinate_t c1111 = {-100, -50};
+	atlas_shp_coordinate_t c1112 = {  80, -20};
+	atlas_shp_coordinate_t c1121 = {-100, -60};
+	atlas_shp_coordinate_t c1122 = {-100,  10};
+	atlas_shp_coordinate_t result_11;
+	int has_intersect_11
+	= atlas_shape_gc_segments_intersect(&result_11, 
+										&c1111, &c1112, 
+										&c1121, &c1122);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_11.latitude, result_11.longitude);
+	fail_unless(has_intersect_11 == 1);
+	
+	// both are meridians that do not overlap
+	i++;
+	atlas_shp_coordinate_t c1211 = {-100, -50};
+	atlas_shp_coordinate_t c1212 = {-100, -20};
+	atlas_shp_coordinate_t c1221 = {-100, -10};
+	atlas_shp_coordinate_t c1222 = {-100,  85};
+	atlas_shp_coordinate_t result_12;
+	int has_intersect_12 
+	= atlas_shape_gc_segments_intersect(&result_12, 
+										&c1211, &c1212, 
+										&c1221, &c1222);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_12.latitude, result_12.longitude);
+	fail_unless(has_intersect_12 == 0);
+	
+	
+	
 } END_TEST
 
 

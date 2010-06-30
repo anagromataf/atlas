@@ -204,7 +204,38 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 								  atlas_shp_coordinate_t * coord21,
 								  atlas_shp_coordinate_t * coord22) {
 	
-	// TODO: Case when two meridian segments are on the same great circle
+	if (is_meridian(coord11, coord12) &&
+		is_meridian(coord21, coord22) &&
+		lon_range_overlaps(coord11, coord12, coord21, coord21) &&
+		(coord11->longitude == coord21->longitude || 
+		 coord11->longitude == coord21->longitude-180.0 || 
+		 coord11->longitude == coord21->longitude+180.0) ) {
+		/*
+		 * Both segments are meridians and their longitude ranges overlap.
+		 * The longitude ranges have to overlap. Otherwise there is no possible
+		 * intersection.
+		 * Also the longitudes must be equal or opposite (+- 180 deg) for
+		 * both meridian segments to be on the same great circle.
+		 */
+		
+		/*
+		 * In case of two identical meridians the intersection of the two
+		 * great circles returns both poles. However, now there will be a check,
+		 * if one point of the first segment is on the other segment. If so,
+		 * this point is returned.
+		 */
+		
+		if (is_point_on_meridian_segment(coord11, coord21, coord22)) {
+			*result = *coord11;
+			return 1;
+		} else if (is_point_on_meridian_segment(coord12, coord21, coord22)) {
+			*result = *coord12;
+			return 1;
+		} else {
+			return 0;
+		}
+
+	}
 	
 	// Variables to hold both points of intersection
 	atlas_shp_coordinate_t intersection1;
