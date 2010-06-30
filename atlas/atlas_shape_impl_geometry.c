@@ -54,10 +54,11 @@ typedef struct atlas_shp_coord_vector_s {
 } atlas_shp_coord_vector_t;
 
 // Private Functions
-int lon_range_overlaps(atlas_shp_coordinate_t * coord11,
-					   atlas_shp_coordinate_t * coord12,
-					   atlas_shp_coordinate_t * coord21,
-					   atlas_shp_coordinate_t * coord22);
+
+int lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
+					   atlas_shp_coordinate_t * destination_1,
+					   atlas_shp_coordinate_t * origin_2,
+					   atlas_shp_coordinate_t * destination_2);
 
 int lat_range_overlaps(double * given_min_1,
 					   double * given_max_1,
@@ -537,65 +538,106 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
 
 /*! Checks if two longitude ranges overlap.
  *
- * \param coord1 coordinate 1.1
- * \param coord2 coordinate 1.2
- * \param coord1 coordinate 2.1
- * \param coord2 coordinate 2.2
+ * \param origin_1 coordinate 1.1
+ * \param destination_1 coordinate 1.2
+ * \param origin_2 coordinate 2.1
+ * \param destination_2 coordinate 2.2
  *
  * \return zero (0) if no overlap, one (1) if overlap
  */
 int
-lon_range_overlaps(atlas_shp_coordinate_t * given_min_1,
-				   atlas_shp_coordinate_t * given_max_1,
-				   atlas_shp_coordinate_t * given_min_2,
-				   atlas_shp_coordinate_t * given_max_2) {
+lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
+				   atlas_shp_coordinate_t * destination_1,
+				   atlas_shp_coordinate_t * origin_2,
+				   atlas_shp_coordinate_t * destination_2) {
 	
-	double min1 = given_min_1->longitude;
-	double max1 = given_max_1->longitude;
-	double min2 = given_min_2->longitude;
-	double max2 = given_max_2->longitude;
+	int segment_1_dateline 
+	= ( fabs(origin_1->longitude - destination_1->longitude) ) > 180.0;
 	
-	while (max1 < min1) {
-		max1 = max1 + 360.0;
-	}
-	while (540.0 < min1 || 540.0 < max1) {
-		min1 = min1 - 360.0;
-		max1 = max1 - 360.0;
-	}
-	while (-180.0 > min1 || -180.0 > max1) {
-		min1 = min1 + 360.0;
-		max1 = max1 + 360.0;
-	}
+	int segment_2_dateline 
+	= ( fabs(origin_2->longitude - destination_2->longitude) ) > 180.0;
 	
-	while (max2 < min2) {
-		max2 = max2 + 360.0;
-	}
-	while (540.0 < min2 || 540.0 < max2) {
-		min2 = min2 - 360.0;
-		max2 = max2 - 360.0;
-	}
-	while (-180.0 > min2 || -180.0 > max2) {
-		min2 = min2 + 360.0;
-		max2 = max2 + 360.0;
+	double min_1 = fmin(origin_1->longitude, destination_1->longitude);
+	double max_1 = fmax(origin_1->longitude, destination_1->longitude);
+	double min_2 = fmin(origin_2->longitude, destination_2->longitude);
+	double max_2 = fmax(origin_2->longitude, destination_2->longitude);
+	
+	/*
+	 * If neither longitude range overlaps the dateline no action needed
+	 */
+	if (segment_1_dateline && !segment_2_dateline) {
+		/*
+		 * Only segment 1 overlaps the dateline.
+		 * At this point min_1 is the point east of the dateline
+		 * and max_1 is the point west of the dateline.
+		 */
+		min_1 = min_1 + 360.0;
+		
+		// swap min and max for segment 1
+		double temp = min_1;
+		min_1 = max_1;
+		max_1 = temp;
+		
+		if (min_2 < 0) {
+			min_2 = min_2 + 360.0;
+			max_2 = max_2 + 360.0;
+		}
+				
+	} else if (!segment_1_dateline && segment_2_dateline) {
+		/*
+		 * Only segment 2 overlaps the dateline
+		 * At this point min_2 is the point east of the dateline
+		 * and max_2 is the point west of the dateline.
+		 */
+		min_2 = min_2 + 360.0;
+		
+		// swap min and max for segment 2
+		double temp = min_2;
+		min_2 = max_1;
+		max_2 = temp;
+		
+		if (min_1 < 0) {
+			min_1 = min_1 + 360.0;
+			max_1 = max_1 + 360.0;
+		}
+		
+	} else if (segment_1_dateline && segment_2_dateline) {
+		/*
+		 * Both segments overlap the dateline
+		 */
+		min_1 = min_1 + 360.0;
+		min_2 = min_2 + 360.0;
+		
+		double temp;
+		
+		// swap min and max for segment 1
+		temp = min_1;
+		min_1 = max_1;
+		max_1 = temp;
+		
+		// swap min and max for segment 2
+		temp = min_2;
+		min_2 = max_1;
+		max_2 = temp;
+		
 	}
 	
 	// Check for overlaps
-	if ((min1 <= min2 && min2 <= max1) || 
-		(min1 <= max2 && max2 <= max1) ||
-		(min2 <= min1 && min1 <= max2) ||
-		(min2 <= max1 && max1 <= max2) ) {
+	if ((min_1 <= min_2 && min_2 <= max_1) || 
+		(min_1 <= max_2 && max_2 <= max_1) ||
+		(min_2 <= min_1 && min_1 <= max_2) ||
+		(min_2 <= max_1 && max_1 <= max_2) ) {
+		/*
+		 * Four cases:
+		 * 1. Segment 2 is enclosed within segment 1.
+		 * 2. Maximum of segment 2 is within the range of segment 1.
+		 * 3. Minimum of segment 1 is within the range of segment 2.
+		 * 4. Segment 1 is enclosed within segment 2.
+		 */
 		return 1;
+	} else {
+		return 0;
 	}
-	
-	// Check for overlaps near the +/- 180 deg meridian
-	if ((min1 <= min2+360.0 && min2+360.0 <= max1) || 
-		(min1 <= max2+360.0 && max2+360.0 <= max1) ||
-		(min2 <= min1+360.0 && min1+360.0 <= max2) ||
-		(min2 <= max1+360.0 && max1+360.0 <= max2) ) {
-		return 1;
-	}
-		
-	return 0;
 }
 
 /*! Checks if two latitude ranges overlap.
@@ -781,7 +823,7 @@ lat_range_gc_seg(double * result_min,
 	phi = geographic_latitude(phi);
 	
 	// Convert phi back to degree
-	phi = radian_to_degree(phi);
+	phi = fabs(radian_to_degree(phi));
 	
 	//printf("phi = %f \n",phi);
 		

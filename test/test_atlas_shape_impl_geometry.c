@@ -741,7 +741,7 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	fail_unless(has_intersect_12 == 0);
 	
 	
-	// Kopenhagen-Bern and Berlin-Paris
+	// Kopenhagen-Bern and Berlin-Paris, intersection around 51,5 N 9,8 E
 	i++;
 	atlas_shp_coordinate_t c1311 = {12.6, 55.6};
 	atlas_shp_coordinate_t c1312 = { 7.4, 46.9};
@@ -755,6 +755,36 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
 		   i, result_13.latitude, result_13.longitude);
 	fail_unless(has_intersect_13 == 1);
+	
+	// intersection around 65,9 N 22,3 E
+	i++;
+	atlas_shp_coordinate_t c1411 = { 23,  70};
+	atlas_shp_coordinate_t c1412 = { 18, -34};
+	atlas_shp_coordinate_t c1421 = {140,  35};
+	atlas_shp_coordinate_t c1422 = {-10,  40};
+	atlas_shp_coordinate_t result_14;
+	int has_intersect_14 
+	= atlas_shape_gc_segments_intersect(&result_14, 
+										&c1411, &c1412, 
+										&c1421, &c1422);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_14.latitude, result_14.longitude);
+	fail_unless(has_intersect_14 == 1);
+	
+	
+	i++;
+	atlas_shp_coordinate_t c1511 = {-49, -27};
+	atlas_shp_coordinate_t c1512 = { 13,  52};
+	atlas_shp_coordinate_t c1521 = {-80,  27};
+	atlas_shp_coordinate_t c1522 = { 55,  -5};
+	atlas_shp_coordinate_t result_15;
+	int has_intersect_15 
+	= atlas_shape_gc_segments_intersect(&result_15, 
+										&c1511, &c1512, 
+										&c1521, &c1522);
+	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+		   i, result_15.latitude, result_15.longitude);
+	fail_unless(has_intersect_15 == 1);
 	
 } END_TEST
 
