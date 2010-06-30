@@ -53,39 +53,72 @@ typedef struct atlas_shp_coord_vector_s {
 	double z;
 } atlas_shp_coord_vector_t;
 
-// TODO: Complete list of private functions
+// Private Functions
+int lon_range_overlaps(atlas_shp_coordinate_t * coord11,
+					   atlas_shp_coordinate_t * coord12,
+					   atlas_shp_coordinate_t * coord21,
+					   atlas_shp_coordinate_t * coord22);
 
+int lat_range_overlaps(double * given_min_1,
+					   double * given_max_1,
+					   atlas_shp_coordinate_t * given_min_2,
+					   atlas_shp_coordinate_t * given_max_2);
+
+int lat_range_gc_seg(double * result_min,
+					 double * result_max,
+					 atlas_shp_coordinate_t * coord1,
+					 atlas_shp_coordinate_t * coord2);
+
+int initial_course(double * hdg_result,
+				   atlas_shp_coordinate_t * coord1,
+				   atlas_shp_coordinate_t * coord2);
+
+int is_meridian(atlas_shp_coordinate_t * c1,
+				atlas_shp_coordinate_t * c2);
+
+
+int is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
+								 atlas_shp_coordinate_t * c1,
+								 atlas_shp_coordinate_t * c2);
+
+
+// Converter Functions
 static inline double degree_to_radian(double degree);
 static inline double radian_to_degree(double radian);
 
 static inline double geographic_latitude(double geocentric_lat);
 static inline double geocentric_latitude(double geographic_lat);
 
+
+// Converter Functions between Spherical and Cartesian Coordinates
 static int sph_to_cart_gc(atlas_shp_coord_vector_t * result,
                           atlas_shp_coordinate_t * coord);
 
 static int cart_to_sph_gc(atlas_shp_coordinate_t * result,
                           atlas_shp_coord_vector_t * coord);
 
+
+// Vector Operations
+int is_vectors_equal(atlas_shp_coord_vector_t * p1, 
+					 atlas_shp_coord_vector_t * p2);
+
 static inline void antipode(atlas_shp_coord_vector_t * result,
                             atlas_shp_coord_vector_t * coord);
+
+int is_antipodal(atlas_shp_coord_vector_t * p1, 
+				 atlas_shp_coord_vector_t * p2);
 
 static int cross_normalize(atlas_shp_coord_vector_t * result,
                            atlas_shp_coord_vector_t * coord1,
                            atlas_shp_coord_vector_t * coord2);
 
-static int is_meridian(atlas_shp_coordinate_t * c1,
-                       atlas_shp_coordinate_t * c2);
+double vectors_angle(atlas_shp_coordinate_t * c1,
+					 atlas_shp_coordinate_t * c2);
 
-int lon_range_overlaps(atlas_shp_coordinate_t * coord11,
-							  atlas_shp_coordinate_t * coord12,
-							  atlas_shp_coordinate_t * coord21,
-							  atlas_shp_coordinate_t * coord22);
 
 
 #pragma mark -
 #pragma mark Spherical Operations
-
 
 int
 atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
@@ -1132,7 +1165,9 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
  *
  * \return Phi
  */
-double atlas_angle_vectors(atlas_shp_coordinate_t * c1, atlas_shp_coordinate_t * c2) {
+double 
+vectors_angle(atlas_shp_coordinate_t * c1,
+			  atlas_shp_coordinate_t * c2) {
 	
 	struct atlas_shp_coord_vector_s v1;
 	sph_to_cart_gc(&v1, c1);
