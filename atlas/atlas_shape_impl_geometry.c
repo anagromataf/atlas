@@ -247,6 +247,14 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 	atlas_shape_gc_intersection(&intersection1, &intersection2,
 								coord11, coord12,
 								coord21, coord22);
+
+	if (intersect_result != 0) {
+		/*
+		 * If there is a problem with finding the intersection of the two
+		 * great circles return that value.
+		 */
+		return intersect_result;
+	}
 	
 	/*
 	 * Next four statements:
@@ -460,64 +468,8 @@ atlas_shape_arc_equal(atlas_shp_coordinate_t * coords1,
                       atlas_shp_coordinate_t * coords2,
                       uint16_t num_coords2) {
 	
-	// TODO: Adapt for use with spheres (see lines_intersect)
-	
-	/*
-	 * First case: The starting and ending point have to be equal, if not, 
-	 no further checks are necessary
-	 */
-	if (!atlas_shape_points_equal(coords1, coords2) ||
-        !atlas_shape_points_equal(coords1 + num_coords1-1, coords2 + num_coords2-1)) {
-		return 0;
-	}
-	
-	// create a temporary pointers back to where the coordinates begin
-	atlas_shp_coordinate_t * tmp_c1_ptr = coords1;
-	atlas_shp_coordinate_t * tmp_c2_ptr = coords2;
-	
-	// each point of the first arc must be on a line segment of the second arc, if not return 0
-	for (int i = 0; i < num_coords1; i++) {
-		for (int j = 0; j < num_coords2 - 1; j++) {
-			// check, if the current point (i) is on line between j and j+1
-			if (atlas_shape_pol(tmp_c1_ptr, tmp_c2_ptr, tmp_c2_ptr + 1) == 0) {
-				// if not, done
-				return 0;
-			}
-			// advance pointer to check next line segment
-			tmp_c2_ptr++;
-		}
-		/*
-		 * Once all line segments are checked with the first point, continue 
-		 * with next point. The pointer for the coordinate pair to create a line 
-		 * segment has to be set back to the start of the coordinate array.
-		 */
-		tmp_c2_ptr = coords2;
-		// Once all inside loops are finished, advance pointer to next point
-		tmp_c1_ptr++;
-	}
-	// also reset pointer after the outer loop is completed
-	tmp_c1_ptr = coords1;
-	
-	
-	/*
-	 * The following lop is completely analog to the previous one. The 
-	 * difference is, that the points are not taken from the first arc, but from 
-	 * the second one. These points are checked to be on a line segment of arc 1.
-	 */
-	for (int i = 0; i < num_coords2; i++) {
-		for (int j = 0; j < num_coords1 - 1; j++) {
-			if (atlas_shape_pol(tmp_c2_ptr, tmp_c1_ptr, tmp_c1_ptr + 1) == 0) {
-				return 0;
-			}
-			tmp_c1_ptr++;
-		}
-		tmp_c1_ptr = coords1;
-		tmp_c2_ptr++;
-	}
-	tmp_c2_ptr = coords2;
-	
-	// if all checks passed, return 1
-	return 1;
+	// TODO: Implement / Adapt for use with spheres
+	return 0;
 }	
 
 
@@ -748,9 +700,9 @@ lat_range_gc_seg(double * result_min,
 			double p2_diff_np = 90.0 - coord2->latitude;
 			
 			// latitude range south pole to point 1
-			double p1_diff_sp = fabs(-90.0 - coord1->latitude);
+			// double p1_diff_sp = fabs(-90.0 - coord1->latitude);
 			// latitude range south pole to point 2
-			double p2_diff_sp = fabs(-90.0 - coord2->latitude);
+			// double p2_diff_sp = fabs(-90.0 - coord2->latitude);
 			
 			if ((p1_diff_np + p2_diff_np) < 180.0) {
 				/*
@@ -836,12 +788,9 @@ lat_range_gc_seg(double * result_min,
 	
 	double hdg1;
 	int h1 = initial_course(&hdg1, coord1, coord2);
-	//printf("hdg1 = %f \n",hdg1);
 
 	double hdg2;
 	int h2 = initial_course(&hdg2, coord2, coord1);
-	//printf("hdg2 = %f \n",hdg2);
-		
 	
 	if ((hdg1 < 90 || hdg1 > 270) && (hdg2 < 90 || hdg2 > 270)) {
 		// hdg1 points north, hdg2 points north
@@ -901,6 +850,8 @@ initial_course(double * hdg_result,
 	
 	double x = cos(lat1_rad) * sin(lat2_rad) 
 				- sin(lat1_rad) * cos(lat2_rad) * cos(lon2_rad - lon1_rad);
+	
+	// TODO: Check if atan2(0,0) can occur, atan2 may be undefined for (0,0)
 	
 	double hdg = fmod(atan2(y, x), 2 * M_PI);
 		
