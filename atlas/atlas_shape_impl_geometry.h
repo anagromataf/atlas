@@ -134,11 +134,71 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
  * \return 1 if the segments intersect, 0 otherwise
  */
 int
-atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
-								  atlas_shp_coordinate_t * coord11,
-								  atlas_shp_coordinate_t * coord12,
-								  atlas_shp_coordinate_t * coord21,
-								  atlas_shp_coordinate_t * coord22);
+atlas_shape_gc_segments_intersection(atlas_shp_coordinate_t * result,
+									 atlas_shp_coordinate_t * coord11,
+									 atlas_shp_coordinate_t * coord12,
+									 atlas_shp_coordinate_t * coord21,
+									 atlas_shp_coordinate_t * coord22);
+
+
+/*! Checks if two longitude ranges overlap.
+ *
+ * \param origin_1 coordinate 1.1
+ * \param destination_1 coordinate 1.2
+ * \param origin_2 coordinate 2.1
+ * \param destination_2 coordinate 2.2
+ *
+ * \return zero (0) if no overlap, one (1) if overlap
+ */
+int 
+atlas_lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
+						 atlas_shp_coordinate_t * destination_1,
+						 atlas_shp_coordinate_t * origin_2,
+						 atlas_shp_coordinate_t * destination_2);
+
+/*! Checks if two latitude ranges overlap.
+ *
+ * \param coord1 coordinate 1.1
+ * \param coord2 coordinate 1.2
+ * \param coord1 coordinate 2.1
+ * \param coord2 coordinate 2.2
+ *
+ * \return zero (0) if no overlap, one (1) if overlap
+ */
+int 
+atlas_lat_range_overlaps(double * given_min_1,
+						 double * given_max_1,
+						 atlas_shp_coordinate_t * given_min_2,
+						 atlas_shp_coordinate_t * given_max_2);
+
+/*! Computes the latitude range of a great circle segment
+ *
+ * \param result_min pointer to result variable, lowest latitude
+ * \param result_max pointer to result variable, highest latitude
+ * \param coord1 coordinate 1
+ * \param coord2 coordinate 2
+ *
+ * \return zero (0) if no overlap, one (1) if overlap
+ */
+int 
+atlas_lat_range_gc_seg(double * result_min,
+					   double * result_max,
+					   atlas_shp_coordinate_t * coord1,
+					   atlas_shp_coordinate_t * coord2);
+
+/*! Determines the initial heading between two points.
+ *
+ * \param hdg_result pointer to variable for initial heading result
+ * \param coord1 point 1
+ * \param coord2 point 2
+ *
+ * \return zero (0)
+ */
+int 
+atlas_gc_initial_course(double * hdg_result,
+						atlas_shp_coordinate_t * coord1,
+						atlas_shp_coordinate_t * coord2);
+
 
 #endif // _ATLAS_SHAPE_IMPL_GEOMETRY_H_
 

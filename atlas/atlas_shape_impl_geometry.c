@@ -55,32 +55,14 @@ typedef struct atlas_shp_coord_vector_s {
 
 // Private Functions
 
-int lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
-					   atlas_shp_coordinate_t * destination_1,
-					   atlas_shp_coordinate_t * origin_2,
-					   atlas_shp_coordinate_t * destination_2);
+// Checks if a line/great circle defined by two coordinates is a meridian.
+static int atlas_is_meridian(atlas_shp_coordinate_t * c1,
+							 atlas_shp_coordinate_t * c2);
 
-int lat_range_overlaps(double * given_min_1,
-					   double * given_max_1,
-					   atlas_shp_coordinate_t * given_min_2,
-					   atlas_shp_coordinate_t * given_max_2);
-
-int lat_range_gc_seg(double * result_min,
-					 double * result_max,
-					 atlas_shp_coordinate_t * coord1,
-					 atlas_shp_coordinate_t * coord2);
-
-int initial_course(double * hdg_result,
-				   atlas_shp_coordinate_t * coord1,
-				   atlas_shp_coordinate_t * coord2);
-
-int is_meridian(atlas_shp_coordinate_t * c1,
-				atlas_shp_coordinate_t * c2);
-
-
-int is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
-								 atlas_shp_coordinate_t * c1,
-								 atlas_shp_coordinate_t * c2);
+// Checks if a point is on a great circle segment which is a meridian.
+static int atlas_is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
+											  atlas_shp_coordinate_t * c1,
+											  atlas_shp_coordinate_t * c2);
 
 
 // Converter Functions
@@ -100,21 +82,27 @@ static int cart_to_sph_gc(atlas_shp_coordinate_t * result,
 
 
 // Vector Operations
-int is_vectors_equal(atlas_shp_coord_vector_t * p1, 
-					 atlas_shp_coord_vector_t * p2);
 
+// Checks if two vectors are equal
+static int is_vectors_equal(atlas_shp_coord_vector_t * p1, 
+							atlas_shp_coord_vector_t * p2);
+
+// Calculates the antipodal point of the point given in cartesian coordinates.
 static inline void antipode(atlas_shp_coord_vector_t * result,
                             atlas_shp_coord_vector_t * coord);
 
-int is_antipodal(atlas_shp_coord_vector_t * p1, 
-				 atlas_shp_coord_vector_t * p2);
+// Checks if two vectors are opposite
+static int is_antipodal(atlas_shp_coord_vector_t * p1, 
+						atlas_shp_coord_vector_t * p2);
 
+// Calculates the cross product of two vectors and normalizes the result.
 static int cross_normalize(atlas_shp_coord_vector_t * result,
                            atlas_shp_coord_vector_t * coord1,
                            atlas_shp_coord_vector_t * coord2);
 
-double vectors_angle(atlas_shp_coordinate_t * c1,
-					 atlas_shp_coordinate_t * c2);
+// Determines the angle in between a line/plane and a line/plane.
+static double vectors_angle(atlas_shp_coordinate_t * c1,
+							atlas_shp_coordinate_t * c2);
 
 
 
@@ -130,7 +118,7 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
                             atlas_shp_coordinate_t * l2_e) {
 	
 	// check, if both great circles are meridians
-	if ( is_meridian(l1_s, l1_e) && is_meridian(l2_s, l2_e) ) {
+	if ( atlas_is_meridian(l1_s, l1_e) && atlas_is_meridian(l2_s, l2_e) ) {
 		result1->latitude = 90.0;
 		result1->longitude = 0.0;
 		result2->latitude = -90.0;
@@ -199,44 +187,44 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
 
 
 int
-atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
-								  atlas_shp_coordinate_t * coord11,
-								  atlas_shp_coordinate_t * coord12,
-								  atlas_shp_coordinate_t * coord21,
-								  atlas_shp_coordinate_t * coord22) {
+atlas_shape_gc_segments_intersection(atlas_shp_coordinate_t * result,
+									 atlas_shp_coordinate_t * coord11,
+									 atlas_shp_coordinate_t * coord12,
+									 atlas_shp_coordinate_t * coord21,
+									 atlas_shp_coordinate_t * coord22) {
 	
-	if (is_meridian(coord11, coord12) &&
-		is_meridian(coord21, coord22) &&
-		lon_range_overlaps(coord11, coord12, coord21, coord21) &&
+	if (atlas_is_meridian(coord11, coord12) &&
+		atlas_is_meridian(coord21, coord22) &&
+		atlas_lon_range_overlaps(coord11, coord12, coord21, coord21) &&
 		(coord11->longitude == coord21->longitude || 
 		 coord11->longitude == coord21->longitude-180.0 || 
 		 coord11->longitude == coord21->longitude+180.0) ) {
-		/*
-		 * Both segments are meridians and their longitude ranges overlap.
-		 * The longitude ranges have to overlap. Otherwise there is no possible
-		 * intersection.
-		 * Also the longitudes must be equal or opposite (+- 180 deg) for
-		 * both meridian segments to be on the same great circle.
-		 */
-		
-		/*
-		 * In case of two identical meridians the intersection of the two
-		 * great circles returns both poles. However, now there will be a check,
-		 * if one point of the first segment is on the other segment. If so,
-		 * this point is returned.
-		 */
-		
-		if (is_point_on_meridian_segment(coord11, coord21, coord22)) {
-			*result = *coord11;
-			return 1;
-		} else if (is_point_on_meridian_segment(coord12, coord21, coord22)) {
-			*result = *coord12;
-			return 1;
-		} else {
-			return 0;
+			/*
+			 * Both segments are meridians and their longitude ranges overlap.
+			 * The longitude ranges have to overlap. Otherwise there is no possible
+			 * intersection.
+			 * Also the longitudes must be equal or opposite (+- 180 deg) for
+			 * both meridian segments to be on the same great circle.
+			 */
+			
+			/*
+			 * In case of two identical meridians the intersection of the two
+			 * great circles returns both poles. However, now there will be a check,
+			 * if one point of the first segment is on the other segment. If so,
+			 * this point is returned.
+			 */
+			
+			if (atlas_is_point_on_meridian_segment(coord11, coord21, coord22)) {
+				*result = *coord11;
+				return 1;
+			} else if (atlas_is_point_on_meridian_segment(coord12, coord21, coord22)) {
+				*result = *coord12;
+				return 1;
+			} else {
+				return 0;
+			}
+			
 		}
-
-	}
 	
 	// Variables to hold both points of intersection
 	atlas_shp_coordinate_t intersection1;
@@ -247,7 +235,7 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 	atlas_shape_gc_intersection(&intersection1, &intersection2,
 								coord11, coord12,
 								coord21, coord22);
-
+	
 	if (intersect_result != 0) {
 		/*
 		 * If there is a problem with finding the intersection of the two
@@ -261,57 +249,57 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 	 * Check, if the points of intersection are within the longitude range
 	 * of both great circle segments.
 	 */
-	int lon_range_result_11 = lon_range_overlaps(coord11, coord12, 
-												 &intersection1, &intersection1);
+	int lon_range_result_11 = atlas_lon_range_overlaps(coord11, coord12, 
+													   &intersection1, &intersection1);
 	
-	int lon_range_result_12 = lon_range_overlaps(coord11, coord12, 
-												 &intersection2, &intersection2);
+	int lon_range_result_12 = atlas_lon_range_overlaps(coord11, coord12, 
+													   &intersection2, &intersection2);
 	
-	int lon_range_result_21 = lon_range_overlaps(coord21, coord22, 
-												 &intersection1, &intersection1);
+	int lon_range_result_21 = atlas_lon_range_overlaps(coord21, coord22, 
+													   &intersection1, &intersection1);
 	
-	int lon_range_result_22 = lon_range_overlaps(coord21, coord22, 
-												 &intersection2, &intersection2);
+	int lon_range_result_22 = atlas_lon_range_overlaps(coord21, coord22, 
+													   &intersection2, &intersection2);
 	
 	
 	// Determine latitude range of first great circle
 	double lat_range_min_1;
 	double lat_range_max_1;
-	lat_range_gc_seg(&lat_range_min_1, &lat_range_max_1, coord11, coord12);
+	atlas_lat_range_gc_seg(&lat_range_min_1, &lat_range_max_1, coord11, coord12);
 	
 	/*
 	 * Check for both points of intersection, if they are within the
 	 * latitude range.
 	 */
-	int lat_range_result_11 = lat_range_overlaps(&lat_range_min_1, 
-												 &lat_range_max_1, 
-												 &intersection1, 
-												 &intersection1);
+	int lat_range_result_11 = atlas_lat_range_overlaps(&lat_range_min_1, 
+													   &lat_range_max_1, 
+													   &intersection1, 
+													   &intersection1);
 	
-	int lat_range_result_12 = lat_range_overlaps(&lat_range_min_1, 
-												 &lat_range_max_1, 
-												 &intersection2, 
-												 &intersection2);
+	int lat_range_result_12 = atlas_lat_range_overlaps(&lat_range_min_1, 
+													   &lat_range_max_1, 
+													   &intersection2, 
+													   &intersection2);
 	
 	
 	// Determine latitude range of second great circle
 	double lat_range_min_2;
 	double lat_range_max_2;
-	lat_range_gc_seg(&lat_range_min_2, &lat_range_max_2, coord21, coord22);
+	atlas_lat_range_gc_seg(&lat_range_min_2, &lat_range_max_2, coord21, coord22);
 	
 	/*
 	 * Check for both points of intersection, if they are within the
 	 * latitude range.
 	 */
-	int lat_range_result_21 = lat_range_overlaps(&lat_range_min_2, 
-												 &lat_range_max_2, 
-												 &intersection1, 
-												 &intersection1);
+	int lat_range_result_21 = atlas_lat_range_overlaps(&lat_range_min_2, 
+													   &lat_range_max_2, 
+													   &intersection1, 
+													   &intersection1);
 	
-	int lat_range_result_22 = lat_range_overlaps(&lat_range_min_2, 
-												 &lat_range_max_2, 
-												 &intersection2, 
-												 &intersection2);
+	int lat_range_result_22 = atlas_lat_range_overlaps(&lat_range_min_2, 
+													   &lat_range_max_2, 
+													   &intersection2, 
+													   &intersection2);
 	
 	
 	/*
@@ -340,8 +328,8 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 	
 	
 	// Check for both segments if they are meridians
-	int gc_seg_1_is_meridian = is_meridian(coord11, coord12);
-	int gc_seg_2_is_meridian = is_meridian(coord21, coord22);	
+	int gc_seg_1_is_meridian = atlas_is_meridian(coord11, coord12);
+	int gc_seg_2_is_meridian = atlas_is_meridian(coord21, coord22);	
 	
 	/*
 	 * Next four statements:
@@ -350,16 +338,16 @@ atlas_shape_gc_segments_intersect(atlas_shp_coordinate_t * result,
 	 * of a meridian passing a pole, but not necessarily within the segment.
 	 */
 	int p1_is_on_seg_1_meridian = 
-	is_point_on_meridian_segment(&intersection1, coord11, coord12);
+	atlas_is_point_on_meridian_segment(&intersection1, coord11, coord12);
 	
 	int p2_is_on_seg_1_meridian = 
-	is_point_on_meridian_segment(&intersection2, coord11, coord12);
+	atlas_is_point_on_meridian_segment(&intersection2, coord11, coord12);
 	
 	int p1_is_on_seg_2_meridian = 
-	is_point_on_meridian_segment(&intersection1, coord21, coord22);
+	atlas_is_point_on_meridian_segment(&intersection1, coord21, coord22);
 	
 	int p2_is_on_seg_2_meridian = 
-	is_point_on_meridian_segment(&intersection2, coord21, coord22);
+	atlas_is_point_on_meridian_segment(&intersection2, coord21, coord22);
 	
 	
 	if ( (gc_seg_1_is_meridian == 1 && 
@@ -482,26 +470,11 @@ atlas_shape_polygon_equal(atlas_shp_coordinate_t * coords1,
 	return 0;
 }
 
-
-#pragma mark -
-#pragma mark -
-#pragma mark Private Functions
-
-
-/*! Checks if two longitude ranges overlap.
- *
- * \param origin_1 coordinate 1.1
- * \param destination_1 coordinate 1.2
- * \param origin_2 coordinate 2.1
- * \param destination_2 coordinate 2.2
- *
- * \return zero (0) if no overlap, one (1) if overlap
- */
 int
-lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
-				   atlas_shp_coordinate_t * destination_1,
-				   atlas_shp_coordinate_t * origin_2,
-				   atlas_shp_coordinate_t * destination_2) {
+atlas_lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
+						 atlas_shp_coordinate_t * destination_1,
+						 atlas_shp_coordinate_t * origin_2,
+						 atlas_shp_coordinate_t * destination_2) {
 	
 	int segment_1_dateline 
 	= ( fabs(origin_1->longitude - destination_1->longitude) ) > 180.0;
@@ -534,7 +507,7 @@ lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
 			min_2 = min_2 + 360.0;
 			max_2 = max_2 + 360.0;
 		}
-				
+		
 	} else if (!segment_1_dateline && segment_2_dateline) {
 		/*
 		 * Only segment 2 overlaps the dateline
@@ -592,20 +565,12 @@ lon_range_overlaps(atlas_shp_coordinate_t * origin_1,
 	}
 }
 
-/*! Checks if two latitude ranges overlap.
- *
- * \param coord1 coordinate 1.1
- * \param coord2 coordinate 1.2
- * \param coord1 coordinate 2.1
- * \param coord2 coordinate 2.2
- *
- * \return zero (0) if no overlap, one (1) if overlap
- */
+
 int
-lat_range_overlaps(double * given_min_1,
-				   double * given_max_1,
-				   atlas_shp_coordinate_t * given_min_2,
-				   atlas_shp_coordinate_t * given_max_2) {
+atlas_lat_range_overlaps(double * given_min_1,
+						 double * given_max_1,
+						 atlas_shp_coordinate_t * given_min_2,
+						 atlas_shp_coordinate_t * given_max_2) {
 	
 	// TODO einer ist meridian über pol
 	
@@ -625,20 +590,12 @@ lat_range_overlaps(double * given_min_1,
 	}	
 }
 
-/*! Computes the latitude range of a great circle segment
- *
- * \param result_min pointer to result variable, lowest latitude
- * \param result_max pointer to result variable, highest latitude
- * \param coord1 coordinate 1
- * \param coord2 coordinate 2
- *
- * \return zero (0) if no overlap, one (1) if overlap
- */
+
 int 
-lat_range_gc_seg(double * result_min,
-				 double * result_max,
-				 atlas_shp_coordinate_t * coord1,
-				 atlas_shp_coordinate_t * coord2) {
+atlas_lat_range_gc_seg(double * result_min,
+					   double * result_max,
+					   atlas_shp_coordinate_t * coord1,
+					   atlas_shp_coordinate_t * coord2) {
 	
 	/*
 	 * Convert both points from spherical to cartesian coordinates.
@@ -674,7 +631,7 @@ lat_range_gc_seg(double * result_min,
 		*result_max = fmax(coord1->latitude, coord2->latitude);
 		return 0;
 		
-	} else if (is_meridian(coord1, coord2)) {
+	} else if (atlas_is_meridian(coord1, coord2)) {
 		
 		if (coord1->longitude == coord2->longitude) {
 			/*
@@ -778,7 +735,7 @@ lat_range_gc_seg(double * result_min,
 	phi = fabs(radian_to_degree(phi));
 	
 	//printf("phi = %f \n",phi);
-		
+	
 	/*
 	 * The following steps are used to determine the initial heading on the 
 	 * great circle segment from each of the two points. Both initial headings 
@@ -787,10 +744,10 @@ lat_range_gc_seg(double * result_min,
 	 */
 	
 	double hdg1;
-	int h1 = initial_course(&hdg1, coord1, coord2);
-
+	int h1 = atlas_gc_initial_course(&hdg1, coord1, coord2);
+	
 	double hdg2;
-	int h2 = initial_course(&hdg2, coord2, coord1);
+	int h2 = atlas_gc_initial_course(&hdg2, coord2, coord1);
 	
 	if ((hdg1 < 90 || hdg1 > 270) && (hdg2 < 90 || hdg2 > 270)) {
 		// hdg1 points north, hdg2 points north
@@ -807,7 +764,7 @@ lat_range_gc_seg(double * result_min,
 	} else if (
 			   ((hdg1 < 90 || hdg1 > 270) && (90 < hdg2 && hdg2 < 270)) ||
 			   ((90 < hdg1 && hdg1 < 270) && (hdg2 < 90 || hdg2 > 270))
-				) {
+			   ) {
 		/*
 		 * hdg1 points north, hdg2 points south
 		 * OR
@@ -822,18 +779,11 @@ lat_range_gc_seg(double * result_min,
 	return 0;
 }
 
-/*! Determines the initial heading between two points.
- *
- * \param hdg_result pointer to variable for initial heading result
- * \param coord1 point 1
- * \param coord2 point 2
- *
- * \return zero (0)
- */
+
 int 
-initial_course(double * hdg_result,
-			   atlas_shp_coordinate_t * coord1,
-			   atlas_shp_coordinate_t * coord2) {
+atlas_gc_initial_course(double * hdg_result,
+						atlas_shp_coordinate_t * coord1,
+						atlas_shp_coordinate_t * coord2) {
 	
 	// Convert coordinates to radians
 	double lat1_rad = geocentric_latitude(degree_to_radian(coord1->latitude));
@@ -849,7 +799,7 @@ initial_course(double * hdg_result,
 	double y = sin(lon2_rad - lon1_rad) * cos(lat2_rad);
 	
 	double x = cos(lat1_rad) * sin(lat2_rad) 
-				- sin(lat1_rad) * cos(lat2_rad) * cos(lon2_rad - lon1_rad);
+	- sin(lat1_rad) * cos(lat2_rad) * cos(lon2_rad - lon1_rad);
 	
 	/*
 	 * atan2 may be undefined for (0,0). It is not and returns 0 if both
@@ -857,7 +807,7 @@ initial_course(double * hdg_result,
 	 */
 	
 	double hdg = fmod(atan2(y, x), 2 * M_PI);
-		
+	
 	// Convert result back to degree
 	hdg = radian_to_degree(hdg);
 	
@@ -873,6 +823,12 @@ initial_course(double * hdg_result,
 }
 
 
+
+
+#pragma mark -
+#pragma mark -
+#pragma mark Private Functions
+
 /*! Checks if a line/great circle defined by two coordinates is a meridian.
  *
  * If both latitudes are equal, the line/great circle is a meridian.
@@ -883,9 +839,9 @@ initial_course(double * hdg_result,
  *
  * \return 1 if meridian, 0 otherwise
  */
-int
-is_meridian(atlas_shp_coordinate_t * c1,
-			atlas_shp_coordinate_t * c2) {
+static int
+atlas_is_meridian(atlas_shp_coordinate_t * c1,
+				  atlas_shp_coordinate_t * c2) {
 	if (c1->longitude == c2->longitude ||
 		c1->longitude + 180.0 == c2->longitude ||
 		c1->longitude == c2->longitude + 180.0) {
@@ -904,12 +860,12 @@ is_meridian(atlas_shp_coordinate_t * c1,
  *
  * \return 1 if meridian, 0 otherwise
  */
-int
-is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
-							 atlas_shp_coordinate_t * c1,
-							 atlas_shp_coordinate_t * c2){
+static int
+atlas_is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
+								   atlas_shp_coordinate_t * c1,
+								   atlas_shp_coordinate_t * c2){
 	
-	if (!is_meridian(c1, c2)) {
+	if (!atlas_is_meridian(c1, c2)) {
 		// if line is not a meridian, return 0
 		return 0;
 	}
@@ -964,7 +920,7 @@ is_point_on_meridian_segment(atlas_shp_coordinate_t * point,
 		}
 	}	
 }
-										
+
 
 #pragma mark -
 #pragma mark Converter Functions
@@ -1094,7 +1050,7 @@ cart_to_sph_gc(atlas_shp_coordinate_t * result,
  *
  * \return 1 if equal, 0 otherwise
  */
-int 
+static int 
 is_vectors_equal(atlas_shp_coord_vector_t * p1, atlas_shp_coord_vector_t * p2) {
 	
 	if (fabs(p1->x - p2->x) < SHAPE_PRECISION &&
@@ -1131,7 +1087,7 @@ antipode(struct atlas_shp_coord_vector_s * result,
  *
  * \return 1 if opposite, 0 otherwise
  */
-int 
+static int 
 is_antipodal(atlas_shp_coord_vector_t * p1, atlas_shp_coord_vector_t * p2) {
 	
 	atlas_shp_coord_vector_t p2_temp = { -1.0 * p2->x, -1.0 * p2->y, -1.0 * p2->z};
@@ -1192,7 +1148,7 @@ cross_normalize(struct atlas_shp_coord_vector_s * result,
  *
  * \return Phi
  */
-double 
+static double 
 vectors_angle(atlas_shp_coordinate_t * c1,
 			  atlas_shp_coordinate_t * c2) {
 	
