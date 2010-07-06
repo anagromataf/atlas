@@ -45,8 +45,8 @@ START_TEST (test_shape_impl_geometry_point_equal) {
 	atlas_shp_coordinate_t c_32 = {(2.0/3.0), (4.0/3.0)};
 	fail_unless(atlas_shape_points_equal(&c_31, &c_32) == 0);
 	
-	atlas_shp_coordinate_t c_41 = {(1.0/9999999.0), (4.0/3.0)};
-	atlas_shp_coordinate_t c_42 = {(1.0/9999998.0), (4.0/3.0)};
+	atlas_shp_coordinate_t c_41 = {(1.0/999999.0), (4.0/3.0)};
+	atlas_shp_coordinate_t c_42 = {(1.0/999998.0), (4.0/3.0)};
 	fail_unless(atlas_shape_points_equal(&c_41, &c_42) == 0);
 	
 } END_TEST
