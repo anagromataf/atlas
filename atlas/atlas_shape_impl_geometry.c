@@ -160,7 +160,7 @@ atlas_shape_gc_intersection(atlas_shp_coordinate_t * result1,
 	int cn3 = cross_normalize(&intersection1, &cross1, &cross2);
 	if (cn3 != 0) {
 		/*
-		 * If SHAPE_DIV_BY_ZERO 1 is returned here, the length of the vector
+		 * If SHAPE_DIV_BY_ZERO 3 is returned here, the length of the vector
 		 * was 0. In this case both great circles are equal.
 		 */
 		return cn3;

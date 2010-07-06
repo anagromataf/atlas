@@ -31,8 +31,8 @@
 // Error constants
 // TODO: Define these constant in a separate file
 
-#define SHAPE_DIV_BY_ZERO 1
 #define SHAPE_INVALID_PARAM 2
+#define SHAPE_DIV_BY_ZERO 3
 
 
 
