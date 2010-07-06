@@ -851,7 +851,10 @@ initial_course(double * hdg_result,
 	double x = cos(lat1_rad) * sin(lat2_rad) 
 				- sin(lat1_rad) * cos(lat2_rad) * cos(lon2_rad - lon1_rad);
 	
-	// TODO: Check if atan2(0,0) can occur, atan2 may be undefined for (0,0)
+	/*
+	 * atan2 may be undefined for (0,0). It is not and returns 0 if both
+	 * parameters are 0.
+	 */
 	
 	double hdg = fmod(atan2(y, x), 2 * M_PI);
 		

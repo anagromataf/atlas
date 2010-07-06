@@ -397,7 +397,19 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	initial_course(&hdg52, &c52, &c51);
 	printf("TEST initial_course %i: course2 = %f \n", i, hdg52);
 	fail_unless(hdg51 > 136 && hdg51 < 137);
-	fail_unless(hdg52 > 235 && hdg52 < 236);	
+	fail_unless(hdg52 > 235 && hdg52 < 236);
+	
+	// point only
+	i++;
+	atlas_shp_coordinate_t c61 = {0, 0};
+	atlas_shp_coordinate_t c62 = {0, 0};
+	;
+	double hdg61, hdg62;
+	initial_course(&hdg61, &c61, &c62);
+	printf("TEST initial_course %i: course1 = %f \n", i, hdg61);
+	initial_course(&hdg52, &c62, &c61);
+	printf("TEST initial_course %i: course2 = %f \n", i, hdg62);
+	
 	
 } END_TEST
 
