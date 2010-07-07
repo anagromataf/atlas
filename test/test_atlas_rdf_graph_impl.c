@@ -385,7 +385,7 @@ START_TEST (test_create_rdf_graph_intersection) {
         dispatch_semaphore_t check_lock = dispatch_semaphore_create(1);
         int * check = malloc(sizeof(int));
         assert(check);
-        check[1] = 0;
+        check[0] = 0;
         
         // check if both terms are in the graph
         atlas_rdf_graph_apply(intersection, ^(atlas_rdf_term_t subject,

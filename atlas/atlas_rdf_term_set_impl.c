@@ -173,6 +173,13 @@ atlas_rdf_term_set_t
 atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
                                      atlas_rdf_term_set_t set2,
                                      atlas_error_handler err) {
+	// The implementation will not compute the difference of sets
+	// set1 and set2 as mentioned by set1\set2 - this function will
+	// compute the minimal disjoint union of set1 and set2, i.e. 
+	// set1\set2 UNION set2\set1 resp.
+	// {a IN set1 | a NOT IN set2} UNION {b IN set2 | b NOT IN set1} resp.
+	// (set1 UNION set2) \ {b | b IN set1 AND b IN set2}!!! 
+	
     assert(set1 != 0);
     assert(set2 != 0);
     
@@ -180,26 +187,34 @@ atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
 	int num_terms_set1 = atlas_rdf_term_set_length(set1);
 	int num_terms_set2 = atlas_rdf_term_set_length(set2);
 	
+	// if set1 is empty return set2
+    if (num_terms_set1 == 0) {
+        return lz_retain(set2);
+    }
     // if set2 is empty return set1
     if (num_terms_set2 == 0) {
         return lz_retain(set1);
     }
     
 	// the resulting term set as a difference of set1 and set2
-	// (set1 - set2)
     atlas_rdf_term_set_t result;
 	
 	// create a new set of terms representing
 	// the difference of the two given sets set1 and set2
 	// and consider the worst case in which the difference
-	// can be max. as mighty as set1
-	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * num_terms_set1);
+	// can be max. as mighty as set1 and set2 together - i.e.
+	// set1 and set2 are elementwise disjoint sets
+	__block atlas_rdf_term_t * set = malloc(sizeof(atlas_rdf_term_t) * (num_terms_set1 + num_terms_set2));
 	assert(set != 0);
 	
 	// the new set has initially no elements
 	__block int num_set = 0;
 	
-	// difference of set1 and set2
+	// compute the difference of set1 and set2
+	//
+	// TODO: naive implementation resulting in O(2*n*m) resp. O(n*n), where n=|set1|, m=|set2|
+	// - by sorting both sets first and then lineary comparing both sets elementwise in parallel
+	// will result in a running time O(logn + logm + n + m) resp. O(logn)
 	for (int i=0; i<num_terms_set1; i++) {
 		atlas_rdf_term_t term_set1 = lz_obj_weak_ref(set1, i);
 		int term_is_in_set2 = 0;
@@ -212,6 +227,20 @@ atlas_rdf_term_set_create_difference(atlas_rdf_term_set_t set1,
 		}
 		if (!term_is_in_set2) {
 			set[num_set++] = term_set1;
+		}
+	}
+	for (int i=0; i<num_terms_set2; i++) {
+		atlas_rdf_term_t term_set2 = lz_obj_weak_ref(set2, i);
+		int term_is_in_set1 = 0;
+		for (int j=0; j<num_terms_set1; j++) {
+			atlas_rdf_term_t term_set1 = lz_obj_weak_ref(set1, j);
+			if (atlas_rdf_term_eq(term_set1, term_set2)) {
+				term_is_in_set1 = 1;
+				break;
+			}
+		}
+		if (!term_is_in_set1) {
+			set[num_set++] = term_set2;
 		}
 	}
 	
