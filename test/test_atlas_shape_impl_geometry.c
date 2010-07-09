@@ -30,6 +30,20 @@
 #include "atlas_shape_impl.h"
 #include "atlas_shape_impl_geometry.h"
 
+int 
+abs_value_check(double actual, 
+				double expected, 
+				double precision){
+	if (fabs( actual - expected ) > precision){
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
+
+#pragma mark -
+#pragma mark test_shape_impl_geometry_point_equal
 
 START_TEST (test_shape_impl_geometry_point_equal) {
 	// Checks for point equality
@@ -51,6 +65,9 @@ START_TEST (test_shape_impl_geometry_point_equal) {
 	
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_geometry_arc_equal
 
 START_TEST (test_shape_impl_geometry_arc_equal) {	
 	
@@ -91,6 +108,9 @@ START_TEST (test_shape_impl_geometry_arc_equal) {
     
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_gc_intersection
 
 START_TEST (test_shape_impl_gc_intersection) {
 	// first great circle is the equator
@@ -186,6 +206,9 @@ START_TEST (test_shape_impl_gc_intersection) {
 } END_TEST
 
 
+#pragma mark -
+#pragma mark test_shape_impl_geometry_lon_range_overlap
+
 START_TEST (test_shape_impl_geometry_lon_range_overlap) {	
 	/*
 	 * Tests for check, if two latitude ranges overlap
@@ -247,6 +270,9 @@ START_TEST (test_shape_impl_geometry_lon_range_overlap) {
 } END_TEST
 
 
+#pragma mark -
+#pragma mark test_shape_impl_geometry_initial_course
+
 START_TEST (test_shape_impl_geometry_initial_course) {
 	// arbitrary course northern hemisphere
 	int i = 1;
@@ -254,9 +280,9 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	atlas_shp_coordinate_t c12 = { 13.2833, 52.5667};
 	double hdg11, hdg12;
 	atlas_gc_initial_course(&hdg11, &c11, &c12);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg11);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg11);
 	atlas_gc_initial_course(&hdg12, &c12, &c11);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg12);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg12);
 	fail_unless(hdg11 > 46 && hdg11 < 47);
 	fail_unless(hdg12 > 295 && hdg12 < 296);
 	
@@ -267,9 +293,9 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	
 	double hdg21, hdg22;
 	atlas_gc_initial_course(&hdg21, &c21, &c22);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg21);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg21);
 	atlas_gc_initial_course(&hdg22, &c22, &c21);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg22);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg22);
 	fail_unless(hdg21 > 158 && hdg21 < 159);
 	fail_unless(hdg22 > 214 && hdg22 < 215);
 	
@@ -280,9 +306,9 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	
 	double hdg31, hdg32;
 	atlas_gc_initial_course(&hdg31, &c31, &c32);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg31);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg31);
 	atlas_gc_initial_course(&hdg32, &c32, &c31);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg32);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg32);
 	fail_unless(abs_value_check(hdg31, 180.0, 0.1) == 1);
 	fail_unless(abs_value_check(hdg32, 0.0, 0.1) == 1);
 	
@@ -293,9 +319,9 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	
 	double hdg41, hdg42;
 	atlas_gc_initial_course(&hdg41, &c41, &c42);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg41);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg41);
 	atlas_gc_initial_course(&hdg42, &c42, &c41);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg42);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg42);
 	fail_unless(abs_value_check(hdg41, 180.0, 0.1) == 1);
 	fail_unless(abs_value_check(hdg42, 180.0, 0.1) == 1);
 	
@@ -303,12 +329,12 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	i++;
 	atlas_shp_coordinate_t c51 = { 110, -40};
 	atlas_shp_coordinate_t c52 = {-150, -50};
-	;
+    
 	double hdg51, hdg52;
 	atlas_gc_initial_course(&hdg51, &c51, &c52);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg51);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg51);
 	atlas_gc_initial_course(&hdg52, &c52, &c51);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg52);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg52);
 	fail_unless(hdg51 > 136 && hdg51 < 137);
 	fail_unless(hdg52 > 235 && hdg52 < 236);
 	
@@ -319,13 +345,16 @@ START_TEST (test_shape_impl_geometry_initial_course) {
 	;
 	double hdg61, hdg62;
 	atlas_gc_initial_course(&hdg61, &c61, &c62);
-	printf("TEST initial_course %i: course1 = %f \n", i, hdg61);
+	//printf("TEST initial_course %i: course1 = %f \n", i, hdg61);
 	atlas_gc_initial_course(&hdg52, &c62, &c61);
-	printf("TEST initial_course %i: course2 = %f \n", i, hdg62);
+	//printf("TEST initial_course %i: course2 = %f \n", i, hdg62);
 	
 	
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_geometry_lat_range_gc_seg
 
 START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	// arbitrary course northern hemisphere
@@ -338,8 +367,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_1 = atlas_lat_range_gc_seg(&result_min_1, &result_max_1,
 										&c11, &c12);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_1);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_1);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_1);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_1);
 	
 	fail_unless(40 < result_min_1 < 41);
 	fail_unless(56 < result_max_1 < 57);
@@ -354,8 +383,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_2 = atlas_lat_range_gc_seg(&result_min_2, &result_max_2,
 										&c21, &c22);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_2);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_2);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_2);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_2);
 	
 	fail_unless(-57.9 > result_min_2 > -58.1);
 	fail_unless(abs_value_check(result_max_2, -40.0, 0.1));
@@ -370,8 +399,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_3 = atlas_lat_range_gc_seg(&result_min_3, &result_max_3,
 										&c31, &c32);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_3);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_3);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_3);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_3);
 	
 	fail_unless(abs_value_check(result_max_3, 50.0, 0.1));
 	fail_unless(abs_value_check(result_min_3, 30.0, 0.1));
@@ -386,8 +415,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_4 = atlas_lat_range_gc_seg(&result_min_4, &result_max_4,
 										&c41, &c42);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_4);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_4);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_4);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_4);
 	
 	fail_unless(abs_value_check(result_max_4, -30.0, 0.1));
 	fail_unless(abs_value_check(result_min_4, -50.0, 0.1));
@@ -401,8 +430,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_5 = atlas_lat_range_gc_seg(&result_min_5, &result_max_5,
 										&c51, &c52);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_5);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_5);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_5);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_5);
 	
 	fail_unless(abs_value_check(result_max_5,  80.0, 0.1));
 	fail_unless(abs_value_check(result_min_5, -70.0, 0.1));
@@ -416,8 +445,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_6 = atlas_lat_range_gc_seg(&result_min_6, &result_max_6,
 										&c61, &c62);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_6);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_6);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_6);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_6);
 	
 	fail_unless(abs_value_check(result_max_6, 90.0, 0.1));
 	fail_unless(abs_value_check(result_min_6, 60.0, 0.1));
@@ -431,8 +460,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_7 = atlas_lat_range_gc_seg(&result_min_7, &result_max_7,
 										&c71, &c72);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_7);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_7);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_7);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_7);
 	
 	fail_unless(abs_value_check(result_max_7, -60.0, 0.1));
 	fail_unless(abs_value_check(result_min_7, -90.0, 0.1));
@@ -446,8 +475,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_8 = atlas_lat_range_gc_seg(&result_min_8, &result_max_8,
 										&c81, &c82);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_8);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_8);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_8);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_8);
 	
 	fail_unless(76.3 < result_max_8 && result_max_8 < 76.4);
 	fail_unless(abs_value_check(result_min_8, -22.0, 0.1));
@@ -461,8 +490,8 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	int latr_9 = atlas_lat_range_gc_seg(&result_min_9, &result_max_9,
 										&c91, &c92);
 	
-	printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_9);
-	printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_9);
+	//printf("TEST lat_range_gc_seg %i: min-lat = %f \n", i, result_min_9);
+	//printf("TEST lat_range_gc_seg %i: max-lat = %f \n", i, result_max_9);
 	
 	fail_unless(abs_value_check(result_min_9, -10.0, 0.1));
 	fail_unless(abs_value_check(result_max_9,  10.0, 0.1));
@@ -471,6 +500,9 @@ START_TEST (test_shape_impl_geometry_lat_range_gc_seg) {
 	
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_geometry_gc_seg_intersect
 
 START_TEST (test_shape_impl_geometry_gc_seg_intersect) {	
 	int i = 1;
@@ -487,8 +519,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_1, 
 										   &c111, &c112, 
 										   &c121, &c122);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_1.latitude, result_1.longitude);
+	//printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+	//	   i, result_1.latitude, result_1.longitude);
 	fail_unless(has_intersect_1 == 1);
 	
 	
@@ -503,8 +535,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	atlas_shape_gc_segments_intersection(&result_2, 
 										 &c211, &c212, 
 										 &c221, &c222);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_2.latitude, result_2.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_2.latitude, result_2.longitude);
 	fail_unless(has_intersect_2 == 0);
 	
 	// latitude ranges overlap, latitude ranges do not, segments do not intersect
@@ -518,8 +550,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_3, 
 										   &c311, &c312, 
 										   &c321, &c322);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_3.latitude, result_3.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_3.latitude, result_3.longitude);
 	fail_unless(has_intersect_3 == 0);
 	
 	// one segment is a meridian, the other one is not, they do intersect
@@ -533,8 +565,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_4, 
 										   &c411, &c412, 
 										   &c421, &c422);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_4.latitude, result_4.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_4.latitude, result_4.longitude);
 	fail_unless(has_intersect_4 == 1);
 	
 	
@@ -549,8 +581,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_5, 
 										   &c511, &c512, 
 										   &c521, &c522);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_5.latitude, result_5.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_5.latitude, result_5.longitude);
 	fail_unless(has_intersect_5 == 1);
 	
 	
@@ -566,8 +598,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_6, 
 										   &c611, &c612, 
 										   &c621, &c622);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_6.latitude, result_6.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_6.latitude, result_6.longitude);
 	fail_unless(has_intersect_6 == 1);
 	
 	
@@ -583,8 +615,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_7, 
 										   &c711, &c712, 
 										   &c721, &c722);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_7.latitude, result_7.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_7.latitude, result_7.longitude);
 	fail_unless(has_intersect_7 == 0);
 	
 	
@@ -599,8 +631,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_8, 
 										   &c811, &c812, 
 										   &c821, &c822);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_8.latitude, result_8.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_8.latitude, result_8.longitude);
 	fail_unless(has_intersect_8 == 0);
 	
 	
@@ -615,8 +647,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_9, 
 										   &c911, &c912, 
 										   &c921, &c922);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_9.latitude, result_9.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_9.latitude, result_9.longitude);
 	fail_unless(has_intersect_9 == 0);
 	
 	
@@ -631,8 +663,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_10, 
 										   &c1011, &c1012, 
 										   &c1021, &c1022);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_10.latitude, result_10.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_10.latitude, result_10.longitude);
 	fail_unless(has_intersect_10 == 1);
 	
 	// both are meridians (one over pole) that overlap
@@ -646,8 +678,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_11, 
 										   &c1111, &c1112, 
 										   &c1121, &c1122);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_11.latitude, result_11.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_11.latitude, result_11.longitude);
 	fail_unless(has_intersect_11 == 1);
 	
 	// both are meridians that do not overlap
@@ -661,8 +693,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_12, 
 										   &c1211, &c1212, 
 										   &c1221, &c1222);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_12.latitude, result_12.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_12.latitude, result_12.longitude);
 	fail_unless(has_intersect_12 == 0);
 	
 	
@@ -677,8 +709,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_13, 
 										   &c1311, &c1312, 
 										   &c1321, &c1322);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_13.latitude, result_13.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_13.latitude, result_13.longitude);
 	fail_unless(has_intersect_13 == 1);
 	
 	// intersection around 65,9 N 22,3 E
@@ -692,8 +724,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_14, 
 										   &c1411, &c1412, 
 										   &c1421, &c1422);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_14.latitude, result_14.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_14.latitude, result_14.longitude);
 	fail_unless(has_intersect_14 == 1);
 	
 	
@@ -707,8 +739,8 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_15, 
 										   &c1511, &c1512, 
 										   &c1521, &c1522);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_15.latitude, result_15.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_15.latitude, result_15.longitude);
 	fail_unless(has_intersect_15 == 1);
 	
 	// two equal segments
@@ -722,23 +754,12 @@ START_TEST (test_shape_impl_geometry_gc_seg_intersect) {
 	= atlas_shape_gc_segments_intersection(&result_16, 
 										   &c1611, &c1612, 
 										   &c1621, &c1622);
-	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
-		   i, result_16.latitude, result_16.longitude);
+//	printf("TEST gc_seg_intersect %i: lat = %f  lon = %f\n", 
+//		   i, result_16.latitude, result_16.longitude);
 	fail_unless(has_intersect_16 == 3);
 	
 } END_TEST
 
-
-int 
-abs_value_check(double actual, 
-				double expected, 
-				double precision){
-	if (fabs( actual - expected ) > precision){
-		return 0;
-	} else {
-		return 1;
-	}
-}
 
 #pragma mark -
 #pragma mark Fixtures

@@ -704,7 +704,7 @@ static void teardown() {
 
 Suite * rdf_term_set_suite(void) {
     
-    Suite *s = suite_create("RDF Set Term");
+    Suite *s = suite_create("RDF Term Set");
     
     TCase *tc_create = tcase_create("Create");
     tcase_add_checked_fixture (tc_create, setup, teardown);

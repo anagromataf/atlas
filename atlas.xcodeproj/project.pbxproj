@@ -489,6 +489,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
 					"${SOURCE_ROOT}/lazyObject/include",
 					/opt/local/include/,
 					"${SOURCE_ROOT}/include",
@@ -509,6 +510,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
 					"${SOURCE_ROOT}/lazyObject/include",
 					/opt/local/include/,
 					"${SOURCE_ROOT}/include",

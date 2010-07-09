@@ -31,6 +31,9 @@
 
 // TODO: Adapt all tests for use with spheres
 
+#pragma mark -
+#pragma mark test_shape_impl_create
+
 START_TEST (test_shape_impl_create) {
     
 	// FIRST SHAPE
@@ -105,6 +108,9 @@ START_TEST (test_shape_impl_create) {
 	
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_equal
 
 START_TEST (test_shape_impl_equal) {
     
@@ -235,6 +241,9 @@ START_TEST (test_shape_impl_equal) {
     
 } END_TEST
 
+
+#pragma mark -
+#pragma mark test_shape_impl_union
 
 START_TEST (test_shape_impl_union) {
 	
